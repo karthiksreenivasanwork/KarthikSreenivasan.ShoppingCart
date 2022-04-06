@@ -30,9 +30,18 @@
               "src/assets"
             ],
             "styles": [
+              "src/assets/css/bootstrap.css",
+              "src/assets/css/style.css",
+              "src/assets/css/font-awesome.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/js/jquery-1.11.1.min.js",
+              "src/assets/js/move-top.js",
+              "src/assets/js/easing.js",
+              "src/assets/js/bootstrap.min.js",
+              "src/assets/js/other.js"
+            ]
           },
           "configurations": {
             "production": {
