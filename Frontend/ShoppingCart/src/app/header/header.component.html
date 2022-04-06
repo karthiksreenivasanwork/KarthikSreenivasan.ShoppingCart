@@ -40,8 +40,11 @@
           <div class="mega-dropdown-menu">
             <div class="w3ls_vegetables">
               <ul class="dropdown-menu drp-mnu">
-                <li><a href="login.html">Login</a></li>
-                <li><a href="login.html">Sign Up</a></li>
+                <!--
+                    routerLink: backslash ( /login) specifies a new URL path.
+                -->
+                <li><a routerLink="/login">Login</a></li>
+                <li><a routerLink="/login">Sign Up</a></li>
               </ul>
             </div>
           </div>
@@ -88,7 +91,7 @@
       <ul>
         <li>
           <i class="fa fa-home" aria-hidden="true"></i
-          ><a href="index.html">Home</a><span>|</span>
+          ><a routerLink="/">Home</a><span>|</span>
         </li>
         <li>Branded Foods</li>
       </ul>
