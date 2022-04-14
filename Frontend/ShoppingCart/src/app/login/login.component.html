@@ -10,16 +10,19 @@
         </div>
         <div class="form">
           <h2>Login to your account</h2>
-          <form action="#" method="post">
+          <div [ngClass]="{ 'alert alert-danger': userErrorStatus }">
+            {{ userMessage }}
+          </div>
+          <form [formGroup]="loginForm" (submit)="doLogin()">
             <input
               type="text"
-              name="Username"
+              formControlName="Username"
               placeholder="Username"
               required=" "
             />
             <input
               type="password"
-              name="Password"
+              formControlName="Password"
               placeholder="Password"
               required=" "
             />
@@ -28,28 +31,47 @@
         </div>
         <div class="form">
           <h2>Create an account</h2>
-          <form action="#" method="post">
+          <!--
+            Clarification - Gopi Sir - ngClass not applying bootstrap class properly.
+          -->
+          <div
+            *ngIf="userMessage != null || userMessage != ''"
+            [ngClass]="{
+              'alert alert-success': !userErrorStatus,
+              'alert alert-danger': userErrorStatus
+            }"
+          >
+            {{ userMessage }}
+          </div>
+          <form
+            (submit)="doRegistration(formTemplateRef)"
+            #formTemplateRef="ngForm"
+          >
             <input
               type="text"
               name="Username"
+              ngModel
               placeholder="Username"
               required=" "
             />
             <input
               type="password"
               name="Password"
+              ngModel
               placeholder="Password"
               required=" "
             />
             <input
               type="email"
               name="Email"
+              ngModel
               placeholder="Email Address"
               required=" "
             />
             <input
               type="text"
               name="Phone"
+              ngModel
               placeholder="Phone Number"
               required=" "
             />
@@ -59,22 +81,6 @@
         <div class="cta"><a href="#">Forgot your password?</a></div>
       </div>
     </div>
-    <script>
-      $(".toggle").click(function () {
-        // Switches the Icon
-        $(this).children("i").toggleClass("fa-pencil");
-        // Switches the forms
-        $(".form").animate(
-          {
-            height: "toggle",
-            "padding-top": "toggle",
-            "padding-bottom": "toggle",
-            opacity: "toggle",
-          },
-          "slow"
-        );
-      });
-    </script>
   </div>
   <!-- //login -->
 </div>
