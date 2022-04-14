@@ -44,6 +44,14 @@ namespace ShoppingCart.WebAPI
                  */
                 c.TagActionsBy(apiDescriptionRef => new[] { apiDescriptionRef.GroupName });
                 c.DocInclusionPredicate((groupName, apiDescriptionRef) => true);
+
+                /**
+                 * How to hide a property just in post request description of swagger using swashbuckle?
+                 * Step 1: Install NuGet package: Swashbuckle.AspNetCore.Annotations
+                 * Step 2: Call EnableAnnotations method detailed below
+                 * Step 3: Use the attribute 'SwaggerSchema to ReadOnly' in the property that needs to be hidden.
+                 */
+                c.EnableAnnotations();
             });
 
             /*
