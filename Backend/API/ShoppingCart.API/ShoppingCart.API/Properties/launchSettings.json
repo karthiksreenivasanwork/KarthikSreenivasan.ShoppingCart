@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ShoppingCart.WebAPI": {
+    "ShoppingCart.API": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

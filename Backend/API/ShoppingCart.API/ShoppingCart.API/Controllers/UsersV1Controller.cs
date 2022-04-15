@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ShoppingCart.WebAPI.Models;
+using Microsoft.Extensions.Configuration;
+using ShoppingCart.API.Models;
+using ShoppingCart.API.SQLDataProvider;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ShoppingCart.WebAPI.Controllers
+namespace ShoppingCart.API.Controllers
 {
     /// <summary>
     /// Purpose of this controller is to register and perform authentication of a new user.
@@ -19,6 +20,14 @@ namespace ShoppingCart.WebAPI.Controllers
     [ApiExplorerSettings(GroupName = "User Controller - V1")]
     public class UsersV1Controller : ControllerBase
     {
+        IConfiguration _configuration;
+        UserDataProvider _userDataProvider;
+        public UsersV1Controller(IConfiguration configuration)
+        {
+            this._configuration = configuration;
+            _userDataProvider = new UserDataProvider(configuration);
+        }
+
         #region CRUD methods
 
         static List<UserModel> _userModelCollection = new List<UserModel>();
@@ -70,19 +79,16 @@ namespace ShoppingCart.WebAPI.Controllers
             {
                 UserModel userModelToRegister = new UserModel()
                 {
-                    ID = this.GetUserId(),
                     Username = userModelRegistrationData.Username,
                     Password = userModelRegistrationData.Password,
                     Email = userModelRegistrationData.Email,
                     Phone = userModelRegistrationData.Phone
                 };
-
-                _userModelCollection.Add(userModelToRegister);
-
+                _userDataProvider.AddNewUser(userModelToRegister);
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Unable to add a new user.");
+                return Problem(detail: "Something went wrong. Unable to add a new user.");
             }
 
             //CreatedAtAction returns status code 201 response.
@@ -96,6 +102,7 @@ namespace ShoppingCart.WebAPI.Controllers
         /// <returns>Returns JWT token on successful result and </returns>
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
         {
             UserModel authenticatedUser = this.IsUserAuthenticated(loginModelDataFromUser.Username, loginModelDataFromUser.Password);
@@ -107,10 +114,6 @@ namespace ShoppingCart.WebAPI.Controllers
         #endregion
 
         #region private methods
-        private int GetUserId()
-        {
-            return _userModelCollection.Count() + 1;
-        }
 
         private bool IsUserRegistered(string username)
         {

@@ -1,4 +1,4 @@
-﻿namespace ShoppingCart.WebAPI.Models
+﻿namespace ShoppingCart.API.Models
 {
     /// <summary>
     /// Data model that holds authentication data.

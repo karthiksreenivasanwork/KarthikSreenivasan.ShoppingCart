@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShoppingCart.WebAPI
+namespace ShoppingCart.API
 {
     public class Program
     {

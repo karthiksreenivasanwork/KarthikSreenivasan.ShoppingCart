@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 
-namespace ShoppingCart.WebAPI.Models
+namespace ShoppingCart.API.Models
 {
     /// <summary>
     /// Data model that holds new user registration data.
@@ -15,7 +15,7 @@ namespace ShoppingCart.WebAPI.Models
         * Step 3: Use the attribute 'SwaggerSchema to ReadOnly' in the property that needs to be hidden.
         */
         [SwaggerSchema(ReadOnly = true)]
-        public int ID { get; set; }
+        public int UserID { get; set; }
         /// <summary>
         /// Username of the user.
         /// </summary>

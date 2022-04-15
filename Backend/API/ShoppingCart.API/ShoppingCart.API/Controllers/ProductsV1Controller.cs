@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ShoppingCart.WebAPI.Controllers
+namespace ShoppingCart.API.Controllers
 {
     [ApiVersion("1")] //Not applied to controller route for supporting Swagger implementation.
     [Route("api/v1/Products")]
