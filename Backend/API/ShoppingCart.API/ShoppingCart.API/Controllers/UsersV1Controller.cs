@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.WebAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,27 +23,46 @@ namespace ShoppingCart.WebAPI.Controllers
 
         static List<UserModel> _userModelCollection = new List<UserModel>();
 
-        // GET api/<UsersController>/5
+        /// <summary>
+        /// Check for a registered user.
+        /// </summary>
+        /// <param name="username">Username of the registered user.</param>
+        /// <returns>Returns UserCheckModel reference if user is found or error status code 500 with a custom error message otherwise.</returns>
         [HttpGet("usernamecheck/{username}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserCheckModel))] //Swagger documentation - Success result details
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(UserCheckModel))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)] //Swagger documentation - Error response details
         public IActionResult Get(string username)
         {
             bool userModelEearchResult = this.IsUserRegistered(username);
+            UserCheckModel userCheckModel = new UserCheckModel()
+            {
+                RegisteredUser = userModelEearchResult,
+                Message = string.Format("'{0}' is a registered user.", username)
+            };
 
             try
             {
-                if (userModelEearchResult)
-                    return Ok(string.Format("'{0}' is a registered user.", username));
-                else
-                    return BadRequest(string.Format("'{0}' does not a registered user.", username));
+                if (!userModelEearchResult)
+                {
+                    userCheckModel.Message = string.Format("'{0}' does not a registered user.", username);
+                    return NotFound(userCheckModel);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest("Something went wrong. Unable to find the user.");
+                return Problem(detail: "Something went wrong. Unable to find the user.", statusCode: 500); //Default status code is 500 by default.
             }
+            return Ok(userCheckModel);
         }
 
-        // POST api/<UsersController>
+        /// <summary>
+        /// Register a new user.
+        /// </summary>
+        /// <param name="userModelRegistrationData">New user details</param>
+        /// <returns>Returns new user registration success message or error status code 500 with a custom error message otherwise.</returns>
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult Post([FromBody] UserModel userModelRegistrationData)
         {
             try
@@ -61,10 +81,10 @@ namespace ShoppingCart.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Unable to add a new user.");
+                return Problem(detail: "Unable to add a new user.");
             }
 
-            return Ok(string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username));
+            return CreatedAtAction(string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username), null);
         }
 
         // POST api/<UsersController>
@@ -97,6 +117,7 @@ namespace ShoppingCart.WebAPI.Controllers
             return _userModelCollection.Find(
                 userToFind => userToFind.Username.ToLower() == username.ToLower() && userToFind.Password == password);
         }
+
         #endregion
     }
 }

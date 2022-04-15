@@ -1,4 +1,5 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingCart.WebAPI.Models
 {
@@ -15,13 +16,25 @@ namespace ShoppingCart.WebAPI.Models
         */
         [SwaggerSchema(ReadOnly = true)]
         public int ID { get; set; }
-
+        /// <summary>
+        /// Username of the user.
+        /// </summary>
+        [Required] // Failure to provide Username in the request causes model validation to fail (400 -  "The Username field is required.")
         public string Username { get; set; }
-
+        /// <summary>
+        /// Password of the user.
+        /// </summary>
+        [Required]
         public string Password { get; set; }
-
+        /// <summary>
+        /// Email address of the user.
+        /// </summary>
+        [Required]
         public string Email { get; set; }
-
+        /// <summary>
+        /// Phone numer of the user.
+        /// </summary>
+        [Required]
         public long Phone { get; set; }
     }
 }
