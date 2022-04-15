@@ -46,7 +46,7 @@ namespace ShoppingCart.WebAPI.Controllers
                 if (!userModelEearchResult)
                 {
                     userCheckModel.Message = string.Format("'{0}' does not a registered user.", username);
-                    return NotFound(userCheckModel);
+                    return NotFound(userCheckModel); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
                 }
             }
             catch (Exception ex)
@@ -63,6 +63,7 @@ namespace ShoppingCart.WebAPI.Controllers
         /// <returns>Returns new user registration success message or error status code 500 with a custom error message otherwise.</returns>
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Post([FromBody] UserModel userModelRegistrationData)
         {
             try
@@ -84,18 +85,23 @@ namespace ShoppingCart.WebAPI.Controllers
                 return Problem(detail: "Unable to add a new user.");
             }
 
-            return CreatedAtAction(string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username), null);
+            //CreatedAtAction returns status code 201 response.
+            return CreatedAtAction("Post", string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username));
         }
 
-        // POST api/<UsersController>
+        /// <summary>
+        /// Returns a JWT token on successful authentication and 401 Unauthorized error response otherwise.
+        /// </summary>
+        /// <param name="loginModelDataFromUser">Authentication credentials from the user to validate</param>
+        /// <returns>Returns JWT token on successful result and </returns>
         [HttpPost("login")]
-        public string Post([FromBody] LoginModel loginModelDataFromUser)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
         {
-            string jwtToken = "Invalid User";
             UserModel authenticatedUser = this.IsUserAuthenticated(loginModelDataFromUser.Username, loginModelDataFromUser.Password);
             if (authenticatedUser != null)
-                jwtToken = "New JWT Token Generated";
-            return jwtToken;
+                return CreatedAtAction("Post", "Header.Payload.Signature");
+            return Unauthorized("Invalid User");
         }
 
         #endregion

@@ -19,21 +19,25 @@ namespace ShoppingCart.WebAPI.Models
         /// <summary>
         /// Username of the user.
         /// </summary>
+        /// <example>karthik</example>
         [Required] // Failure to provide Username in the request causes model validation to fail (400 -  "The Username field is required.")
         public string Username { get; set; }
         /// <summary>
         /// Password of the user.
         /// </summary>
+        /// <example>p@ssw0rd123!</example>
         [Required]
         public string Password { get; set; }
         /// <summary>
         /// Email address of the user.
         /// </summary>
+        /// <example>karthik@gmail.com</example>
         [Required]
         public string Email { get; set; }
         /// <summary>
         /// Phone numer of the user.
         /// </summary>
+        /// <example>9940568874</example>
         [Required]
         public long Phone { get; set; }
     }
