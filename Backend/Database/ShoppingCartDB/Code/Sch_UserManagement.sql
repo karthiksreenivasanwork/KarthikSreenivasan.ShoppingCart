@@ -24,4 +24,26 @@ VALUES (
 	);
 END
 GO
-PRINT 'Stored procedure ''Sch_UserManagement.sp_CreateUser'' created or altered.'
+
+CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_ValidateUser
+@UsernameInputParam VARCHAR(200),
+@PasswordInputParam VARCHAR(200),
+@UserSearchCountOutputParam int OUTPUT 
+AS
+BEGIN
+SELECT @UserSearchCountOutputParam = COUNT(*) 
+FROM T_Users AS a 
+where a.Username = @UsernameInputParam and a.Password = @PasswordInputParam;
+END
+GO
+
+CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_UserExists
+@UsernameInputParam VARCHAR(200),
+@UserSearchCountOutputParam int OUTPUT 
+AS
+BEGIN
+SELECT @UserSearchCountOutputParam = COUNT(*) 
+FROM T_Users AS a 
+where a.Username = @UsernameInputParam;
+END
+GO

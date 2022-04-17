@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 
@@ -22,6 +24,10 @@ namespace ShoppingCart.API.Controllers
     {
         IConfiguration _configuration;
         UserDataProvider _userDataProvider;
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="configuration">Reference to application configuration properties</param>
         public UsersV1Controller(IConfiguration configuration)
         {
             this._configuration = configuration;
@@ -30,39 +36,33 @@ namespace ShoppingCart.API.Controllers
 
         #region CRUD methods
 
-        static List<UserModel> _userModelCollection = new List<UserModel>();
-
         /// <summary>
         /// Check for a registered user.
         /// </summary>
         /// <param name="username">Username of the registered user.</param>
         /// <returns>Returns UserCheckModel reference if user is found or error status code 500 with a custom error message otherwise.</returns>
         [HttpGet("usernamecheck/{username}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserCheckModel))] //Swagger documentation - Success result details
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(UserCheckModel))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)] //Swagger documentation - Error response details
+        [SwaggerResponse(StatusCodes.Status200OK, "{username} is a registered user")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "{username} is not a registered user.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to find the user.")] //Swagger documentation - Error response details
         public IActionResult Get(string username)
         {
-            bool userModelEearchResult = this.IsUserRegistered(username);
-            UserCheckModel userCheckModel = new UserCheckModel()
-            {
-                RegisteredUser = userModelEearchResult,
-                Message = string.Format("'{0}' is a registered user.", username)
-            };
+            bool userModelEearchResult = _userDataProvider.verifyUserRegistration(username);
+            string responseMessage = string.Format("'{0}' is a registered user.", username);
 
             try
             {
                 if (!userModelEearchResult)
                 {
-                    userCheckModel.Message = string.Format("'{0}' does not a registered user.", username);
-                    return NotFound(userCheckModel); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
+                    responseMessage = string.Format("'{0}' is not a registered user.", username);
+                    return NotFound(responseMessage); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
                 }
             }
             catch (Exception ex)
             {
                 return Problem(detail: "Something went wrong. Unable to find the user.", statusCode: 500); //Default status code is 500 by default.
             }
-            return Ok(userCheckModel);
+            return Ok(responseMessage);
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace ShoppingCart.API.Controllers
         /// <param name="userModelRegistrationData">New user details</param>
         /// <returns>Returns new user registration success message or error status code 500 with a custom error message otherwise.</returns>
         [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerResponse(StatusCodes.Status201Created, "New user - '{username}' added successfully")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new user.")]
         public IActionResult Post([FromBody] UserModel userModelRegistrationData)
         {
             try
@@ -84,7 +84,7 @@ namespace ShoppingCart.API.Controllers
                     Email = userModelRegistrationData.Email,
                     Phone = userModelRegistrationData.Phone
                 };
-                _userDataProvider.AddNewUser(userModelToRegister);
+                _userDataProvider.addNewUser(userModelToRegister);
             }
             catch (Exception ex)
             {
@@ -101,30 +101,21 @@ namespace ShoppingCart.API.Controllers
         /// <param name="loginModelDataFromUser">Authentication credentials from the user to validate</param>
         /// <returns>Returns JWT token on successful result and </returns>
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [SwaggerResponse(StatusCodes.Status201Created, "Returns a valid 'JSON Web Token' (JWT) token which expires in 30 minutes.")]
+        [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid User")]
         public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
         {
-            UserModel authenticatedUser = this.IsUserAuthenticated(loginModelDataFromUser.Username, loginModelDataFromUser.Password);
-            if (authenticatedUser != null)
-                return CreatedAtAction("Post", "Header.Payload.Signature");
+            LoginModel loginModel = new LoginModel()
+            {
+                Username = loginModelDataFromUser.Username,
+                Password = loginModelDataFromUser.Password
+            };
+
+            if (_userDataProvider.validateUser(loginModel))
+            {
+                return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+            }
             return Unauthorized("Invalid User");
-        }
-
-        #endregion
-
-        #region private methods
-
-        private bool IsUserRegistered(string username)
-        {
-            return _userModelCollection.Exists(
-                userToFind => userToFind.Username.ToLower() == username.ToLower());
-        }
-
-        private UserModel IsUserAuthenticated(string username, string password)
-        {
-            return _userModelCollection.Find(
-                userToFind => userToFind.Username.ToLower() == username.ToLower() && userToFind.Password == password);
         }
 
         #endregion

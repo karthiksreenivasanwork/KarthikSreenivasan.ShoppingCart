@@ -1,3 +1,7 @@
+IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'T_Users')
+	DROP TABLE T_Users
+GO
+
 /*
  Create a new users table
  */
@@ -8,7 +12,7 @@ CREATE TABLE T_Users(
      * AUTO INCREMENT BY 1
      */
     UserID NUMERIC(6, 0) IDENTITY(1, 1) NOT NULL,
-    Username VARCHAR(200) NOT NULL,
+    Username VARCHAR(200) NOT NULL UNIQUE,
     Password VARCHAR(200) NOT NULL,
     Email VARCHAR(200),
     Phone VARCHAR(20) NOT NULL
