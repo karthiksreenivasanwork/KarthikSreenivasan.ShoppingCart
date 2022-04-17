@@ -72,6 +72,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns new user registration success message or error status code 500 with a custom error message otherwise.</returns>
         [HttpPost("register")]
         [SwaggerResponse(StatusCodes.Status201Created, "New user - '{username}' added successfully")]
+        [SwaggerResponse(StatusCodes.Status409Conflict, "Username {username} already exists")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new user.")]
         public IActionResult Post([FromBody] UserModel userModelRegistrationData)
         {
@@ -85,6 +86,10 @@ namespace ShoppingCart.API.Controllers
                     Phone = userModelRegistrationData.Phone
                 };
                 _userDataProvider.addNewUser(userModelToRegister);
+            }
+            catch (UserExistsException uex)
+            {
+                return Conflict(string.Format("Username {0} already exists", userModelRegistrationData.Username));
             }
             catch (Exception ex)
             {

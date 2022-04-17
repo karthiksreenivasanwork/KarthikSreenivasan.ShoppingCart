@@ -73,6 +73,14 @@ namespace ShoppingCart.API
                 apiVersioningServiceRef.AssumeDefaultVersionWhenUnspecified = true;
                 apiVersioningServiceRef.ReportApiVersions = true;
             });
+
+            services.AddCors(option =>
+            {
+                option.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
         }
 
         /// <summary>
@@ -92,6 +100,8 @@ namespace ShoppingCart.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(); //Please use UseCors method between UseRouting and UseEndpoints.
 
             app.UseAuthorization();
 

@@ -42,6 +42,8 @@ namespace ShoppingCart.API.SQLDataProvider
 
             try
             {
+                if (this.verifyUserRegistration(userModelToRegister.Username))
+                    throw new UserExistsException();
                 /**
                  * Requires the NuGet package - System.Data.SqlClient.
                  */

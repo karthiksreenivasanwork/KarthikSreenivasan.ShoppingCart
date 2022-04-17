@@ -16,15 +16,16 @@ export class UsersService {
 
   userRegistration(registrationDataFromUser: any): Observable<string> {
     return this.httpClient.post<string>(
-      'https://credo-shoppingcartv5.herokuapp.com/register',
+      'https://localhost:44398/api/v1/users/register',
       registrationDataFromUser
     );
   }
 
   userLogin(loginCredentialFromUser: any): Observable<string> {
-    return this.httpClient.post<string>(
-      'https://credo-shoppingcartv5.herokuapp.com/login',
-      loginCredentialFromUser
+    return this.httpClient.post(
+      'https://localhost:44398/api/v1/users/login',
+      loginCredentialFromUser,
+      { responseType: 'text' } //The return value is JSON by default and we need to change that to text.
     );
   }
 
