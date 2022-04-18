@@ -25,15 +25,14 @@ VALUES (
 END
 GO
 
-CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_ValidateUser
+CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser
 @UsernameInputParam VARCHAR(200),
-@PasswordInputParam VARCHAR(200),
-@UserSearchCountOutputParam int OUTPUT 
+@HashedPasswordOutputParam VARCHAR(200) OUTPUT
 AS
 BEGIN
-SELECT @UserSearchCountOutputParam = COUNT(*) 
-FROM T_Users AS a 
-where a.Username = @UsernameInputParam and a.Password = @PasswordInputParam;
+SELECT @HashedPasswordOutputParam = u.Password
+FROM T_Users AS u 
+where u.Username = @UsernameInputParam;
 END
 GO
 
@@ -47,3 +46,5 @@ FROM T_Users AS a
 where a.Username = @UsernameInputParam;
 END
 GO
+
+PRINT 'Stored procedures created or updated successfully.'

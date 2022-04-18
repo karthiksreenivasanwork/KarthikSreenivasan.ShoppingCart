@@ -91,11 +91,11 @@ namespace ShoppingCart.API.SQLDataProvider
         /// <summary>
         /// Validate the credentials provided by the user against the database.
         /// </summary>
-        /// <param name="loginModel">Login model reference.</param>
-        /// <returns>Returns true if the user authentication was successful and false otherwise.</returns>
-        public bool validateUser(LoginModel loginModel)
+        /// <param name="username">Username to validate</param>
+        /// <returns>Returns the hashed password for a registered user.</returns>
+        public string returnHashedPassword(string username)
         {
-            bool isValidUser = false;
+            string hashedPassword = String.Empty;
 
             try
             {
@@ -104,24 +104,22 @@ namespace ShoppingCart.API.SQLDataProvider
                  */
                 using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("SQLConnection")))
                 {
-                    using (SqlCommand command = new SqlCommand("Sch_UserManagement.sp_ValidateUser"))
+                    using (SqlCommand command = new SqlCommand("Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser"))
                     {
                         connection.Open();
 
                         command.Connection = connection;
                         command.CommandType = CommandType.StoredProcedure;
 
-                        SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", loginModel.Username);
-                        SqlParameter passwordParam = new SqlParameter("@PasswordInputParam", loginModel.Password);
-                        SqlParameter isValidUserParam = new SqlParameter("@UserSearchCountOutputParam", SqlDbType.Int);
-                        isValidUserParam.Direction = ParameterDirection.Output;
+                        SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", username);
+                        SqlParameter hashedOutputPasswordParam = new SqlParameter("@HashedPasswordOutputParam", SqlDbType.VarChar, 200);
+                        hashedOutputPasswordParam.Direction = ParameterDirection.Output;
 
                         command.Parameters.Add(userNameParam);
-                        command.Parameters.Add(passwordParam);
-                        command.Parameters.Add(isValidUserParam);
+                        command.Parameters.Add(hashedOutputPasswordParam);
 
                         command.ExecuteNonQuery();
-                        isValidUser = Convert.ToInt32(command.Parameters["@UserSearchCountOutputParam"].Value) == (int)UserLoginValidationResult.Exists;
+                        hashedPassword = command.Parameters["@HashedPasswordOutputParam"].Value.ToString();
                     }
                 }
             }
@@ -138,7 +136,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 throw exception;
             }
 
-            return isValidUser;
+            return hashedPassword;
         }
 
         /// <summary>

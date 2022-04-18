@@ -24,6 +24,8 @@ namespace ShoppingCart.API.Controllers
     {
         IConfiguration _configuration;
         UserDataProvider _userDataProvider;
+        PasswordHashManager _passwordHashManager;
+
         /// <summary>
         /// Initialize
         /// </summary>
@@ -32,6 +34,7 @@ namespace ShoppingCart.API.Controllers
         {
             this._configuration = configuration;
             _userDataProvider = new UserDataProvider(configuration);
+            _passwordHashManager = new PasswordHashManager();
         }
 
         #region CRUD methods
@@ -81,7 +84,7 @@ namespace ShoppingCart.API.Controllers
                 UserModel userModelToRegister = new UserModel()
                 {
                     Username = userModelRegistrationData.Username,
-                    Password = userModelRegistrationData.Password,
+                    Password = _passwordHashManager.Hash(userModelRegistrationData.Password),
                     Email = userModelRegistrationData.Email,
                     Phone = userModelRegistrationData.Phone
                 };
@@ -110,15 +113,19 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid User")]
         public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
         {
-            LoginModel loginModel = new LoginModel()
-            {
-                Username = loginModelDataFromUser.Username,
-                Password = loginModelDataFromUser.Password
-            };
+            string hashedPassword = _userDataProvider.returnHashedPassword(loginModelDataFromUser.Username);
 
-            if (_userDataProvider.validateUser(loginModel))
+            bool passwordVerificationResult = false;
+            bool needsUpgrade = false;
+
+            if (!string.IsNullOrEmpty(hashedPassword))
             {
-                return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                (passwordVerificationResult, needsUpgrade) = _passwordHashManager.Check(hashedPassword, loginModelDataFromUser.Password);
+
+                if (passwordVerificationResult)
+                {
+                    return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                }
             }
             return Unauthorized("Invalid User");
         }
