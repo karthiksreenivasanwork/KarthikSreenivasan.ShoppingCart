@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { LoginComponent } from './login/login.component';
 import { ListproductsComponent } from './products/listproducts/listproducts.component';
+import { ViewcartComponent } from './products/viewcart/viewcart.component';
+
+import { ClientauthGuard } from './authorization/clientauthorization/clientauth.guard';
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'viewcart', component: ViewcartComponent , canActivate: [ClientauthGuard]},
 ];
 
 @NgModule({

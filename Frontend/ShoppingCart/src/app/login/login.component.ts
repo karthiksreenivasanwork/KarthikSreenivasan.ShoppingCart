@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
 
-  constructor(public usersService: UsersService, public routerRef: Router) {}
+  constructor(public usersService: UsersService, public router: Router) {}
 
   ngOnInit(): void {
     $('.toggle').click(() => {
@@ -42,11 +42,16 @@ export class LoginComponent implements OnInit {
   doRegistration(ngFormTemplateRef: NgForm) {
     this.usersService.userRegistration(ngFormTemplateRef.value).subscribe({
       next: (registrationResponseData: string) => {
-        console.log('User registration response from API');
-        console.log(registrationResponseData);
-
         this.userErrorStatus = false;
         this.userMessage = registrationResponseData;
+        /**
+         * This is to indicate the user about the successful registration for a second
+         * before redirecting the user to the login page.
+         */
+        setTimeout(() => {
+          //Will reload the page to load the login section as login and registration are on the same component.
+          window.location.reload();
+        }, 1000);
       },
       error: (registrationErrorData) => {
         console.log('Error during registration process');
@@ -54,10 +59,7 @@ export class LoginComponent implements OnInit {
 
         this.userMessage = 'Something went wrong!';
         this.userErrorStatus = true;
-      },
-      complete: () => {
-        console.log('User registration completed');
-      },
+      }
     });
   }
 
@@ -69,9 +71,10 @@ export class LoginComponent implements OnInit {
             this.userErrorStatus = true;
             this.userMessage = 'Username or password incorrect';
           } else if (loginResponseData.length > 0) {
+            
             localStorage.setItem('loggeduser', loginResponseData);
             this.userErrorStatus = false;
-            this.routerRef.navigateByUrl('/'); //When the user has successfully logged in.
+            this.router.navigateByUrl('/'); //When the user has successfully logged in.
           }
         },
         error: (loginErrorData) => {

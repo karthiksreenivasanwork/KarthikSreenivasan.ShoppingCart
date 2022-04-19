@@ -10,6 +10,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { ListproductsComponent } from './products/listproducts/listproducts.component';
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
+import { ViewcartComponent } from './products/viewcart/viewcart.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { LoginComponent } from './login/login.component';
     ListproductsComponent,
     FooterComponent,
     LoginComponent,
+    ViewcartComponent,
   ],
   imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule, AppRoutingModule],
   providers: [],

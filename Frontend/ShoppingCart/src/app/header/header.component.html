@@ -17,18 +17,14 @@
     </form>
   </div>
   <div class="product_list_header">
-    <form action="#" method="post" class="last">
-      <fieldset>
-        <input type="hidden" name="cmd" value="_cart" />
-        <input type="hidden" name="display" value="1" />
-        <input
-          type="submit"
-          name="submit"
-          value="View your cart"
-          class="button"
-        />
-      </fieldset>
-    </form>
+    <a routerLink="/viewcart">
+      <input
+        type="submit"
+        name="submit"
+        value="View your cart"
+        class="button"
+      />
+    </a>
   </div>
   <div class="w3l_header_right">
     <ul>
@@ -39,7 +35,10 @@
         ></a>
         <div class="mega-dropdown-menu">
           <div class="w3ls_vegetables">
-            <ul class="dropdown-menu drp-mnu" *ngIf="!usersService.isUserLoggedIn">
+            <ul
+              class="dropdown-menu drp-mnu"
+              *ngIf="!usersService.isUserLoggedIn"
+            >
               <!--
                     routerLink: backslash ( /login) specifies a new URL path.
                 -->
@@ -48,7 +47,10 @@
                 <a routerLink="/login">Sign Up</a>
               </li>
             </ul>
-            <ul class="dropdown-menu drp-mnu" *ngIf="usersService.isUserLoggedIn">
+            <ul
+              class="dropdown-menu drp-mnu"
+              *ngIf="usersService.isUserLoggedIn"
+            >
               <li><a>Add products</a></li>
               <li><a (click)="onLogoutClick()">Logout</a></li>
             </ul>

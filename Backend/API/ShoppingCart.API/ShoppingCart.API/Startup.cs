@@ -75,15 +75,9 @@ namespace ShoppingCart.API
             });
 
             /*
-             * Create CORS policy to allow website from another domain to call this API.
+             * Create CORS (Cross-Origin Resource Sharing) policy to allow website from another domain to call this API.
              */
-            services.AddCors(option =>
-            {
-                option.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-            });
+            services.AddCors();
         }
 
         /// <summary>
