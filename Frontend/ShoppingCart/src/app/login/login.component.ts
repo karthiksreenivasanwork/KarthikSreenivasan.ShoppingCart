@@ -62,7 +62,6 @@ export class LoginComponent implements OnInit {
   }
 
   doLogin() {
-    console.log(this.loginForm.value);
     if (this.loginForm.valid) {
       this.usersService.userLogin(this.loginForm.value).subscribe({
         next: (loginResponseData: string) => {

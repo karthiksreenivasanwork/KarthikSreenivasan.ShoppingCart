@@ -74,6 +74,9 @@ namespace ShoppingCart.API
                 apiVersioningServiceRef.ReportApiVersions = true;
             });
 
+            /*
+             * Create CORS policy to allow website from another domain to call this API.
+             */
             services.AddCors(option =>
             {
                 option.AddDefaultPolicy(builder =>
@@ -101,7 +104,27 @@ namespace ShoppingCart.API
 
             app.UseRouting();
 
-            app.UseCors(); //Please use UseCors method between UseRouting and UseEndpoints.
+            /*
+             * Please note that the port number is as important as the localhost to allow access to this API.
+             */
+            if (env.IsDevelopment())
+            {
+                app.UseCors(
+                    options => options.WithOrigins("http://localhost:4201").AllowAnyMethod().AllowAnyHeader()
+                    ); //Please use UseCors method between UseRouting and UseEndpoints.
+            }
+            else if (env.IsProduction())
+            {
+                /*
+                 * Need to provide the webiste URL that is hosted with a domain.
+                 * Additionally need to mention the header configurations.
+                 * NOTE: https://www.shoppingcart.karthik.com/ is not a real website. It is just a dummy value at this time.
+                 */
+                string websiteURLProduction = "https://www.shoppingcart.karthik.com/";
+                app.UseCors(
+                    options => options.WithOrigins(websiteURLProduction).AllowAnyMethod().AllowAnyHeader()
+                    );
+            }
 
             app.UseAuthorization();
 
