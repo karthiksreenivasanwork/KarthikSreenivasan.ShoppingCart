@@ -98,22 +98,14 @@ namespace ShoppingCart.API
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShoppingCart.API v1"));
-            }
 
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            /*
-             * Please note that the port number is as important as the localhost to allow access to this API.
-             */
-            if (env.IsDevelopment())
-            {
+                //Allow the Agnular application hosted locally to connect to this API during development
                 app.UseCors(
                     options => options.WithOrigins("http://localhost:4201").AllowAnyMethod().AllowAnyHeader()
-                    ); //Please use UseCors method between UseRouting and UseEndpoints.
+                    );
             }
-            else if (env.IsProduction())
+
+            if (env.IsProduction())
             {
                 /*
                  * Need to provide the webiste URL that is hosted with a domain.
@@ -125,6 +117,10 @@ namespace ShoppingCart.API
                     options => options.WithOrigins(websiteURLProduction).AllowAnyMethod().AllowAnyHeader()
                     );
             }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
 
             app.UseAuthorization();
 
