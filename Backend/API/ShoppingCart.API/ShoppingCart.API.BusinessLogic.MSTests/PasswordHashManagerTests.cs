@@ -2,6 +2,10 @@
 
 namespace ShoppingCart.API.BusinessLogic.MSTests
 {
+    /// <summary>
+    // Summary:
+    //     Verifies the logic for each method in the ShoppingCart.API.BusinessLogic.PasswordHashManager.
+    /// </summary>
     [TestClass]
     public class PasswordHashManagerTests
     {

@@ -16,7 +16,6 @@ namespace ShoppingCart.API.Controllers
     /// <summary>
     /// Purpose of this controller is to register and perform authentication of a new user.
     /// </summary>
-    [ApiVersion("1")]
     [Route("api/v1/users")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "User Controller - V1")]

@@ -91,14 +91,7 @@ namespace ShoppingCart.API.BusinessLogic
                      * ReadJwtToken will NOT need an explicit cast to JwtSecurityToken
                      */
                     JwtSecurityToken jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(jwtTokenParam);
-                    byte[] jwtBinaryKey = Convert.FromBase64String(JWT_SECRET_KEY);
-                    TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
-                    {
-                        RequireExpirationTime = true, //We have set the expire time to 30 minutes, hence we check for this token configuration.
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(jwtBinaryKey)
-                    };
+                    TokenValidationParameters tokenValidationParameters = getTokenValidationParameters();
                     SecurityToken securityToken;
                     claimsPrincipal = jwtSecurityTokenHandler.ValidateToken(jwtTokenParam, tokenValidationParameters, out securityToken);
                 }
@@ -111,6 +104,24 @@ namespace ShoppingCart.API.BusinessLogic
             }
 
             return claimsPrincipal;
+        }
+
+        /// <summary>
+        /// Returns the token validation parameters to perform JWT token validation.
+        /// </summary>
+        /// <returns></returns>
+        public static TokenValidationParameters getTokenValidationParameters()
+        {
+            byte[] jwtBinaryKey = Convert.FromBase64String(JWT_SECRET_KEY);
+            TokenValidationParameters tokenValidationParameters = new TokenValidationParameters()
+            {
+                RequireExpirationTime = true, //We have set the expire time to 30 minutes, hence we check for this token configuration.
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(jwtBinaryKey)
+            };
+            return tokenValidationParameters;
         }
     }
 }
