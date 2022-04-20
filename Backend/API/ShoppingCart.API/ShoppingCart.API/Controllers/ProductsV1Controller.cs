@@ -16,14 +16,14 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "Products Controller - V1")]
     public class ProductsV1Controller : ControllerBase
     {
-        // GET: api/<ProductsController>
         [HttpGet("JWTAuthorizedMethod")]
         [Authorize]
-        public string GetAuthorize()
+        public IActionResult GetAuthorize()
         {
-            bool x = User.Identity.IsAuthenticated;
-            var identity = User.Identity as ClaimsIdentity;
-            return "value1 from version controller 1" ;
+            //bool x = User.Identity.IsAuthenticated;
+            //var identity = User.Identity as ClaimsIdentity;
+            //return Unauthorized("Invalid Token");
+            return Ok();
         }
     }
 }

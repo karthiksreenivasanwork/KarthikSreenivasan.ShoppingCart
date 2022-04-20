@@ -4,13 +4,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
+using Newtonsoft.Json.Linq;
 using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -126,7 +131,15 @@ namespace ShoppingCart.API
                     }
                 };
                 operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+                /*
+                 * Appears as a possible response if we have applied  the following custom attribute to our endpoints.
+                 * Microsoft.AspNetCore.Authorization.AuthorizeAttribute
+                 */
+                operation.Responses.Add("401", new OpenApiResponse
+                {
+                    Description = "Unauthorized. Invalid token was found"
+                }
+                );
             }
         }
     }

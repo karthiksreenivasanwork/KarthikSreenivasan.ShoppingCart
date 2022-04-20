@@ -9,6 +9,8 @@ using ShoppingCart.API.Models;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 
 namespace ShoppingCart.API
 {
@@ -29,11 +31,50 @@ namespace ShoppingCart.API
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = JwtTokenManager.getTokenValidationParameters();
-
-                    options.Events = new JwtBearerEvents
+                    /*
+                     * Whenever I had implemented the `Authorized` attribute, I wanted to send a meaningful JSON response to the user. 
+                     * It was achieved using  JwtBearerEvents events using the OnChallenge Func delegate.
+                     * Additionally, I have implemented OnAuthenticationFailed delegate as well which returns an appropriate header 
+                     * error response for two important Jwt token validation exceptions.
+                     */
+                    options.Events = new JwtBearerEvents()
                     {
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse(); //Skip the default logic for this challenge.
+                            var payload = new JObject();
+
+                            if (context.Error == null)
+                            {
+                                payload = new JObject
+                                {
+                                    ["error"] = "Unauthorized",
+                                    ["error_description"] = "Invalid token found.",
+                                    ["error_uri"] = context.ErrorUri
+                                };
+
+                            }
+                            else
+                            {
+                                payload = new JObject
+                                {
+                                    ["error"] = context.Error,
+                                    ["error_description"] = context.ErrorDescription,
+                                    ["error_uri"] = context.ErrorUri
+                                };
+                            }
+                            context.Response.ContentType = "application/json";
+                            context.Response.StatusCode = 401;
+
+                            return context.Response.WriteAsync(payload.ToString());
+                        },
                         OnAuthenticationFailed = context =>
                         {
+                            if (context.Exception.GetType() == typeof(SecurityTokenValidationException))
+                            {
+                                context.Response.Headers.Add("Invalid Token", "true");
+                            }
+
                             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                             {
                                 context.Response.Headers.Add("Token-Expired", "true");
@@ -52,7 +93,8 @@ namespace ShoppingCart.API
         /// <returns>Updated configuration of the Application builder reference</returns>
         public static IApplicationBuilder UseJWTServices(this IApplicationBuilder app)
         {
-            app.UseAuthentication(); //For JWT authentication
+            //Order of middleware call is important. Call UseAuthentication first before calling UseAuthorization
+            app.UseAuthentication(); //For JWT authentication 
             app.UseAuthorization();
             return app;
         }
