@@ -9,7 +9,7 @@ namespace ShoppingCart.API.SQLDataProvider
 {
     /// <summary>
     // Summary:
-    //     Retrieves the required information in relation to user details
+    //     Performs all CRUD (Create, Read, Update, Delete) in relation to user details.
     /// </summary>
     public class UserDataProvider
     {
@@ -47,7 +47,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 /**
                  * Requires the NuGet package - System.Data.SqlClient.
                  */
-                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("SQLConnection")))
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString(ProviderStrings.SQL_CONNECTION_KEY_NAME)))
                 {
                     using (SqlCommand command = new SqlCommand("Sch_UserManagement.sp_CreateUser"))
                     {
@@ -102,7 +102,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 /**
                  * Requires the NuGet package - System.Data.SqlClient.
                  */
-                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("SQLConnection")))
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString(ProviderStrings.SQL_CONNECTION_KEY_NAME)))
                 {
                     using (SqlCommand command = new SqlCommand("Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser"))
                     {
@@ -153,7 +153,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 /**
                  * Requires the NuGet package - System.Data.SqlClient.
                  */
-                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("SQLConnection")))
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString(ProviderStrings.SQL_CONNECTION_KEY_NAME)))
                 {
                     using (SqlCommand command = new SqlCommand("Sch_UserManagement.sp_UserExists"))
                     {
