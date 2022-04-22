@@ -29,7 +29,7 @@ AS
 BEGIN
 SELECT pc.ProductCategoryID,
 	   pc.ProductCategoryName
-	   FROM T_LU_ProductCategories as pc;
+	   FROM T_LU_ProductCategories as pc order by pc.ProductCategoryID;
 END
 GO
 
@@ -56,9 +56,13 @@ AS
 BEGIN
 SELECT p.ProductID,
 	   p.ProductCategoryID,
+	   pc.ProductCategoryName,
 	   p.ProductName,
 	   p.ProductPrice,
 	   p.ProductDescription,
-	   p.ProductImage FROM T_Products as p;
+	   p.ProductImage FROM T_Products as p
+	   join T_LU_ProductCategories as pc
+	   on p.ProductCategoryID = pc.ProductCategoryID
+	   order by p.ProductCategoryID;
 END
 GO

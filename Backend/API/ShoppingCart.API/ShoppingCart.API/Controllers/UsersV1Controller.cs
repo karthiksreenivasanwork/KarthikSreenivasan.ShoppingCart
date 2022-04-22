@@ -91,7 +91,7 @@ namespace ShoppingCart.API.Controllers
             }
             catch (UserExistsException uex)
             {
-                return Conflict(string.Format("Username {0} already exists", userModelRegistrationData.Username));
+                return Conflict(string.Format(uex.Message, userModelRegistrationData.Username));
             }
             catch (Exception ex)
             {

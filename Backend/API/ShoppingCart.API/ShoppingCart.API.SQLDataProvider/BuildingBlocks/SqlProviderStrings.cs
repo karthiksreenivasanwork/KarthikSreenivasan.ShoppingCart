@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ShoppingCart.API.SQLDataProvider
 {
-    internal class ProviderStrings
+    internal class SqlProviderStrings
     {
         /// <summary>
         /// Defined in the appsettings.json of the API project which we can access using dependency injection of the reference to the configuration object.
