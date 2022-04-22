@@ -49,22 +49,23 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to find the user.")] //Swagger documentation - Error response details
         public IActionResult Get(string username)
         {
-            bool userModelEearchResult = _userDataProvider.verifyUserRegistration(username);
-            string responseMessage = string.Format("'{0}' is a registered user.", username);
+            string successResponseMessage = string.Format("'{0}' is a registered user.", username);
 
             try
             {
+                bool userModelEearchResult = _userDataProvider.verifyUserRegistration(username);
+
                 if (!userModelEearchResult)
                 {
-                    responseMessage = string.Format("'{0}' is not a registered user.", username);
-                    return NotFound(responseMessage); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
+                    successResponseMessage = string.Format("'{0}' is not a registered user.", username);
+                    return NotFound(successResponseMessage); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
                 }
             }
             catch (Exception ex)
             {
                 return Problem(detail: "Something went wrong. Unable to find the user.", statusCode: 500); //Default status code is 500 by default.
             }
-            return Ok(responseMessage);
+            return Ok(successResponseMessage);
         }
 
         /// <summary>
@@ -112,21 +113,28 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid User")]
         public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
         {
-            string hashedPassword = _userDataProvider.returnHashedPassword(loginModelDataFromUser.Username);
-
-            bool passwordVerificationResult = false;
-            bool needsUpgrade = false;
-
-            if (!string.IsNullOrEmpty(hashedPassword))
+            try
             {
-                (passwordVerificationResult, needsUpgrade) = _passwordHashManager.Check(hashedPassword, loginModelDataFromUser.Password);
+                string hashedPassword = _userDataProvider.returnHashedPassword(loginModelDataFromUser.Username);
 
-                if (passwordVerificationResult)
+                bool passwordVerificationResult = false;
+                bool needsUpgrade = false;
+
+                if (!string.IsNullOrEmpty(hashedPassword))
                 {
-                    return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                    (passwordVerificationResult, needsUpgrade) = _passwordHashManager.Check(hashedPassword, loginModelDataFromUser.Password);
+
+                    if (passwordVerificationResult)
+                    {
+                        return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                    }
                 }
+                return Unauthorized("Invalid User");
             }
-            return Unauthorized("Invalid User");
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to login");
+            }
         }
 
         #endregion

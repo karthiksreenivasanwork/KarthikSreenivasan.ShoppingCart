@@ -38,7 +38,14 @@ namespace ShoppingCart.API.Controllers
         [HttpGet("GetAllCategories")]
         public IActionResult GetAllProductCategories()
         {
-            return Ok(_productDataProvider.getAllProductCategories());
+            try
+            {
+                return Ok(_productDataProvider.getAllProductCategories());
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to get all product categories.");
+            }
         }
 
         /// <summary>
@@ -50,15 +57,43 @@ namespace ShoppingCart.API.Controllers
         [HttpGet("GetAllProducts")]
         public IActionResult GetAllProducts()
         {
-            return Ok(_productDataProvider.getAllProducts());
+            try
+            {
+                return Ok(_productDataProvider.getAllProducts());
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to retrieve all the products.");
+            }
         }
 
-        [HttpGet("AddProduct")]
-        [Authorize]
-        public IActionResult AddProduct()
+        [HttpPost("AddProduct")]
+        public IActionResult Post([FromBody] ProductModel productDataParam)
         {
-            //Todo
-            return Ok();
+            try
+            {
+                ProductModel productModelToRegister = new ProductModel()
+                {
+                    ProductCategoryName = productDataParam.ProductCategoryName, //The database will get the category ID based on the category name.
+                    ProductName = productDataParam.ProductName,
+                    ProductDescription = productDataParam.ProductDescription,
+                    ProductPrice = productDataParam.ProductPrice,
+                    ProductImageName = productDataParam.ProductImageName
+                };
+
+                _productDataProvider.addNewProduct(productModelToRegister);
+            }
+            catch (ProductExistsException pex)
+            {
+                return Conflict(string.Format(pex.Message, productDataParam.ProductName));
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to add a new product.");
+            }
+
+            //CreatedAtAction returns status code 201 response.
+            return CreatedAtAction("Post", string.Format("Product - '{0}' added successfully", productDataParam.ProductName));
         }
     }
 }

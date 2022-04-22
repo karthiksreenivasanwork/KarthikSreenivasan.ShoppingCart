@@ -14,24 +14,13 @@ namespace ShoppingCart.API.SQLDataProvider
     /// </summary>
     public class UserDataProvider
     {
-        /// <summary>
-        /// Enum that indicates the validation result after authenticating a user.
-        /// </summary>
-        private enum UserLoginValidationResult //Greatly improve the readability of the code when the corresponding values are fetched from the database.
-        {
-            [Description("Indicates an invalid user after authentication")]
-            NotExists = 0,
-            [Description("Indicates a registered user after authentication")]
-            Exists = 1
-        }
-
         IConfiguration _configuration; //Required NuGet package - Microsoft.Extensions.Configuration.Abstractions
-        DatabaseFunctions<UserDataProvider> _databaseFunctions = null;
+        DatabaseFunctions _databaseFunctions = null;
 
         public UserDataProvider(IConfiguration configuration)
         {
             this._configuration = configuration;
-            _databaseFunctions = new DatabaseFunctions<UserDataProvider>();
+            _databaseFunctions = new DatabaseFunctions();
         }
 
         /// <summary>
@@ -51,22 +40,30 @@ namespace ShoppingCart.API.SQLDataProvider
             int commandResult = 0;
             SqlCommand commandReference = null;
 
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            try
             {
-                new SqlParameter("UsernameParam", userModelToRegister.Username),
-                new SqlParameter("PasswordParam", userModelToRegister.Password),
-                new SqlParameter("EmailParam", userModelToRegister.Email),
-                new SqlParameter("PhoneParam", userModelToRegister.Phone)
-            };
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("UsernameParam", userModelToRegister.Username),
+                    new SqlParameter("PasswordParam", userModelToRegister.Password),
+                    new SqlParameter("EmailParam", userModelToRegister.Email),
+                    new SqlParameter("PhoneParam", userModelToRegister.Phone)
+                };
 
-            (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
-                "Sch_UserManagement.sp_CreateUser",
-                sqlParameters);
+                (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_UserManagement.sp_CreateUser",
+                    sqlParameters);
 
-            if (commandReference != null)
-                hasUserAddedSuccessfully = commandResult > 0;
-
+                if (commandReference != null)
+                    hasUserAddedSuccessfully = commandResult > 0;
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
             return hasUserAddedSuccessfully;
         }
 
@@ -84,24 +81,32 @@ namespace ShoppingCart.API.SQLDataProvider
             int commandResult = 0;
             SqlCommand commandReference = null;
 
-            SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", username);
-            SqlParameter hashedOutputPasswordParam = new SqlParameter("@HashedPasswordOutputParam", SqlDbType.VarChar, 200);
-            hashedOutputPasswordParam.Direction = ParameterDirection.Output;
-
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            try
             {
-                userNameParam,
-                hashedOutputPasswordParam
-            };
+                SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", username);
+                SqlParameter hashedOutputPasswordParam = new SqlParameter("@HashedPasswordOutputParam", SqlDbType.VarChar, 200);
+                hashedOutputPasswordParam.Direction = ParameterDirection.Output;
 
-            (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
-                "Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser",
-                sqlParameters);
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    userNameParam,
+                    hashedOutputPasswordParam
+                };
 
-            if (commandReference != null)
-                hashedPassword = commandReference.Parameters["@HashedPasswordOutputParam"].Value.ToString();
+                (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser",
+                    sqlParameters);
 
+                if (commandReference != null)
+                    hashedPassword = commandReference.Parameters["@HashedPasswordOutputParam"].Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
             return hashedPassword;
         }
 
@@ -119,24 +124,32 @@ namespace ShoppingCart.API.SQLDataProvider
             int commandResult = 0;
             SqlCommand commandReference = null;
 
-            SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", username);
-            SqlParameter isValidUserParam = new SqlParameter("@UserSearchCountOutputParam", SqlDbType.Int);
-            isValidUserParam.Direction = ParameterDirection.Output;
-
-            List<SqlParameter> sqlParameters = new List<SqlParameter>
+            try
             {
-                userNameParam,
-                isValidUserParam
-            };
+                SqlParameter userNameParam = new SqlParameter("@UsernameInputParam", username);
+                SqlParameter isValidUserParam = new SqlParameter("@UserSearchCountOutputParam", SqlDbType.Int);
+                isValidUserParam.Direction = ParameterDirection.Output;
 
-            (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
-                "Sch_UserManagement.sp_UserExists",
-                sqlParameters);
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    userNameParam,
+                    isValidUserParam
+                };
 
-            if (commandReference != null)
-                isRegisteredUser = Convert.ToInt32(commandReference.Parameters["@UserSearchCountOutputParam"].Value) == (int)UserLoginValidationResult.Exists;
+                (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_UserManagement.sp_UserExists",
+                    sqlParameters);
 
+                if (commandReference != null)
+                    isRegisteredUser = Convert.ToInt32(commandReference.Parameters["@UserSearchCountOutputParam"].Value) == (int)DatabaseSearchResult.RecordExists;
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
             return isRegisteredUser;
         }
     }

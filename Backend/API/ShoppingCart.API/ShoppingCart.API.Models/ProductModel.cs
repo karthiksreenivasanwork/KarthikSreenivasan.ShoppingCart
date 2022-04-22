@@ -1,4 +1,6 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingCart.API.Models
@@ -12,13 +14,13 @@ namespace ShoppingCart.API.Models
         /// Uniquely identifies each product with it's unique ID.
         /// </summary>
         /// <example>1</example>
-        [SwaggerSchema(ReadOnly = true)]
+        [SwaggerSchema(ReadOnly = true), FromForm]
         public int ProductID { get; set; }
         /// <summary>
         /// Uniquely identifies each product category with it's unique ID.
         /// </summary>
         /// <example>1</example>
-        [SwaggerSchema(ReadOnly = true)]
+        [SwaggerSchema(ReadOnly = true), FromForm]
         public int ProductCategoryID { get; set; }
         /// <summary>
         /// Defines the category name of this product
@@ -45,10 +47,16 @@ namespace ShoppingCart.API.Models
         [Required]
         public string ProductDescription { get; set; }
         /// <summary>
+        /// Defines the image in binary format to be saved in a server location
+        /// </summary>
+        /// <example>Binary object</example>
+        //[Required]
+        //public IFormFile ProductImage { get; set; }
+        /// <summary>
         /// Defines the image name of this product
         /// </summary>
         /// <example>pepsi_image.png</example>
         [Required]
-        public string ProductImage { get; set; }
+        public string ProductImageName { get; set; }
     }
 }

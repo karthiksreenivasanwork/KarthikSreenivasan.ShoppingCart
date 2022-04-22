@@ -38,15 +38,15 @@ CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_CreateProduct
 @ProductNameParam VARCHAR(200),
 @ProductPriceParam NUMERIC(6, 0),
 @ProductDescriptionParam VARCHAR(MAX),
-@ProductImageParam VARCHAR(200) AS
+@ProductImageNameParam VARCHAR(200) AS
 BEGIN
-INSERT INTO T_Products (ProductCategoryID, ProductName, ProductPrice, ProductDescription, ProductImage)
+INSERT INTO T_Products (ProductCategoryID, ProductName, ProductPrice, ProductDescription, ProductImageName)
 VALUES (
 		(SELECT lpc.ProductCategoryID FROM T_LU_ProductCategories lpc where lpc.ProductCategoryName = @ProductCategoryNameParam),
 		@ProductNameParam,
 		@ProductPriceParam,
 		@ProductDescriptionParam,
-		@ProductImageParam
+		@ProductImageNameParam
 	);
 END
 GO
@@ -60,9 +60,22 @@ SELECT p.ProductID,
 	   p.ProductName,
 	   p.ProductPrice,
 	   p.ProductDescription,
-	   p.ProductImage FROM T_Products as p
+	   p.ProductImageName FROM T_Products as p
 	   join T_LU_ProductCategories as pc
 	   on p.ProductCategoryID = pc.ProductCategoryID
 	   order by p.ProductCategoryID;
 END
 GO
+
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExists
+@ProductNameInputParam VARCHAR(200),
+@ProductSearchCountOutputParam int OUTPUT 
+AS
+BEGIN
+SELECT @ProductSearchCountOutputParam = COUNT(*) 
+FROM T_Products AS p 
+where p.ProductName = @ProductNameInputParam;
+END
+GO
+
+PRINT 'Stored procedures for the schema `Sch_ProductManagement` created or updated successfully.'
