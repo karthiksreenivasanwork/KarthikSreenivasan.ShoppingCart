@@ -6,15 +6,13 @@ using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
-
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ShoppingCart.API.Controllers
 {
+
     /// <summary>
-    /// Purpose of this controller is to register and perform authentication of a new user.
+    /// Summary:
+    ///     Purpose of this controller is to register and perform authentication of a new user.   
     /// </summary>
     [Route("api/v1/users")]
     [ApiController]
@@ -22,13 +20,17 @@ namespace ShoppingCart.API.Controllers
     public class UsersV1Controller : ControllerBase
     {
         IConfiguration _configuration;
-        UserDataProvider _userDataProvider;
         PasswordHashManager _passwordHashManager;
 
+        /*
+         * ToDo - Move this to business logic using a interface to coordinate with the data provider.
+         */
+        UserDataProvider _userDataProvider;
+
         /// <summary>
-        /// Initialize
+        /// Initialize controller
         /// </summary>
-        /// <param name="configuration">Reference to application configuration properties</param>
+        /// <param name="configuration">Dependency injected parameter to get application configuration</param>
         public UsersV1Controller(IConfiguration configuration)
         {
             this._configuration = configuration;

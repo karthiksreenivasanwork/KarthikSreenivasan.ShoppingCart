@@ -14,13 +14,13 @@ namespace ShoppingCart.API.Models
         /// Uniquely identifies each product with it's unique ID.
         /// </summary>
         /// <example>1</example>
-        [SwaggerSchema(ReadOnly = true), FromForm]
+        [SwaggerSchema(ReadOnly = true)]
         public int ProductID { get; set; }
         /// <summary>
         /// Uniquely identifies each product category with it's unique ID.
         /// </summary>
         /// <example>1</example>
-        [SwaggerSchema(ReadOnly = true), FromForm]
+        [SwaggerSchema(ReadOnly = true)]
         public int ProductCategoryID { get; set; }
         /// <summary>
         /// Defines the category name of this product
@@ -50,8 +50,8 @@ namespace ShoppingCart.API.Models
         /// Defines the image in binary format to be saved in a server location
         /// </summary>
         /// <example>Binary object</example>
-        //[Required]
-        //public IFormFile ProductImage { get; set; }
+        [Required]
+        public IFormFile ProductImage { get; set; }
         /// <summary>
         /// Defines the image name of this product
         /// </summary>

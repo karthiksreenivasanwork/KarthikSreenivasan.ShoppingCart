@@ -2,28 +2,33 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System.IO;
 
 namespace ShoppingCart.API.Controllers
 {
+    /// <summary>
+    /// Summary:
+    ///     Purpose of this controller is to manage product related data.
+    /// </summary>
     [Route("api/v1/Products")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "Products Controller - V1")]
     public class ProductsV1Controller : ControllerBase
     {
+        /*
+         * ToDo - Move this to business logic using a interface to coordinate with the data provider.
+         */
         ProductDataProvider _productDataProvider;
 
+        /// <summary>
+        /// Initialize controller
+        /// </summary>
+        /// <param name="configuration">Dependency injected parameter to get application configuration</param>
         public ProductsV1Controller(IConfiguration configuration)
         {
             _productDataProvider = new ProductDataProvider(configuration);
@@ -67,8 +72,12 @@ namespace ShoppingCart.API.Controllers
             }
         }
 
-        [HttpPost("AddProduct")]
-        public IActionResult Post([FromBody] ProductModel productDataParam)
+        /// <summary>
+        /// Add a new product
+        /// </summary>
+        /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
+        [HttpPost("AddProduct"), Authorize]
+        public IActionResult Post([FromForm] ProductModel productDataParam)
         {
             try
             {
@@ -81,7 +90,14 @@ namespace ShoppingCart.API.Controllers
                     ProductImageName = productDataParam.ProductImageName
                 };
 
-                _productDataProvider.addNewProduct(productModelToRegister);
+                if (ProductImageManager.uploadProductImage(productDataParam.ProductImage))
+                    _productDataProvider.addNewProduct(productModelToRegister);
+                else
+                {
+                    //ToDo - Log this information.
+                    System.Diagnostics.Debug.WriteLine(String.Format("Error occured while uploading the image {0}", productDataParam.ProductImage));
+                    return Problem(detail: "Something went wrong. Unable to add a new product.");
+                }
             }
             catch (ProductExistsException pex)
             {
@@ -91,7 +107,6 @@ namespace ShoppingCart.API.Controllers
             {
                 return Problem(detail: "Something went wrong. Unable to add a new product.");
             }
-
             //CreatedAtAction returns status code 201 response.
             return CreatedAtAction("Post", string.Format("Product - '{0}' added successfully", productDataParam.ProductName));
         }
