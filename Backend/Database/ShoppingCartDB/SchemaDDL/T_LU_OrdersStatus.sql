@@ -1,6 +1,4 @@
-IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES AS I WHERE I.TABLE_NAME = 'T_LU_OrdersStatus')
-	DROP TABLE T_LU_OrdersStatus;
-GO
+use ShoppingCartDB;
 
 /*
  Products that are checked out from the cart will be associated with an Order.
@@ -14,5 +12,5 @@ CREATE TABLE T_LU_OrdersStatus(
      */
 	OrderLookupID NUMERIC(6,0) IDENTITY(1,1) NOT NULL,
 	OrderPurchaseState NUMERIC(2,0) UNIQUE,
-	OrderStateDescription VARCHAR(200)
+	OrderStateDescription NVARCHAR(200)
 );

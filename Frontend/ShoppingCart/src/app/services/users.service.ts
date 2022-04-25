@@ -47,6 +47,14 @@ export class UsersService {
   }
 
   /**
+   * Returns the JWT token of the validated user.
+   * @returns JWT Token
+   */
+  getUserToken(){
+    return localStorage.getItem(LOCAL_STORAGE_KEY_LOGGED_USER);
+  }
+
+  /**
    * Returns true if the value is available and false otherwise.
    */
   get isUserLoggedIn(): boolean {

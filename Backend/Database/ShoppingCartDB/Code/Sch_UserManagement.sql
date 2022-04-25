@@ -47,4 +47,4 @@ where a.Username = @UsernameInputParam;
 END
 GO
 
-PRINT 'Stored procedures for the schema `Sch_UserManagement` created or updated successfully.'
+PRINT 'Script to create stored procedures for the schema `Sch_UserManagement` completed.'

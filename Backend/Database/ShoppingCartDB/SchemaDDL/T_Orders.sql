@@ -1,9 +1,4 @@
-IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES AS I WHERE I.TABLE_NAME = 'T_Cart')
-	DROP TABLE  T_Cart; --Foreign key reference must be removed before the main table
-GO
-IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES AS I WHERE I.TABLE_NAME = 'T_Orders')
-	DROP TABLE T_Orders;
-GO
+use ShoppingCartDB;
 
 /*
  Products that are checked out from the cart will be associated with an Order.
@@ -17,8 +12,7 @@ CREATE TABLE T_Orders(
      */
 	OrderID NUMERIC(6,0) IDENTITY(1,1) NOT NULL,
 	UserID NUMERIC(6,0),
-	CartD NUMERIC(6,0),
-	OrderPurchaseState NUMERIC(2,0) UNIQUE,
+	OrderPurchaseState NUMERIC(2,0),
 	OrderDate DATETIME,
 
     PRIMARY KEY (OrderID),

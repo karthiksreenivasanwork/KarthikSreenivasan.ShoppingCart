@@ -1,5 +1,5 @@
 /*
- Insert data into T_LU_ProductCategory
+ Insert data into T_LU_ProductCategories
  */
 exec Sch_ProductManagement.sp_CreateProductCategory 'Branded Foods';
 exec Sch_ProductManagement.sp_CreateProductCategory 'Households';
