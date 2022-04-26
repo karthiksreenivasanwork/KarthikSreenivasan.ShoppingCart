@@ -60,8 +60,8 @@ SELECT p.ProductID,
 	   p.ProductName,
 	   p.ProductPrice,
 	   p.ProductDescription,
-	   p.ProductImageName FROM T_Products as p
-	   join T_LU_ProductCategories as pc
+	   p.ProductImageName FROM T_Products p
+	   join T_LU_ProductCategories pc
 	   on p.ProductCategoryID = pc.ProductCategoryID
 	   order by p.ProductCategoryID;
 END
@@ -73,7 +73,7 @@ CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExists
 AS
 BEGIN
 SELECT @ProductSearchCountOutputParam = COUNT(*) 
-FROM T_Products AS p 
+FROM T_Products p 
 where p.ProductName = @ProductNameInputParam;
 END
 GO

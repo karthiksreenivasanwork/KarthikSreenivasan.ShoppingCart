@@ -38,8 +38,11 @@ namespace ShoppingCart.API
         {
             //Allow the Agnular application hosted locally to connect to this API during development
             app.UseCors(
-                options => options.WithOrigins("http://localhost:4201").AllowAnyMethod().AllowAnyHeader()
-                );
+                options =>
+                {
+                    options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+                    options.WithOrigins("http://localhost:4201").AllowAnyMethod().AllowAnyHeader();
+                });
             return app;
         }
 

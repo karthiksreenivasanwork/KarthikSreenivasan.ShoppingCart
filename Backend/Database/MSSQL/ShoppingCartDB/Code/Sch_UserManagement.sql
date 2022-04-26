@@ -31,7 +31,7 @@ CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_ReturnHashedPasswordOfRegistered
 AS
 BEGIN
 SELECT @HashedPasswordOutputParam = u.Password
-FROM T_Users AS u 
+FROM T_Users u 
 where u.Username = @UsernameInputParam;
 END
 GO
@@ -42,8 +42,8 @@ CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_UserExists
 AS
 BEGIN
 SELECT @UserSearchCountOutputParam = COUNT(*) 
-FROM T_Users AS a 
-where a.Username = @UsernameInputParam;
+FROM T_Users u 
+where u.Username = @UsernameInputParam;
 END
 GO
 

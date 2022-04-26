@@ -6,6 +6,7 @@ using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingCart.API.Controllers
 {
@@ -49,7 +50,7 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "{username} is a registered user")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "{username} is not a registered user.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to find the user.")] //Swagger documentation - Error response details
-        public IActionResult Get(string username)
+        public IActionResult Get([Required]string username)
         {
             string successResponseMessage = string.Format("'{0}' is a registered user.", username);
 

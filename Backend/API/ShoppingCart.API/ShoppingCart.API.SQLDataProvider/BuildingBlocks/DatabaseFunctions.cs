@@ -89,6 +89,39 @@ namespace ShoppingCart.API.SQLDataProvider
 
             return null;
         }
+
+        public SqlDataReader executeReader(string sqlConnectionString, string storedProcedureName, List<SqlParameter> sqlParameters)
+        {
+            SqlConnection connection = new SqlConnection(sqlConnectionString);
+
+            try
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(storedProcedureName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    foreach (SqlParameter parameter in sqlParameters)
+                        command.Parameters.Add(parameter);
+                    return command.ExecuteReader(CommandBehavior.CloseConnection);
+                }
+            }
+            catch (SqlException sqlException)
+            {
+                connection.Close();
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(string.Format("SQL Exception at: {0} with exception details  - {1}", this.GetType(), sqlException));
+                throw sqlException;
+            }
+            catch (Exception exception)
+            {
+                connection.Close();
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(exception);
+                throw exception;
+            }
+
+            return null;
+        }
     }
 }
 

@@ -40,7 +40,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns ShoppingCart.API.Models.ProductCategoryModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductCategoryModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the product categories.")]
-        [HttpGet("GetAllCategories")]
+        [HttpGet("Categories")]
         public IActionResult GetAllProductCategories()
         {
             try
@@ -59,7 +59,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the list of all the products available.")]
-        [HttpGet("GetAllProducts")]
+        [HttpGet("Products")]
         public IActionResult GetAllProducts()
         {
             try
@@ -76,7 +76,7 @@ namespace ShoppingCart.API.Controllers
         /// Add a new product
         /// </summary>
         /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
-        [HttpPost("AddProduct"), Authorize]
+        [HttpPost("Add"), Authorize]
         public IActionResult Post([FromForm] ProductModel productDataParam)
         {
             try

@@ -10,4 +10,4 @@ EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @PepsiProductIDPar
 EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @CookerProductIDParam
 EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @AppleProductIDParam
 
-EXEC Sch_CartManagement.sp_GetCartItemsForUser 2
+EXEC Sch_CartManagement.sp_GetCartItemsForUser 'dharini'

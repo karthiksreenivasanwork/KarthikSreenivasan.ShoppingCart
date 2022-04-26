@@ -50,7 +50,7 @@ export class UsersService {
    * Returns the JWT token of the validated user.
    * @returns JWT Token
    */
-  getUserToken(){
+  get getUserToken(): string {
     return localStorage.getItem(LOCAL_STORAGE_KEY_LOGGED_USER);
   }
 
