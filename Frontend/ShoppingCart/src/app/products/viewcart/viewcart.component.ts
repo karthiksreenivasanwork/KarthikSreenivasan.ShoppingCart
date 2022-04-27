@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
+import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-viewcart',
@@ -7,12 +9,19 @@ import { ProductsService } from 'src/app/services/products.service';
   styleUrls: ['./viewcart.component.css'],
 })
 export class ViewcartComponent implements OnInit {
-  constructor(public productService: ProductsService) {}
+  constructor(public userService: UsersService, public productService: ProductsService, public router:Router) {}
 
   ngOnInit(): void {
-    this.productService.getMyCartItems().subscribe((data)=>{
-      console.log(data);
+    this.productService.getMyCartItems().subscribe(
+      {
+        next: (data:any[]) =>{
+          console.log(data);
+        },
+        error: (error:any) => {
+            console.log(error);
+            this.userService.logout();
+            this.router.navigateByUrl('/login');
+        }
     });
-    
   }
 }

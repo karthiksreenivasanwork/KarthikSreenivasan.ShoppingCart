@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
+using System;
 
 namespace ShoppingCart.API
 {
@@ -74,13 +75,19 @@ namespace ShoppingCart.API
                  * Adds a green padlock icon at the top of the Swagger UI documentation to include the JWT token.
                  * This defintion will be used by OperationFilter to apply popup at individual endpoints.
                  */
+                StringBuilder strBuilderSecurityDesc = new StringBuilder();
+                strBuilderSecurityDesc.AppendLine("JWT Authorization header using the Bearer scheme using the JSON format below<br>");
+                strBuilderSecurityDesc.AppendLine("{<br>");
+                strBuilderSecurityDesc.AppendLine("     Authorization: Bearer `JWT Token`<br>");
+                strBuilderSecurityDesc.AppendLine("}");
+
                 c.AddSecurityDefinition(AUTHORIZATION_SCHEME_NAME,
                     new OpenApiSecurityScheme
                     {
-                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Description = strBuilderSecurityDesc.ToString(),
                         Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
-                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
-                    });
+                        Scheme = "bearer", //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+                    });;
 
                 //IOperationFilter is used to apply padlock icon only for endpoints with attributes - Microsoft.AspNetCore.Authorization.AuthorizeAttribute
                 c.OperationFilter<AuthResponsesOperationFilter>();

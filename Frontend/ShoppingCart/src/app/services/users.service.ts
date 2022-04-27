@@ -56,6 +56,10 @@ export class UsersService {
 
   /**
    * Returns true if the value is available and false otherwise.
+   * 
+   * ToDo:
+   * Check to see if the JWT key was tampered beyond the basic verification below
+   * Please note that we are already verifying the JWT token integrity using HTTPInterceptors.
    */
   get isUserLoggedIn(): boolean {
     let isLoggedIn: boolean = false;
@@ -75,7 +79,7 @@ export class UsersService {
   /**
    * Logout the user by clearing their authenticated data stored locally.
    */
-  userLogout() {
+  logout() {
     this._keysInLocalStorage.forEach((localStorageKey) => {
       localStorage.removeItem(localStorageKey);
     });

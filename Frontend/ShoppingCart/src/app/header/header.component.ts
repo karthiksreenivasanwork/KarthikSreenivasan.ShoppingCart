@@ -13,7 +13,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {}
 
   onLogoutClick(){
-    this.usersService.userLogout();
+    this.usersService.logout();
     this.routerRef.navigateByUrl("/login");
   }
 }

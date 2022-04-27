@@ -42,7 +42,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns ShoppingCart.API.Models.CartModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(CartModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the cart items.")]
-        [HttpGet("Items"), Authorize]
+        [HttpGet("Items"), CustomAuthorize(Role.User)]
         public IActionResult GetCartItems()
         {
             try

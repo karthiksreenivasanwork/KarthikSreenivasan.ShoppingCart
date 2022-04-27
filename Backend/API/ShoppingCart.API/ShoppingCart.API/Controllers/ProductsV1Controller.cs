@@ -76,7 +76,7 @@ namespace ShoppingCart.API.Controllers
         /// Add a new product
         /// </summary>
         /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
-        [HttpPost("Add"), Authorize]
+        [HttpPost("Add"), CustomAuthorize(Role.Admin)]
         public IActionResult Post([FromForm] ProductModel productDataParam)
         {
             try
