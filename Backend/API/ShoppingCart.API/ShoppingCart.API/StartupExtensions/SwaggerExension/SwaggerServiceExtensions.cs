@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
 using System;
+using ShoppingCart.API.StartupExtensions.SwaggerExension.Filters;
 
 namespace ShoppingCart.API
 {
@@ -107,112 +108,6 @@ namespace ShoppingCart.API
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShoppingCart.API v1"));
             return app;
-        }
-    }
-
-    /// <summary>
-    /// Summary:
-    ///     Represents the configuration of each endpoint in the SwaggerUI that needs JWT token authorization represented by a padlock icon.
-    /// </summary>
-    public class AuthResponsesOperationFilter : IOperationFilter
-    {
-        /// <summary>
-        /// Implement the interface method IOperationFilter which applies a padlock to the endpoint of the defined custom attribute.
-        /// </summary>
-        /// <param name="operation"></param>
-        /// <param name="context"></param>
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
-                .Union(context.MethodInfo.GetCustomAttributes(true))
-                .OfType<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>(); //Custom attribute applied to the the endpoints that need authorization.
-
-            if (authAttributes.Any())
-            {
-                var securityRequirement = new OpenApiSecurityRequirement
-                {
-                    //Initializing the dictionary
-                    {
-                        new OpenApiSecurityScheme //Dictionary Key
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Id = SwaggerServiceExtensions.AUTHORIZATION_SCHEME_NAME, //This name has to match the name provided in the AddSecurityDefinition method for the popup to work in the said method.
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        }, new List<string>() //Dictionary Value
-                    }
-                };
-                operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
-                /*
-                 * Appears as a possible response if we have applied  the following custom attribute to our endpoints.
-                 * Microsoft.AspNetCore.Authorization.AuthorizeAttribute
-                 */
-                operation.Responses.Add("401", new OpenApiResponse
-                {
-                    Description = "Unauthorized. Invalid token was found"
-                }
-                );
-            }
-        }
-    }
-
-    /// <summary>
-    /// Provide the Swagger the ability to upload files if it detects the proeprty IFormFile
-    /// </summary>
-    public class FileUploadFilter : IOperationFilter
-    {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            if (context.ApiDescription.HttpMethod != HttpMethods.Post) //Filter for post methods only.
-                return;
-
-
-            var formParameters = context.ApiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.HasFormFileProperty());
-
-            if (!formParameters.Any()) //If any IFormFile properties are found, then we proceed
-            {
-                return;
-            }
-
-            var uploadFileMediaType = new OpenApiMediaType()
-            {
-                Schema = new OpenApiSchema()
-                {
-                    Type = "object",
-                    Properties =
-                        {
-                            ["productimage"] = new OpenApiSchema()
-                            {
-                                Type = "string",
-                                Format = "binary"
-                            }
-                        },
-                    Required = new HashSet<string>() { "productimage" }
-                }
-            };
-        }
-    }
-
-    /// <summary>
-    /// Helps match the given property is of type IFormFile
-    /// </summary>
-    public static class ApiParameterDescriptionExtensions
-    {
-        /// <summary>
-        /// Ditermine if a give property is of type IFormFile
-        /// </summary>
-        /// <param name="apiParameter">Parameter to verify</param>
-        /// <returns>Returns true if IFormFile property type is found and false otherwise.</returns>
-        internal static bool HasFormFileProperty(this ApiParameterDescription apiParameter)
-        {
-            bool isFormFilePropertyFound = false;
-            if (apiParameter.ModelMetadata?.ModelType == typeof(IFormFile))
-            {
-                isFormFilePropertyFound = true;
-            }
-            return isFormFilePropertyFound;
         }
     }
 }

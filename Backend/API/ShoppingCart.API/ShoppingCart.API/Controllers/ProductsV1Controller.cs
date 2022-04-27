@@ -8,6 +8,7 @@ using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ShoppingCart.API.Controllers
 {
@@ -40,7 +41,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns ShoppingCart.API.Models.ProductCategoryModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductCategoryModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the product categories.")]
-        [HttpGet("Categories")]
+        [HttpGet("categories")]
         public IActionResult GetAllProductCategories()
         {
             try
@@ -59,7 +60,7 @@ namespace ShoppingCart.API.Controllers
         /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the list of all the products available.")]
-        [HttpGet("Products")]
+        [HttpGet("products")]
         public IActionResult GetAllProducts()
         {
             try
@@ -76,8 +77,8 @@ namespace ShoppingCart.API.Controllers
         /// Add a new product
         /// </summary>
         /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
-        [HttpPost("Add"), CustomAuthorize(Role.Admin)]
-        public IActionResult Post([FromForm] ProductModel productDataParam)
+        [HttpPost("add"), CustomAuthorize(Role.Admin)]
+        public async Task<IActionResult> Post([FromForm] ProductSwaggerUIModel productDataParam)
         {
             try
             {
@@ -87,17 +88,17 @@ namespace ShoppingCart.API.Controllers
                     ProductName = productDataParam.ProductName,
                     ProductDescription = productDataParam.ProductDescription,
                     ProductPrice = productDataParam.ProductPrice,
-                    ProductImageName = productDataParam.ProductImageName
+                    /*
+                     * ToDo - This is a temporary solution to assign image name dynamically handled by the server
+                     * but will need to implement a better solution.
+                     */
+                    ProductImageName = string.Concat(_productDataProvider.getAllProducts().Count.ToString(), ".",
+                                       productDataParam.ProductImage.FileName.Split('.')[1])
                 };
-
-                if (ProductImageManager.uploadProductImage(productDataParam.ProductImage))
-                    _productDataProvider.addNewProduct(productModelToRegister);
-                else
-                {
-                    //ToDo - Log this information.
-                    System.Diagnostics.Debug.WriteLine(String.Format("Error occured while uploading the image {0}", productDataParam.ProductImage));
-                    return Problem(detail: "Something went wrong. Unable to add a new product.");
-                }
+                //Async-Await: It uploads the image while also creating the database record for the product details which improves performance.
+                ProductImageManager.uploadProductImage(productDataParam.ProductImage, productModelToRegister.ProductImageName); 
+                // This task is independent which doesn't need the result of uploadProductImage method.
+                await _productDataProvider.AddNewProduct(productModelToRegister);
             }
             catch (ProductExistsException pex)
             {
@@ -105,6 +106,7 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
+                //
                 return Problem(detail: "Something went wrong. Unable to add a new product.");
             }
             //CreatedAtAction returns status code 201 response.

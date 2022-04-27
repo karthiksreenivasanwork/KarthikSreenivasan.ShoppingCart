@@ -1,5 +1,7 @@
 /*
  Insert data into T_Products
+ NOTE: Ensure that the corresponding images are saved to the API image folder - Backend\API\ShoppingCart.API\ShoppingCart.API\wwwroot\images
+	   Otherwise, the staged data below will have no corresponding product images.
  */
 exec Sch_ProductManagement.sp_CreateProduct 'Branded Foods', 'Pepsi', 100, 'A product from ABC company', '2.png'
 exec Sch_ProductManagement.sp_CreateProduct 'Households', 'Vim', 50, 'A product from a DEF company', '18.png'

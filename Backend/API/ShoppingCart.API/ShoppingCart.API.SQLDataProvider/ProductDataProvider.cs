@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace ShoppingCart.API.SQLDataProvider
 {
@@ -95,7 +96,7 @@ namespace ShoppingCart.API.SQLDataProvider
         /// </summary>
         /// <param name="newProductToRegister">A new product with the specifications.</param>
         /// <returns>Returns true if the new product was added successfully and false otherwise.</returns>
-        public bool addNewProduct(ProductModel newProductToRegister)
+        public async Task<bool> AddNewProduct(ProductModel newProductToRegister)
         {
             if (newProductToRegister == null)
                 throw new ArgumentNullException("newProductToRegister");
@@ -118,7 +119,7 @@ namespace ShoppingCart.API.SQLDataProvider
                     new SqlParameter("ProductImageNameParam", newProductToRegister.ProductImageName)
                 };
 
-                (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
+                (commandResult, commandReference) = await _databaseFunctions.executeNonQueryAsync(
                     _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
                     "Sch_ProductManagement.sp_CreateProduct",
                     sqlParameters);

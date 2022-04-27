@@ -17,18 +17,28 @@ namespace ShoppingCart.API.BusinessLogic
         /// </summary>
         /// <param name="productImageFile">A Microsoft.AspNetCore.Http.IFormFile</param>
         /// <returns>Return true if the product image was uploaded successfully and false otherwise</returns>
-        public static bool uploadProductImage(IFormFile productImageFile)
+        public static bool uploadProductImage(IFormFile productImageFile, string renamedFileName)
         {
-            if (productImageFile != null && productImageFile.Length > 0)
+            try
             {
-                var fileName = Path.GetFileName(productImageFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images", fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                if (productImageFile != null && productImageFile.Length > 0)
                 {
-                    productImageFile.CopyTo(fileStream);
+                    var fileName = Path.GetFileName(renamedFileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images", fileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        productImageFile.CopyTo(fileStream);
+                    }
+                    return true;
                 }
-                return true;
             }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information.
+                System.Diagnostics.Debug.WriteLine(String.Format("Error occured while uploading the image {0}", productImageFile.FileName));
+                throw new Exception("Something went wrong. Unable to add a new product.");
+            }
+
             return false;
         }
     }
