@@ -38,7 +38,9 @@ CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_CreateProduct
 @ProductNameParam VARCHAR(200),
 @ProductPriceParam NUMERIC(6, 0),
 @ProductDescriptionParam VARCHAR(MAX),
-@ProductImageNameParam VARCHAR(200) AS
+@ProductImageNameParam VARCHAR(200),
+@ProductIDOutputParam NUMERIC(6, 0) OUTPUT
+AS
 BEGIN
 INSERT INTO T_Products (ProductCategoryID, ProductName, ProductPrice, ProductDescription, ProductImageName)
 VALUES (
@@ -48,6 +50,53 @@ VALUES (
 		@ProductDescriptionParam,
 		@ProductImageNameParam
 	);
+SELECT @ProductIDOutputParam = SCOPE_IDENTITY()
+END
+GO
+
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_UpdateProduct
+@ProductIDParam NUMERIC(6, 0),
+@ProductCategoryNameParam VARCHAR(200),
+@ProductPriceParam NUMERIC(6, 0),
+@ProductDescriptionParam VARCHAR(MAX)
+AS
+BEGIN
+
+DECLARE @ProductUpdateTableVariable TABLE (  
+	ProductCategoryIDUpdated NUMERIC(6, 0),
+	ProductPriceUpdated NUMERIC(6, 0),
+	ProductDescriptionUpdated VARCHAR(MAX)
+	);  
+
+UPDATE T_Products SET 
+ProductCategoryID = (SELECT lpc.ProductCategoryID FROM T_LU_ProductCategories lpc where lpc.ProductCategoryName = @ProductCategoryNameParam),
+ProductPrice = @ProductPriceParam,
+ProductDescription = @ProductDescriptionParam
+OUTPUT 
+INSERTED.ProductCategoryID,
+INSERTED.ProductPrice,
+INSERTED.ProductDescription
+INTO @ProductUpdateTableVariable
+WHERE ProductID = @ProductIDParam
+
+SELECT * FROM @ProductUpdateTableVariable;
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_DeleteProduct
+@ProductIDParam NUMERIC(6, 0),
+@ProductSearchCountOutputParam int OUTPUT 
+AS
+BEGIN
+DECLARE @ProductUpdateTableVariable TABLE (  
+	ProductID NUMERIC(6,0) IDENTITY(1,1) NOT NULL,
+	ProductCategoryID NUMERIC(6,0),
+	ProductName NVARCHAR(200) NOT NULL UNIQUE,
+	ProductPrice NUMERIC(6, 0),
+	ProductDescription NVARCHAR(MAX)
+	);
+--ToDo - Delete Operation
 END
 GO
 
@@ -67,7 +116,7 @@ SELECT p.ProductID,
 END
 GO
 
-CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExists
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExistsByName
 @ProductNameInputParam VARCHAR(200),
 @ProductSearchCountOutputParam int OUTPUT 
 AS
@@ -75,6 +124,17 @@ BEGIN
 SELECT @ProductSearchCountOutputParam = COUNT(*) 
 FROM T_Products p 
 where p.ProductName = @ProductNameInputParam;
+END
+GO
+
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExistsByID
+@ProductIDParam NUMERIC(6, 0),
+@ProductSearchCountOutputParam int OUTPUT 
+AS
+BEGIN
+SELECT @ProductSearchCountOutputParam = COUNT(*) 
+FROM T_Products p 
+where p.ProductID = @ProductIDParam;
 END
 GO
 

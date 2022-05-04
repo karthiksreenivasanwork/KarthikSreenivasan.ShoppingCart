@@ -8,14 +8,14 @@ namespace ShoppingCart.API.SQLDataProvider
     // Summary:
     //     Represents the error that occurs if the product name has already been taken.
     /// </summary>
-    public class ProductExistsException : Exception
+    public class ProductException : Exception
     {
-        public ProductExistsException()
+        public ProductException()
         {
         }
 
-        public ProductExistsException(string productName)
-            : base(string.Format("Product `{0}` already exists", productName))
+        public ProductException(string errorMessage)
+            : base(errorMessage)
         {
         }
 

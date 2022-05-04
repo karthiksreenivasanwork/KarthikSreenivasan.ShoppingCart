@@ -95,28 +95,34 @@ namespace ShoppingCart.API.SQLDataProvider
         /// Register a new product.
         /// </summary>
         /// <param name="newProductToRegister">A new product with the specifications.</param>
-        /// <returns>Returns true if the new product was added successfully and false otherwise.</returns>
-        public async Task<bool> AddNewProduct(ProductModel newProductToRegister)
+        /// <returns>Returns the product ID if the new product was added successfully or 0 otherwise.</returns>
+        /// <exception cref="ArgumentNullException">Input parameter cannot be null</exception>
+        /// <exception cref="ProductException">Is thrown if this an existing product</exception>
+        public async Task<int> AddNewProduct(ProductModel newProductToRegister)
         {
             if (newProductToRegister == null)
                 throw new ArgumentNullException("newProductToRegister");
 
             if (this.checkForExistingProduct(newProductToRegister.ProductName))
-                throw new ProductExistsException(newProductToRegister.ProductName);
+                throw new ProductException(string.Format("Product `{0}` already exists", newProductToRegister.ProductName));
 
-            bool hasProductAddedSuccessfully = false;
             int commandResult = 0;
             SqlCommand commandReference = null;
+            int productIDOutputData = 0;
 
             try
             {
+                SqlParameter productIDOutputSQLParam = new SqlParameter("ProductIDOutputParam", SqlDbType.Int);
+                productIDOutputSQLParam.Direction = ParameterDirection.Output;
+
                 List<SqlParameter> sqlParameters = new List<SqlParameter>
                 {
                     new SqlParameter("ProductCategoryNameParam", newProductToRegister.ProductCategoryName),
                     new SqlParameter("ProductNameParam", newProductToRegister.ProductName),
                     new SqlParameter("ProductPriceParam", newProductToRegister.ProductPrice),
                     new SqlParameter("ProductDescriptionParam", newProductToRegister.ProductDescription),
-                    new SqlParameter("ProductImageNameParam", newProductToRegister.ProductImageName)
+                    new SqlParameter("ProductImageNameParam", newProductToRegister.ProductImageName),
+                    productIDOutputSQLParam
                 };
 
                 (commandResult, commandReference) = await _databaseFunctions.executeNonQueryAsync(
@@ -125,7 +131,8 @@ namespace ShoppingCart.API.SQLDataProvider
                     sqlParameters);
 
                 if (commandReference != null)
-                    hasProductAddedSuccessfully = commandResult > 0;
+                    if (commandResult > 0) //Record successfully inserted into the database.
+                        productIDOutputData = Convert.ToInt32(productIDOutputSQLParam.Value);
             }
             catch (Exception ex)
             {
@@ -133,9 +140,62 @@ namespace ShoppingCart.API.SQLDataProvider
                 System.Diagnostics.Debug.WriteLine(ex);
                 throw ex;
             }
-            return hasProductAddedSuccessfully;
+            return productIDOutputData;
         }
 
+
+        /// <summary>
+        /// Update product details
+        /// </summary>
+        /// <param name="productDataToUpdate">Update model type ShoppingCart.API.Models.ProductModel</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Input parameter cannot be null</exception>
+        /// <exception cref="ProductException">Is thrown if no product exists</exception>
+        public ProductModel UpdateProduct(ProductModel productDataToUpdate)
+        {
+            if (productDataToUpdate == null)
+                throw new ArgumentNullException("productToUpdate");
+
+            if (!this.checkForExistingProduct(productDataToUpdate.ProductID))
+                throw new ProductException(string.Format("Product ID `{0}` does not exists", productDataToUpdate.ProductID));
+
+            ProductModel updatedProductModel = productDataToUpdate;
+
+            try
+            {
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    new SqlParameter("ProductIDParam", productDataToUpdate.ProductID),
+                    new SqlParameter("ProductCategoryNameParam", productDataToUpdate.ProductCategoryName),
+                    new SqlParameter("ProductPriceParam", productDataToUpdate.ProductPrice),
+                    new SqlParameter("ProductDescriptionParam", productDataToUpdate.ProductDescription)
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_ProductManagement.sp_UpdateProduct",
+                    sqlParameters))
+                {
+                    if (sqlReader != null && sqlReader.HasRows)
+                    {
+                        sqlReader.Read();
+                        updatedProductModel = new ProductModel
+                        {
+                            ProductCategoryID = Convert.ToInt32(sqlReader["ProductCategoryIDUpdated"]),
+                            ProductPrice = Convert.ToInt32(sqlReader["ProductPriceUpdated"]),
+                            ProductDescription = sqlReader.GetString("ProductDescriptionUpdated")
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return updatedProductModel;
+        }
 
         /// <summary>
         ///  Verifies if a given product already exists in the database.
@@ -165,7 +225,50 @@ namespace ShoppingCart.API.SQLDataProvider
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
                     _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
-                    "Sch_ProductManagement.sp_ProductExists",
+                    "Sch_ProductManagement.sp_ProductExistsByName",
+                    sqlParameters);
+
+                if (commandReference != null)
+                    isExistingProduct = Convert.ToInt32(commandReference.Parameters["ProductSearchCountOutputParam"].Value) == (int)DatabaseSearchResult.RecordExists;
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return isExistingProduct;
+        }
+
+        /// <summary>
+        ///  Verifies if a given product already exists in the database.
+        /// </summary>
+        /// <param name="productID">Product id to validate</param>
+        /// <returns>True if the product already exists and false otherwise.</returns>
+        public bool checkForExistingProduct(int productID)
+        {
+            if (productID == 0)
+                throw new ArgumentException("productID");
+
+            bool isExistingProduct = true; //By default, we shall add any new products
+            int commandResult = 0;
+            SqlCommand commandReference = null;
+
+            try
+            {
+                SqlParameter productnameParam = new SqlParameter("ProductIDParam", productID);
+                SqlParameter isExistingProductParam = new SqlParameter("ProductSearchCountOutputParam", SqlDbType.Int);
+                isExistingProductParam.Direction = ParameterDirection.Output;
+
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    productnameParam,
+                    isExistingProductParam
+                };
+
+                (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_ProductManagement.sp_ProductExistsByID",
                     sqlParameters);
 
                 if (commandReference != null)

@@ -42,7 +42,7 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductCategoryModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the product categories.")]
         [HttpGet("categories")]
-        public IActionResult GetAllProductCategories()
+        public IActionResult GetAllCategories()
         {
             try
             {
@@ -76,13 +76,20 @@ namespace ShoppingCart.API.Controllers
         /// <summary>
         /// Add a new product
         /// </summary>
-        /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
+        /// <returns>Returns prodct name</returns>
         [HttpPost("add"), CustomAuthorize(Role.Admin)]
-        public async Task<IActionResult> Post([FromForm] ProductSwaggerUIModel productDataParam)
+        [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status409Conflict, "Product `{0}` already exists")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new product.")]
+        public async Task<IActionResult> PostProduct([FromForm] ProductSwaggerAddModel productDataParam)
         {
+            ProductModel productModelToRegister = new ProductModel();
             try
             {
-                ProductModel productModelToRegister = new ProductModel()
+                if (this._productDataProvider.checkForExistingProduct(productDataParam.ProductName))
+                    return Conflict(string.Format("Product `{0}` already exists", productDataParam.ProductName));
+
+                productModelToRegister = new ProductModel()
                 {
                     ProductCategoryName = productDataParam.ProductCategoryName, //The database will get the category ID based on the category name.
                     ProductName = productDataParam.ProductName,
@@ -96,21 +103,64 @@ namespace ShoppingCart.API.Controllers
                                        productDataParam.ProductImage.FileName.Split('.')[1])
                 };
                 //Async-Await: It uploads the image while also creating the database record for the product details which improves performance.
-                ProductImageManager.uploadProductImage(productDataParam.ProductImage, productModelToRegister.ProductImageName); 
+                ProductImageManager.uploadProductImage(productDataParam.ProductImage, productModelToRegister.ProductImageName);
                 // This task is independent which doesn't need the result of uploadProductImage method.
-                await _productDataProvider.AddNewProduct(productModelToRegister);
+                productModelToRegister.ProductID = await _productDataProvider.AddNewProduct(productModelToRegister);
             }
-            catch (ProductExistsException pex)
+            catch (ProductException pex)
             {
                 return Conflict(string.Format(pex.Message, productDataParam.ProductName));
             }
             catch (Exception ex)
             {
-                //
                 return Problem(detail: "Something went wrong. Unable to add a new product.");
             }
             //CreatedAtAction returns status code 201 response.
-            return CreatedAtAction("Post", string.Format("Product - '{0}' added successfully", productDataParam.ProductName));
+            return CreatedAtAction("PostProduct", new { id = productModelToRegister.ProductID }, productModelToRegister);
+        }
+
+        /// <summary>
+        /// Update a product
+        /// </summary>
+        /// <returns>Status code 204 on successful update</returns>
+        [HttpPut("update/{id}"), CustomAuthorize(Role.Admin)]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Product ID `{0}` does not match the ID `{1}` of the product model.")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Product ID `{0}` does not exists")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to update product - `{0}`.")]
+        public IActionResult PutProduct(int id, [FromForm] ProductSwaggerUpdateModel productUpdateModelParam)
+        {
+            if (id != productUpdateModelParam.ProductID)
+                return BadRequest(string.Format("Product ID `{0}` does not match the ID `{1}` of the product model.", id, productUpdateModelParam.ProductID));
+
+            ProductModel productModelToUpdate = null;
+            ProductModel productResultAfterUpdate = new ProductModel();
+
+            try
+            {
+                if (!this._productDataProvider.checkForExistingProduct(id))
+                    return NotFound("Product ID `{0}` does not exists");
+
+                productModelToUpdate = new ProductModel()
+                {
+                    ProductID = id,
+                    ProductName = productUpdateModelParam.ProductName,
+                    ProductCategoryName = productUpdateModelParam.ProductCategoryName, //The database will get the category ID based on the category name.
+                    ProductDescription = productUpdateModelParam.ProductDescription,
+                    ProductPrice = productUpdateModelParam.ProductPrice
+                };
+
+                productResultAfterUpdate = _productDataProvider.UpdateProduct(productModelToUpdate);
+            }
+            catch (ProductException pex)
+            {
+                return Conflict(string.Format("Product ID `{0}` does not exists", id));
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: string.Format("Something went wrong. Unable to update product - `{0}`.", productUpdateModelParam.ProductName));
+            }
+            return NoContent();
         }
     }
 }

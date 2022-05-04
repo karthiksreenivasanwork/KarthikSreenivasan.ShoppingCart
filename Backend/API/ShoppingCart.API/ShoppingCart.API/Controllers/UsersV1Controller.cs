@@ -50,7 +50,7 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "{username} is a registered user")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "{username} is not a registered user.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to find the user.")] //Swagger documentation - Error response details
-        public IActionResult Get([Required]string username)
+        public IActionResult GetUser([Required, FromRoute] string username)
         {
             string successResponseMessage = string.Format("'{0}' is a registered user.", username);
 
@@ -80,7 +80,7 @@ namespace ShoppingCart.API.Controllers
         [SwaggerResponse(StatusCodes.Status201Created, "New user - '{username}' added successfully")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Username {username} already exists")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new user.")]
-        public IActionResult Post([FromBody] UserModel userModelRegistrationData)
+        public IActionResult PostUser([FromBody] UserModel userModelRegistrationData)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace ShoppingCart.API.Controllers
             }
 
             //CreatedAtAction returns status code 201 response.
-            return CreatedAtAction("Post", string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username));
+            return CreatedAtAction("PostUser", string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace ShoppingCart.API.Controllers
         [HttpPost("login")]
         [SwaggerResponse(StatusCodes.Status201Created, "Returns a valid 'JSON Web Token' (JWT) token which expires in 30 minutes.")]
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid User")]
-        public IActionResult Post([FromBody] LoginModel loginModelDataFromUser)
+        public IActionResult PostLogin([FromBody] LoginModel loginModelDataFromUser)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace ShoppingCart.API.Controllers
 
                     if (passwordVerificationResult)
                     {
-                        return CreatedAtAction("Post", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                        return CreatedAtAction("PostLogin", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
                     }
                 }
                 return Unauthorized("Invalid User");
