@@ -14,6 +14,6 @@ CREATE TABLE T_Cart(
 	OrderID NUMERIC(6,0),
 
 	PRIMARY KEY (CartID),
-	FOREIGN KEY (ProductID) REFERENCES T_Products (ProductID),
+	FOREIGN KEY (ProductID) REFERENCES T_Products (ProductID) ON DELETE CASCADE,
 	FOREIGN KEY (OrderID) REFERENCES T_Orders (OrderID) --Will be updated on checkout
 );

@@ -85,18 +85,24 @@ GO
 
 
 CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_DeleteProduct
-@ProductIDParam NUMERIC(6, 0),
-@ProductSearchCountOutputParam int OUTPUT 
+@ProductIDParam NUMERIC(6, 0)
 AS
 BEGIN
-DECLARE @ProductUpdateTableVariable TABLE (  
-	ProductID NUMERIC(6,0) IDENTITY(1,1) NOT NULL,
+DECLARE @ProductDeleteTableVariable TABLE (  
+	ProductID NUMERIC(6,0),
 	ProductCategoryID NUMERIC(6,0),
-	ProductName NVARCHAR(200) NOT NULL UNIQUE,
+	ProductName NVARCHAR(200),
 	ProductPrice NUMERIC(6, 0),
-	ProductDescription NVARCHAR(MAX)
+	ProductDescription NVARCHAR(MAX),
+	ProductImageName NVARCHAR(200)
 	);
---ToDo - Delete Operation
+DELETE FROM T_Products 
+OUTPUT
+DELETED.*
+INTO @ProductDeleteTableVariable
+WHERE ProductID = @ProductIDParam;
+
+SELECT * FROM @ProductDeleteTableVariable;
 END
 GO
 

@@ -7,6 +7,7 @@ using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -161,6 +162,76 @@ namespace ShoppingCart.API.Controllers
                 return Problem(detail: string.Format("Something went wrong. Unable to update product - `{0}`.", productUpdateModelParam.ProductName));
             }
             return NoContent();
+        }
+
+        /// <summary>
+        /// Delete a product
+        /// </summary>
+        /// <param name="id">Product to remove with this Product ID</param>
+        /// <returns>Returns ShoppingCart.API.Models.ProductModel if product was removed successfully</returns>
+        [HttpDelete("delete/{id}"), CustomAuthorize(Role.Admin)]
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel[]))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Product ID `{0}` does not exists")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to delete product ID - `{0}`.")]
+        public IActionResult DeleteProduct(int id)
+        {
+            ProductModel deletedProductModel = null;
+
+            try
+            {
+                if (!this._productDataProvider.checkForExistingProduct(id))
+                    return NotFound(string.Format("Product ID `{0}` does not exists", id));
+
+                deletedProductModel = _productDataProvider.deleteProduct(id);
+                if (deletedProductModel == null)
+                    return NotFound(string.Format("Product ID `{0}` does not exists", id));
+            }
+            catch (ProductException pex)
+            {
+                return Conflict(string.Format("Product ID `{0}` does not exists", id));
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: string.Format("Something went wrong. Unable to delete product ID - `{0}`.", id));
+            }
+            return Ok(deletedProductModel);
+        }
+
+        /// <summary>
+        /// Delete multiple products
+        /// </summary>
+        /// <param name="ids">Collection of Product ID for deletion</param>
+        /// <returns>Collection of ShoppingCart.API.Models.ProductModel if products were removed successfully and Status Code 404 otherwise</returns>
+        [HttpPost("DeleteMultiple"), CustomAuthorize(Role.Admin)]
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel[]))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Product ID `{0}` does not exist. Hence, deleting multiple products has been canceled.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to delete the products")]
+        public IActionResult DeleteMultiple([FromQuery] int[] ids)
+        {
+            List<ProductModel> productsToDelete = new List<ProductModel>();
+            try
+            {
+                List<ProductModel> allProducts = _productDataProvider.getAllProducts();
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    ProductModel foundProduct = allProducts.Find(product => product.ProductID == ids[i]);
+                    if (foundProduct == null) //Even if one product in the request does not exist, we cancel the delete operation.
+                    {
+                        if(productsToDelete.Count > 0)
+                            productsToDelete.Clear();
+                        return NotFound(string.Format("Product ID `{0}` does not exist. Hence, deleting multiple products has been canceled.", ids[i]));
+                    }
+                    productsToDelete.Add(foundProduct);
+                }
+
+                foreach (ProductModel deleteProduct in productsToDelete)
+                    _productDataProvider.deleteProduct(deleteProduct.ProductID);
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to delete the products");
+            }
+            return Ok(productsToDelete);
         }
     }
 }

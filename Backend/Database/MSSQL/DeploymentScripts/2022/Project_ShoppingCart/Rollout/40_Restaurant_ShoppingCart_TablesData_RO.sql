@@ -1,5 +1,5 @@
 use ShoppingCartDB;
-:setvar path "D:\GitLab\karthiksreenivasanwork\Repos\KarthikSreenivasan.ShoppingCart\Backend\Database\DeploymentScripts\2022\Project_ShoppingCart\Rollout\"
+:setvar path "D:\GitLab\karthiksreenivasanwork\Repos\KarthikSreenivasan.ShoppingCart\Backend\Database\MSSQL\DeploymentScripts\2022\Project_ShoppingCart\Rollout\"
 
 :r $(path)Insert_Into_T_Users.sql --Dummy user data for creating a dummy order.
 

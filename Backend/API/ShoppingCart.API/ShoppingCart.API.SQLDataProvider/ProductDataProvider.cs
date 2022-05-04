@@ -282,5 +282,56 @@ namespace ShoppingCart.API.SQLDataProvider
             }
             return isExistingProduct;
         }
+
+        /// <summary>
+        ///  Remove a product
+        /// </summary>
+        /// <param name="productID">Product id to remove</param>
+        /// <returns>Returns the delete product details if it has been removed successfully and null reference otherwise.</returns>
+        public ProductModel deleteProduct(int productID)
+        {
+            if (productID == 0)
+                throw new ArgumentException("productID");
+
+            ProductModel productModelAfterDelete = null;
+
+            try
+            {
+                SqlParameter productnameParam = new SqlParameter("ProductIDParam", productID);
+
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    productnameParam,
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_ProductManagement.sp_DeleteProduct",
+                    sqlParameters))
+                {
+                    if (sqlReader != null && sqlReader.HasRows)
+                    {
+                        sqlReader.Read();
+                        productModelAfterDelete = new ProductModel
+                        {
+                            ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                            ProductCategoryID = Convert.ToInt32(sqlReader["ProductCategoryID"]),
+                            ProductName = sqlReader["ProductName"].ToString(),
+                            ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"].ToString()),
+                            ProductDescription = sqlReader["ProductDescription"].ToString(),
+                            ProductImageName = sqlReader["ProductImageName"].ToString(),
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return productModelAfterDelete;
+        }
+
     }
 }
