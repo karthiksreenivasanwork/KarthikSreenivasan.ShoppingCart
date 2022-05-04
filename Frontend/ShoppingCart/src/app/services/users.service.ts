@@ -14,7 +14,6 @@ const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 })
 export class UsersService {
   private _keysInLocalStorage: string[] = [];
-  private _verifiedUserNameFromAPI: string = '';
 
   constructor(public httpClient: HttpClient) {
     this._keysInLocalStorage.push(LOCAL_STORAGE_KEY_LOGGED_USER);

@@ -44,22 +44,22 @@ namespace ShoppingCart.API
                             context.HandleResponse(); //Skip the default logic for this challenge.
                             var payload = new JObject();
 
-                            if (context.Error == null)
+                            if (context.Error == null) //No JWT Token is empty.
                             {
                                 payload = new JObject
                                 {
                                     ["error"] = "Unauthorized",
-                                    ["error_description"] = "Invalid token found.",
+                                    ["error_description"] = "No token found.",
                                     ["error_uri"] = context.ErrorUri
                                 };
 
                             }
                             else
                             {
-                                payload = new JObject
+                                payload = new JObject //When the JWT token is invalid.
                                 {
                                     ["error"] = context.Error,
-                                    ["error_description"] = context.ErrorDescription,
+                                    ["error_description"] = context.ErrorDescription == string.Empty ? "Invalid token found" : context.ErrorDescription,
                                     ["error_uri"] = context.ErrorUri
                                 };
                             }

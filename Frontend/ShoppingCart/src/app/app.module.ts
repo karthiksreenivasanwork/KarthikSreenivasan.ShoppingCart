@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +11,7 @@ import { ListproductsComponent } from './products/listproducts/listproducts.comp
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { ViewcartComponent } from './products/viewcart/viewcart.component';
+import { TokeninterceptorService } from './authorization/serverauthorization/tokeninterceptor.service';
 
 @NgModule({
   declarations: [
@@ -22,8 +23,20 @@ import { ViewcartComponent } from './products/viewcart/viewcart.component';
     LoginComponent,
     ViewcartComponent,
   ],
-  imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule, AppRoutingModule],
-  providers: [],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokeninterceptorService,
+      multi: true, //Mandatory property - Specifies if other interceptors must be called if available
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
