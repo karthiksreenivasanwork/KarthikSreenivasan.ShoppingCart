@@ -18,5 +18,6 @@ namespace ShoppingCart.API
 
         private IFormFile ProductImage { get; set; }
         private string ProductImageName { get; set; }
+        private string ProductImageURL { get; set; }
     }
 }

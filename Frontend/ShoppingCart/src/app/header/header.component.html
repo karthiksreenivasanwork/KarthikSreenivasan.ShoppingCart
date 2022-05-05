@@ -51,7 +51,7 @@
               class="dropdown-menu drp-mnu"
               *ngIf="usersService.isUserLoggedIn"
             >
-              <li><a>Add products</a></li>
+              <li><a routerLink="addproducts">Add products</a></li>
               <li><a (click)="onLogoutClick()">Logout</a></li>
             </ul>
           </div>

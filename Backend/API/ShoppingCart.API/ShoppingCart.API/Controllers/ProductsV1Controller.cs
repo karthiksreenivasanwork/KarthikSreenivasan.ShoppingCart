@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -66,7 +67,10 @@ namespace ShoppingCart.API.Controllers
         {
             try
             {
-                return Ok(_productDataProvider.getAllProducts());
+                List<ProductModel> productCollection = _productDataProvider.getAllProducts();
+                foreach (var product in productCollection)
+                    product.ProductImageURL = ProductImageManager.GetImageApiURL(this.Request.Host.Value, product.ProductImageName); //Update the image URL for each product.
+                return Ok(productCollection);
             }
             catch (Exception ex)
             {

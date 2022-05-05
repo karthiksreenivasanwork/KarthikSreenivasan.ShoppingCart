@@ -1,0 +1,73 @@
+<div class="w3l_banner_nav_right">
+  <!-- login -->
+  <div class="w3_login">
+    <h3>Add Products</h3>
+    <div class="w3_login_module">
+      <div class="module form-module">
+        <div></div>
+        <div class="form">
+          <h2>Create a new product</h2>
+          <!--
+              Clarification - Gopi Sir - ngClass not applying bootstrap class properly.
+            -->
+          <div
+            *ngIf="userMessage != null || userMessage != ''"
+            class="user-message alert"
+            [ngClass]="{
+              'alert  alert-success ': !userErrorStatus,
+              'alert  alert-danger ': userErrorStatus
+            }"
+          >
+            {{ userMessage }}
+          </div>
+          <form
+            (submit)="addProducts(formTemplateRef)"
+            #formTemplateRef="ngForm"
+            enctype="multipart/form-data"
+          >
+            <select name="category" ngModel class="select-product-categories">
+              <option value="">Select Category</option>
+              <option
+                *ngFor="let category of productCategories"
+                value="{{ category.productCategoryName }}"
+              >
+                {{ category.productCategoryName }}
+              </option>
+            </select>
+            <input
+              type="text"
+              name="productname"
+              ngModel
+              placeholder="Product Name"
+              required=" "
+              class="input"
+            />
+            <input
+              type="number"
+              name="productprice"
+              ngModel
+              placeholder="Product Price"
+              required=" "
+              class="input"
+            />
+            <div class="file-container">
+              <label for="fileUpload">Upload Product Image</label>
+              <input type="file" id="fileUpload" name="productImage" ngModel (change)="OnImageUpload($event)"/>
+            </div>
+            <textarea
+              name="productdescription"
+              ngModel
+              required=" "
+              class="textarea-product-desc"
+              placeholder="Product Description"
+            >
+            </textarea>
+            <input type="submit" value="Add Product" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- //login -->
+</div>
+<div class="clearfix"></div>

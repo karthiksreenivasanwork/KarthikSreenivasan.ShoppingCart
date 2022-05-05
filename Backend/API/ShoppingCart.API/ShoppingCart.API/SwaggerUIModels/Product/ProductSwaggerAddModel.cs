@@ -17,6 +17,7 @@ namespace ShoppingCart.API
     {
         private int ProductID { get; set; } //Hide this input in the Swagger UI using private access specifier
         private int ProductCategoryID { get; set; }
-        private string ProductImageName { get; set; } 
+        private string ProductImageName { get; set; }
+        private string ProductImageURL { get; set; }
     }
 }

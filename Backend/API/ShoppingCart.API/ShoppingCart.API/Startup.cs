@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace ShoppingCart.API
 {
@@ -44,6 +47,21 @@ namespace ShoppingCart.API
             {
                 app.UseCorsConfigurationForProduction();
             }
+            /**
+             * Make the images in the server accessable via API URL
+             * /
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")), //Relative path of the images in the server
+                RequestPath = new PathString("/images") //API Path configuration
+            });
+            /**
+             * Required for viewing image files via URL from the server
+             * Example: 
+             * API URL Path: https://localhost:44398/images/0.png
+             * Relative Directory Path: \API\ShoppingCart.API\ShoppingCart.API\wwwroot\images\0.png
+             */
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 

@@ -6,11 +6,15 @@ import { ListproductsComponent } from './products/listproducts/listproducts.comp
 import { ViewcartComponent } from './products/viewcart/viewcart.component';
 
 import { ClientauthGuard } from './authorization/clientauthorization/clientauth.guard';
+import { AddproductsComponent } from './products/addproducts/addproducts.component';
+import { CategoriesComponent } from './categories/categories.component';
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
+  { path: 'categories', component: ListproductsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'viewcart', component: ViewcartComponent , canActivate: [ClientauthGuard]},
+  { path: 'addproducts', component: AddproductsComponent , canActivate: [ClientauthGuard]},
 ];
 
 @NgModule({

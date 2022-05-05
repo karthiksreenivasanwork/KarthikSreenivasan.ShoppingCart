@@ -12,6 +12,8 @@ import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { ViewcartComponent } from './products/viewcart/viewcart.component';
 import { TokeninterceptorService } from './authorization/serverauthorization/tokeninterceptor.service';
+import { AddproductsComponent } from './products/addproducts/addproducts.component';
+import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { TokeninterceptorService } from './authorization/serverauthorization/tok
     FooterComponent,
     LoginComponent,
     ViewcartComponent,
+    AddproductsComponent,
+    ShowminimumproddescPipe,
   ],
   imports: [
     BrowserModule,

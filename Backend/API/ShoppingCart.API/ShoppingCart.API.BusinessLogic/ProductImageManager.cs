@@ -41,5 +41,10 @@ namespace ShoppingCart.API.BusinessLogic
 
             return false;
         }
+
+        public static string GetImageApiURL(string appBaseURL, string fileNameParam)
+        {
+            return String.Concat("https://", appBaseURL, "/images/", fileNameParam);
+        }
     }
 }
