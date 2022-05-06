@@ -1,13 +1,17 @@
-DECLARE @UserIDInputParam NUMERIC(6,0) = (select u.UserID from T_Users as u where u.Username = 'dharini');
---DECLARE @OrderIDOutput NUMERIC(6,0);
---EXEC Sch_CartManagement.sp_CreateOrReturnExistingOrder @UserIDInputParam, @OrderIDOutputParam = @OrderIDOutput OUTPUT
+DECLARE @UsernameInputParam NVARCHAR(200) = 'karthik';
+DECLARE @CartIDOutput INT;
 
 DECLARE @PepsiProductIDParam NUMERIC(6,0) = (select p.ProductID from T_Products as p where p.ProductName = 'Pepsi');
-DECLARE @CookerProductIDParam NUMERIC(6,0) = (select p.ProductID from T_Products as p where p.ProductName = 'Cooker');
-DECLARE @AppleProductIDParam NUMERIC(6,0) = (select p.ProductID from T_Products as p where p.ProductName = 'Apple');
+DECLARE @FortuneOilItemParam NUMERIC(6,0) = (select p.ProductID from T_Products as p where p.ProductName = 'Fortune Oil');
+DECLARE @VimItemParam NUMERIC(6,0) = (select p.ProductID from T_Products as p where p.ProductName = 'Vim');
 
-EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @PepsiProductIDParam
-EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @CookerProductIDParam
-EXEC Sch_CartManagement.sp_CreateCartItems @UserIDInputParam, @AppleProductIDParam
+EXEC Sch_CartManagement.sp_CreateCartItems @UsernameInputParam, @PepsiProductIDParam, @CartIDOutputParam = @CartIDOutput OUTPUT
+PRINT CAST(@CartIDOutput as varchar) + ' - Card ID for product `Pepsi` added successfully';
 
-EXEC Sch_CartManagement.sp_GetCartItemsForUser 'dharini'
+EXEC Sch_CartManagement.sp_CreateCartItems @UsernameInputParam, @FortuneOilItemParam, @CartIDOutputParam = @CartIDOutput OUTPUT
+PRINT CAST(@CartIDOutput as varchar) + ' - Card ID for product `Fortune Oil` added successfully';
+
+EXEC Sch_CartManagement.sp_CreateCartItems @UsernameInputParam, @VimItemParam, @CartIDOutputParam = @CartIDOutput OUTPUT
+PRINT CAST(@CartIDOutput as varchar) + ' - Card ID for product `Vim` added successfully';
+
+EXEC Sch_CartManagement.sp_GetCartItemsForUser 'karthik';

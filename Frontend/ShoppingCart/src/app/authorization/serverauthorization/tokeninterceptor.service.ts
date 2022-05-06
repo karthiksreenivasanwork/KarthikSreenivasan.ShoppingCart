@@ -22,9 +22,7 @@ export class TokeninterceptorService implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    console.log('Interceptor called for this request');
     let jwtToken = this.userService.getUserToken;
-    console.log(`JWT Token Data : ${jwtToken}`);
 
     //Clone the request and add a HTTPHeader to include the JWT token if available and an empty string otherwise.
     var tokenizedRequest = req.clone({

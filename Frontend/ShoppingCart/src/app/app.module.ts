@@ -14,6 +14,7 @@ import { ViewcartComponent } from './products/viewcart/viewcart.component';
 import { TokeninterceptorService } from './authorization/serverauthorization/tokeninterceptor.service';
 import { AddproductsComponent } from './products/addproducts/addproducts.component';
 import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe';
+import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe'
     ViewcartComponent,
     AddproductsComponent,
     ShowminimumproddescPipe,
+    NotfoundComponent,
   ],
   imports: [
     BrowserModule,

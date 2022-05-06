@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
  * jwt-decode is a small browser library that helps to decode JWTs token which is Base64Url encoded.
  */
 import jwt_decode from 'jwt-decode';
+import { CartService } from './cart.service';
 
 const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 
@@ -15,7 +16,7 @@ const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 export class UsersService {
   private _keysInLocalStorage: string[] = [];
 
-  constructor(public httpClient: HttpClient) {
+  constructor(public httpClient: HttpClient, public cartService: CartService) {
     this._keysInLocalStorage.push(LOCAL_STORAGE_KEY_LOGGED_USER);
   }
 
@@ -55,7 +56,7 @@ export class UsersService {
 
   /**
    * Returns true if the value is available and false otherwise.
-   * 
+   *
    * ToDo:
    * Check to see if the JWT key was tampered beyond the basic verification below
    * Please note that we are already verifying the JWT token integrity using HTTPInterceptors.
@@ -69,7 +70,8 @@ export class UsersService {
       try {
         //If the username exists, then the local authentication is completed
         isLoggedIn = !!jwtDataObject['unique_name'];
-      } catch (Error) { //Catch block indicates an invalid token
+      } catch (Error) {
+        //Catch block indicates an invalid token
       }
     }
     return isLoggedIn;
@@ -82,6 +84,7 @@ export class UsersService {
     this._keysInLocalStorage.forEach((localStorageKey) => {
       localStorage.removeItem(localStorageKey);
     });
+    this.cartService.clearCartItems();
   }
 
   /**
@@ -91,8 +94,16 @@ export class UsersService {
   getDecodedAccessToken(jwtTokenToVerify: string): any {
     try {
       return jwt_decode(jwtTokenToVerify);
-    } catch (Error) { //JWT token has been tampered if the catch block is executed
+    } catch (Error) {
+      //JWT token has been tampered if the catch block is executed
       return null;
     }
+  }
+
+  getUserName(jwtToken: string) {
+    let username: string = '';
+    if (this.isUserLoggedIn)
+      username = this.getDecodedAccessToken(jwtToken)['unique_name'];
+    return username;
   }
 }

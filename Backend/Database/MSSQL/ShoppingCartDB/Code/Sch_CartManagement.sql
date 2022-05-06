@@ -36,16 +36,17 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE Sch_CartManagement.sp_CreateCartItems
-@UserIDParam NUMERIC(6,0),
-@ProductIDParam NUMERIC(6,0)
+@UserNameParam NVARCHAR(200),
+@ProductIDParam NUMERIC(6,0),
+@CartIDOutputParam NUMERIC(6, 0) OUTPUT
 AS
 BEGIN
 	/*
-	* ToDo - Use transaction to create an order for a cart and and add cart items to it.
+	* ToDo - Use transactions to create an order for a cart and and add cart items to it.
 	* In case any issue was encountered while creating an order, then the whole transaction
 	* would be rolled back.
 	*/
-	DECLARE @UserIDInputParam NUMERIC(6,0) = (select u.UserID from T_Users as u where u.UserID = @UserIDParam);
+	DECLARE @UserIDInputParam NUMERIC(6,0) = (select u.UserID from T_Users as u where u.Username = @UserNameParam);
 	DECLARE @OrderIDOutput NUMERIC(6,0);
 	EXEC Sch_CartManagement.sp_CreateOrReturnExistingOrder @UserIDInputParam, @OrderIDOutputParam = @OrderIDOutput OUTPUT
 
@@ -54,6 +55,7 @@ BEGIN
 			@ProductIDParam,
 			@OrderIDOutput
 		);
+SELECT @CartIDOutputParam = SCOPE_IDENTITY()
 END
 GO
 

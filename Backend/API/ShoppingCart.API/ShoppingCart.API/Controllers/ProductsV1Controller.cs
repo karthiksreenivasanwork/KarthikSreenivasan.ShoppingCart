@@ -59,7 +59,7 @@ namespace ShoppingCart.API.Controllers
         /// <summary>
         /// Returns the list of all the products available
         /// </summary>
-        /// <returns>Returns ShoppingCart.API.Models.ProductModel</returns>
+        /// <returns>Returns a collection of ShoppingCart.API.Models.ProductModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the list of all the products available.")]
         [HttpGet("products")]
@@ -70,6 +70,28 @@ namespace ShoppingCart.API.Controllers
                 List<ProductModel> productCollection = _productDataProvider.getAllProducts();
                 foreach (var product in productCollection)
                     product.ProductImageURL = ProductImageManager.GetImageApiURL(this.Request.Host.Value, product.ProductImageName); //Update the image URL for each product.
+                return Ok(productCollection);
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: "Something went wrong. Unable to retrieve all the products.");
+            }
+        }
+
+        /// <summary>
+        /// Returns the list of all the products based on it's category ID
+        /// </summary>
+        /// <returns>Returns a collection of ShoppingCart.API.Models.ProductModel</returns>
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the list of all the products available.")]
+        [HttpGet("products/{categoryID}")]
+        public IActionResult GetProductsByCategory(int categoryID)
+        {
+            try
+            {
+                List<ProductModel> productCollection = _productDataProvider.getProductsByCategory(categoryID);
+                foreach (var product in productCollection)
+                    product.ProductImageURL = ProductImageManager.GetImageApiURL(this.Request.Host.Value, product.ProductImageName);
                 return Ok(productCollection);
             }
             catch (Exception ex)
@@ -221,7 +243,7 @@ namespace ShoppingCart.API.Controllers
                     ProductModel foundProduct = allProducts.Find(product => product.ProductID == ids[i]);
                     if (foundProduct == null) //Even if one product in the request does not exist, we cancel the delete operation.
                     {
-                        if(productsToDelete.Count > 0)
+                        if (productsToDelete.Count > 0)
                             productsToDelete.Clear();
                         return NotFound(string.Format("Product ID `{0}` does not exist. Hence, deleting multiple products has been canceled.", ids[i]));
                     }

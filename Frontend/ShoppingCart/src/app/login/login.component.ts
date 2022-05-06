@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CartService } from '../services/cart.service';
+import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
 declare var $: any;
 
@@ -15,7 +17,12 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
 
-  constructor(public usersService: UsersService, public router: Router) {}
+  constructor(
+    public usersService: UsersService,
+    public cartService: CartService,
+    public compCommunicate: ComponentcommunicationService,
+    public router: Router
+  ) {}
 
   ngOnInit(): void {
     $('.toggle').click(() => {
@@ -59,7 +66,7 @@ export class LoginComponent implements OnInit {
 
         this.userMessage = 'Something went wrong!';
         this.userErrorStatus = true;
-      }
+      },
     });
   }
 
@@ -71,20 +78,20 @@ export class LoginComponent implements OnInit {
             this.userErrorStatus = true;
             this.userMessage = 'Username or password incorrect';
           } else if (loginResponseData.length > 0) {
-            
             localStorage.setItem('loggeduser', loginResponseData);
             this.userErrorStatus = false;
-            this.router.navigateByUrl('/'); //When the user has successfully logged in.
+
+            let username: string = this.usersService.getUserName(loginResponseData);
+            this.compCommunicate.triggerLoginSuccessfulEvent(`Login successful for user - ${username}`);
+            this.router.navigateByUrl('/');
           }
         },
         error: (loginErrorData) => {
           console.log('Error during login process');
           console.log(loginErrorData);
 
-          if(loginErrorData.error)
-            this.userMessage = loginErrorData.error;
-          else
-            this.userMessage = "Something went wrong!";
+          if (loginErrorData.error) this.userMessage = loginErrorData.error;
+          else this.userMessage = 'Something went wrong!';
           this.userErrorStatus = true;
         },
       });

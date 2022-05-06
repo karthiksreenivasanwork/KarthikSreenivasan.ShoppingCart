@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { ProductModel } from '../productmodel';
 
@@ -10,13 +12,55 @@ import { ProductModel } from '../productmodel';
 export class ListproductsComponent implements OnInit {
   productModelCollection: ProductModel[] = [];
 
-  constructor(public productService: ProductsService) {}
+  constructor(
+    public productService: ProductsService,
+    public cartService: CartService,
+    public activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.productService.getAllProducts().subscribe({
+    this.activatedRoute.params.subscribe({
+      next: (parameter: Params) => {
+        if (parameter['categoryid']) {
+          //If the category ID is defined
+          this.productService
+            .getProductsByCategoryID(parameter['categoryid'])
+            .subscribe({
+              next: (filteredProducts: any) => {
+                this.productModelCollection = filteredProducts;
+              },
+              error: () => {
+                console.log(
+                  "Error retrieving product by it's product category"
+                );
+              },
+            });
+        } else {
+          /**
+           * If no query parameter is found to filter the product based on it's id,
+           * then, we display products from all categories.
+           */
+          this.productService.getAllProducts().subscribe({
+            next: (data: any) => {
+              this.productModelCollection = data as ProductModel[];
+            },
+            error: (error) => {
+              console.log(error);
+            },
+          });
+        }
+      },
+      error: (error) => {
+        console.log(error);
+      },
+    });
+  }
+
+  addToCart(productID: number) {
+    this.cartService.addItemsToCart(productID.toString()).subscribe({
       next: (data: any) => {
-        this.productModelCollection = data as ProductModel[];
-        console.log(data);
+        //Only update the cart count when the cart item has been successfully saved to the database.
+        this.cartService.updateCartCountSubj.next('');
       },
       error: (error) => {
         console.log(error);

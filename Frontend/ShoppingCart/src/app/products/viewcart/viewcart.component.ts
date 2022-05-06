@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
 
@@ -12,11 +13,12 @@ export class ViewcartComponent implements OnInit {
   constructor(
     public userService: UsersService,
     public productService: ProductsService,
+    public cartService: CartService,
     public router: Router
   ) {}
 
   ngOnInit(): void {
-    this.productService.getMyCartItems().subscribe({
+    this.cartService.getMyCartItems().subscribe({
       next: (data: any[]) => {
         console.log(data);
       },

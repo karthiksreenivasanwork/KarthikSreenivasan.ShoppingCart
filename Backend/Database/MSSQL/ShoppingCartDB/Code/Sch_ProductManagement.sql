@@ -122,6 +122,23 @@ SELECT p.ProductID,
 END
 GO
 
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_GetProductsByCategory
+@ProductCategoryIDParam NUMERIC(6, 0)
+AS
+BEGIN
+SELECT p.ProductID,
+	   p.ProductCategoryID,
+	   pc.ProductCategoryName,
+	   p.ProductName,
+	   p.ProductPrice,
+	   p.ProductDescription,
+	   p.ProductImageName FROM T_Products p
+	   join T_LU_ProductCategories pc
+	   on p.ProductCategoryID = pc.ProductCategoryID
+	   where p.ProductCategoryID = @ProductCategoryIDParam;
+END
+GO
+
 CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExistsByName
 @ProductNameInputParam VARCHAR(200),
 @ProductSearchCountOutputParam int OUTPUT 

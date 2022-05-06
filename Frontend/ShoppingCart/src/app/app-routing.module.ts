@@ -7,14 +7,36 @@ import { ViewcartComponent } from './products/viewcart/viewcart.component';
 
 import { ClientauthGuard } from './authorization/clientauthorization/clientauth.guard';
 import { AddproductsComponent } from './products/addproducts/addproducts.component';
-import { CategoriesComponent } from './categories/categories.component';
+import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
-  { path: 'categories', component: ListproductsComponent },
+  /**
+   * pathMatch: When the full path is ending with the route - categories,
+   * then you redirect to list all the products.
+   */
+  { path: 'categories', redirectTo: '/', pathMatch: 'full' },
+  /**
+   * Filter each product using it's category using dynamic routing.
+   * Dynamic routing is implemented using query parameters.
+   */
+  { path: 'categories/:categoryid', component: ListproductsComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'viewcart', component: ViewcartComponent , canActivate: [ClientauthGuard]},
-  { path: 'addproducts', component: AddproductsComponent , canActivate: [ClientauthGuard]},
+  {
+    path: 'viewcart',
+    component: ViewcartComponent,
+    canActivate: [ClientauthGuard],
+  },
+  {
+    path: 'addproducts',
+    component: AddproductsComponent,
+    canActivate: [ClientauthGuard],
+  },
+  /**
+   * Wild card route must be defined after all the known routes have been defined.
+   * If no route matches, we display the page not found error to the user.
+   */
+  { path: '**', component: NotfoundComponent },
 ];
 
 @NgModule({

@@ -92,6 +92,55 @@ namespace ShoppingCart.API.SQLDataProvider
         }
 
         /// <summary>
+        /// Returns the product collection based on it's category id.
+        /// </summary>
+        /// <param name="categoryID"></param>
+        /// <returns></returns>
+        public List<ProductModel> getProductsByCategory(int categoryID)
+        {
+            var productCollection = new List<ProductModel>();
+
+            try
+            {
+                SqlParameter productCategoryIDParam = new SqlParameter("ProductCategoryIDParam", SqlDbType.Int);
+                productCategoryIDParam.Value = categoryID;
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    productCategoryIDParam
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_ProductManagement.sp_GetProductsByCategory", sqlParameters))
+                {
+                    if (sqlReader != null)
+                    {
+                        while (sqlReader.Read())
+                        {
+                            productCollection.Add(new ProductModel
+                            {
+                                ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                                ProductCategoryID = Convert.ToInt32(sqlReader["ProductCategoryID"]),
+                                ProductCategoryName = sqlReader["ProductCategoryName"].ToString(),
+                                ProductName = sqlReader["ProductName"].ToString(),
+                                ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"].ToString()),
+                                ProductDescription = sqlReader["ProductDescription"].ToString(),
+                                ProductImageName = sqlReader["ProductImageName"].ToString(),
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return productCollection;
+        }
+
+        /// <summary>
         /// Register a new product.
         /// </summary>
         /// <param name="newProductToRegister">A new product with the specifications.</param>
