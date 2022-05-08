@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { ProductModel } from '../productmodel';
+import { IProductModel } from '../IProductModel';
 
 @Component({
   selector: 'app-addproducts',
@@ -53,7 +53,7 @@ export class AddproductsComponent implements OnInit {
     formData.append('ProductImage', this.productImage);
     this.productService.addProducts(formData).subscribe({
       next: (data) => {
-        let productModel = data as ProductModel;
+        let productModel = data as IProductModel;
         if (productModel != null) {
           if (productModel.productID > 0) {
             this.userMessage = `Product '${productModel.productName}' has been created`;

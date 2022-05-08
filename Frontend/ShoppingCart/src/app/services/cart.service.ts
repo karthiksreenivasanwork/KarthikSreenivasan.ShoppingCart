@@ -32,12 +32,32 @@ export class CartService {
     );
   }
 
-  addItemsToCart(productID: string) {
-    let productDataForm = new FormData();
-    productDataForm.append('ProductID', productID); //ProductID is the name of the property that maps the model defined in the API
+  addItemsToCart(productID: string): Observable<any> {
+    let cartItemDataToAdd = new FormData();
+    cartItemDataToAdd.append('ProductID', productID); //ProductID is the name of the property that maps the model defined in the API
     return this.httpClient.post(
       'https://localhost:44398/api/v1/Cart/add',
-      productDataForm
+      cartItemDataToAdd
+    );
+  }
+
+  removeProductQtyFromCart(orderID: string, productID: string): Observable<any> {
+    let cartItemDataToDelete = new FormData();
+    cartItemDataToDelete.append('orderID', orderID);
+    cartItemDataToDelete.append('productID', productID); 
+    return this.httpClient.post(
+      'https://localhost:44398/api/v1/Cart/removeprodqty',
+      cartItemDataToDelete
+    );
+  }
+
+  removeProductFromCart(orderID: string, productID: string): Observable<any> {
+    let cartItemDataToDelete = new FormData();
+    cartItemDataToDelete.append('orderID', orderID);
+    cartItemDataToDelete.append('productID', productID); 
+    return this.httpClient.post(
+      'https://localhost:44398/api/v1/Cart/removeproduct',
+      cartItemDataToDelete
     );
   }
 

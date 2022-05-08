@@ -33,17 +33,16 @@
         </div>
         <div class="form">
           <h2>Create an account</h2>
-          <!--
-            Clarification - Gopi Sir - ngClass not applying bootstrap class properly.
-          -->
-          <div
-            *ngIf="userMessage != null || userMessage != ''"
-            [ngClass]="{
-              'alert alert-success': !userErrorStatus,
-              'alert alert-danger': userErrorStatus
-            }"
-          >
-            {{ userMessage }}
+          <div class="alert-message-container" *ngIf="userMessage">
+            <div
+              class="alert-message-item alert"
+              [ngClass]="{
+                'alert-success': !userErrorStatus,
+                'alert-danger': userErrorStatus
+              }"
+            >
+              {{ userMessage }}
+            </div>
           </div>
           <form
             (submit)="doRegistration(formTemplateRef)"

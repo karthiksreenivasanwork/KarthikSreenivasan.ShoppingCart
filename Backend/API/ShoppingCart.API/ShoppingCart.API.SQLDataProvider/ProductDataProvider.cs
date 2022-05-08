@@ -346,11 +346,11 @@ namespace ShoppingCart.API.SQLDataProvider
 
             try
             {
-                SqlParameter productnameParam = new SqlParameter("ProductIDParam", productID);
+                SqlParameter productIDParam = new SqlParameter("ProductIDParam", productID);
 
                 List<SqlParameter> sqlParameters = new List<SqlParameter>
                 {
-                    productnameParam,
+                    productIDParam,
                 };
 
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(

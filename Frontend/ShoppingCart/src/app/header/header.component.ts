@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit {
     //Update cart count if the cart item is saved in the database.
     this.cartService.updateCartCountSubj.subscribe({
       next: () => {
-        this.cartCount += 1;
+        this.updateCartCountFromAPI();
       },
       error: () => {
         console.log('Error while updating the cart count.');

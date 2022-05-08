@@ -11,7 +11,7 @@ namespace ShoppingCart.API
     /// ToDo:
     ///     Find a better approach in order to avoid model duplicaton and works as intended with the Swagger UI.
     /// </summary>
-    public class CartSwaggerAddModel : CartModel
+    public class CartItemSwaggerAddModel : CartItemModel
     {
         private int CartID { get; set; }
         private int UserID { get; set; }

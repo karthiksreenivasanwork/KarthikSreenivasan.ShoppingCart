@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
-import { ProductModel } from '../productmodel';
+import { IProductModel } from '../IProductModel';
 
 @Component({
   selector: 'app-listproducts',
@@ -10,7 +10,10 @@ import { ProductModel } from '../productmodel';
   styleUrls: ['./listproducts.component.css'],
 })
 export class ListproductsComponent implements OnInit {
-  productModelCollection: ProductModel[] = [];
+  productModelCollection: IProductModel[] = [];
+
+  userMessage: string = '';
+  userErrorStatus: boolean = false;
 
   constructor(
     public productService: ProductsService,
@@ -42,7 +45,7 @@ export class ListproductsComponent implements OnInit {
            */
           this.productService.getAllProducts().subscribe({
             next: (data: any) => {
-              this.productModelCollection = data as ProductModel[];
+              this.productModelCollection = data as IProductModel[];
             },
             error: (error) => {
               console.log(error);
@@ -57,12 +60,20 @@ export class ListproductsComponent implements OnInit {
   }
 
   addToCart(productID: number) {
+    this.userMessage = '';
+    this.userErrorStatus = false;
+
     this.cartService.addItemsToCart(productID.toString()).subscribe({
       next: (data: any) => {
+        if (data != null) {
+          this.userMessage = `Product '${data.productname}' added to cart`;
+        } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
         this.cartService.updateCartCountSubj.next('');
       },
       error: (error) => {
+        this.userErrorStatus = true;
+        this.userMessage = 'Something went wrong!';
         console.log(error);
       },
     });

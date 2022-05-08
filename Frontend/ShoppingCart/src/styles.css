@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+.alert-message-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  
+  .alert-message-item {
+    text-align: center;
+  }
+  

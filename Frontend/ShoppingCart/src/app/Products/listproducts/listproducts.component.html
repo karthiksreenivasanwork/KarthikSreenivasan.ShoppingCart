@@ -2,6 +2,17 @@
   <div class="w3ls_w3l_banner_nav_right_grid">
     <div class="w3ls_w3l_banner_nav_right_grid1">
       <h6>Products</h6>
+      <div class="alert-message-container" *ngIf="userMessage">
+        <div
+          class="alert-message-item alert"
+          [ngClass]="{
+            'alert-success': !userErrorStatus,
+            'alert-danger': userErrorStatus
+          }"
+        >
+          {{ userMessage }}
+        </div>
+      </div>
       <div
         class="col-md-3 w3ls_w3l_banner_left"
         *ngFor="let product of productModelCollection"

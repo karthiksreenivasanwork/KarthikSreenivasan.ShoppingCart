@@ -23,35 +23,43 @@ namespace ShoppingCart.API.SQLDataProvider
             _databaseFunctions = new DatabaseFunctions();
         }
 
-        public async Task<int> AddNewItemToCart(CartModel cartModel)
+        public CartItemModel addNewItemToCart(CartItemModel cartModel)
         {
             if (cartModel == null)
                 throw new ArgumentNullException("cartModel");
 
             int commandResult = 0;
             SqlCommand commandReference = null;
-            int cartIDOutputData = 0;
+            CartItemModel cartModelAdded = new CartItemModel();
 
             try
             {
-                SqlParameter productIDOutputSQLParam = new SqlParameter("CartIDOutputParam", SqlDbType.Int);
-                productIDOutputSQLParam.Direction = ParameterDirection.Output;
-
                 List<SqlParameter> sqlParameters = new List<SqlParameter>
                 {
                     new SqlParameter("UserNameParam", cartModel.Username),
-                    new SqlParameter("ProductIDParam", cartModel.ProductID),
-                    productIDOutputSQLParam
+                    new SqlParameter("ProductIDParam", cartModel.ProductID)
                 };
 
-                (commandResult, commandReference) = await _databaseFunctions.executeNonQueryAsync(
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
                     _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
                     "Sch_CartManagement.sp_CreateCartItems",
-                    sqlParameters);
-
-                if (commandReference != null)
-                    if (commandResult > 0) //Record successfully inserted into the database.
-                        cartIDOutputData = Convert.ToInt32(productIDOutputSQLParam.Value);
+                    sqlParameters))
+                {
+                    if (sqlReader != null && sqlReader.HasRows)
+                    {
+                        sqlReader.Read();
+                        cartModelAdded = new CartItemModel
+                        {
+                            CartID = Convert.ToInt32(sqlReader["CartID"]),
+                            OrderID = Convert.ToInt32(sqlReader["OrderID"]),
+                            UserID = Convert.ToInt32(sqlReader["UserID"]),
+                            Username = sqlReader["Username"].ToString(),
+                            ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                            Productname = sqlReader["ProductName"].ToString(),
+                            ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"])
+                        };
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -59,12 +67,104 @@ namespace ShoppingCart.API.SQLDataProvider
                 System.Diagnostics.Debug.WriteLine(ex);
                 throw ex;
             }
-            return cartIDOutputData;
+            return cartModelAdded;
         }
 
-        public List<CartModel> getCartItemForUser(string usernameParam)
+        public CartItemModel removeProductQuantityFromCart(CartItemModel cartModel)
         {
-            var cartCollection = new List<CartModel>();
+            if (cartModel == null)
+                throw new ArgumentException("cartModel");
+
+            CartItemModel cartModelAfterDelete = null;
+
+            try
+            {
+                SqlParameter orderIDParam = new SqlParameter("OrderIDParam", cartModel.OrderID);
+                SqlParameter productIDParam = new SqlParameter("ProductIDParam", cartModel.ProductID);
+
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    orderIDParam,
+                    productIDParam
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_CartManagement.spRemoveProductQtyFromCart",
+                    sqlParameters))
+                {
+                    if (sqlReader != null && sqlReader.HasRows)
+                    {
+                        sqlReader.Read();
+                        cartModelAfterDelete = new CartItemModel
+                        {
+                            CartID = Convert.ToInt32(sqlReader["CartID"]),
+                            OrderID = Convert.ToInt32(sqlReader["OrderID"]),
+                            ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                            ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"]),
+                            Productname = sqlReader["Productname"].ToString()
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return cartModelAfterDelete;
+        }
+
+        public CartItemModel removeProductFromCart(CartItemModel cartModel)
+        {
+            if (cartModel == null)
+                throw new ArgumentException("cartModel");
+
+            CartItemModel cartModelAfterDelete = null;
+
+            try
+            {
+                SqlParameter orderIDParam = new SqlParameter("OrderIDParam", cartModel.OrderID);
+                SqlParameter productIDParam = new SqlParameter("ProductIDParam", cartModel.ProductID);
+
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    orderIDParam,
+                    productIDParam
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    "Sch_CartManagement.spRemoveProductFromCart",
+                    sqlParameters))
+                {
+                    if (sqlReader != null && sqlReader.HasRows)
+                    {
+                        sqlReader.Read();
+                        cartModelAfterDelete = new CartItemModel
+                        {
+                            CartID = Convert.ToInt32(sqlReader["CartID"]),
+                            OrderID = Convert.ToInt32(sqlReader["OrderID"]),
+                            ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                            ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"]),
+                            Productname = sqlReader["Productname"].ToString()
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return cartModelAfterDelete;
+        }
+
+        public List<CartItemCollectionModel> getCartItemForUser(string usernameParam)
+        {
+            var cartCollection = new List<CartItemCollectionModel>();
 
             try
             {
@@ -80,13 +180,16 @@ namespace ShoppingCart.API.SQLDataProvider
                     if (sqlReader != null)
                     {
                         while (sqlReader.Read())
-                            cartCollection.Add(new CartModel
+                            cartCollection.Add(new CartItemCollectionModel
                             {
-                                CartID = Convert.ToInt32(sqlReader["CartID"]),
                                 OrderID = Convert.ToInt32(sqlReader["OrderID"]),
-                                UserID = Convert.ToInt32(sqlReader["UserID"]),
+                                ProductID = Convert.ToInt32(sqlReader["ProductID"]),
                                 Productname = sqlReader["Productname"].ToString(),
-                                ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"]),
+                                Quantity = Convert.ToInt32(sqlReader["Quantity"]),
+                                TotalAmount = Convert.ToInt64(sqlReader["TotalAmount"]),
+                                ProductImageName = sqlReader["ProductImageName"].ToString(),
+                                UserID = Convert.ToInt32(sqlReader["UserID"]),
+                                Username = sqlReader["Username"].ToString(),
                             });
                     }
                 }
