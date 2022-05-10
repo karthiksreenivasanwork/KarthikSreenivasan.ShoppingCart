@@ -11,6 +11,9 @@ import { Observable, throwError, catchError } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
 
 /**
+ * Attaches a HTTP header with the JWT token for each request to the API
+ * after the user has been authenticated.
+ *  
  * Added server side authorization using HTTP_INTERCEPTORS.
  * Injectable: This is required in the recent versions of Angular even though we are adding them in the providers of the app.module.
  */

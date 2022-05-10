@@ -17,7 +17,7 @@
     </form>
   </div>
   <div class="product_list_header">
-    <a routerLink="/viewcart">
+    <a routerLink="authorized/viewcart">
       <input
         type="submit"
         name="submit"
@@ -51,7 +51,7 @@
               class="dropdown-menu drp-mnu"
               *ngIf="usersService.isUserLoggedIn"
             >
-              <li><a routerLink="addproducts">Add products</a></li>
+              <li><a routerLink="authorized/addproducts">Add products</a></li>
               <li><a (click)="onLogoutClick()">Logout</a></li>
             </ul>
           </div>

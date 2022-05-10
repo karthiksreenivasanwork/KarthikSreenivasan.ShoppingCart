@@ -6,6 +6,9 @@ import { ComponentcommunicationService } from '../services/componentcommunicatio
 import { UsersService } from '../services/users.service';
 declare var $: any;
 
+/**
+ * User interface to authenicate a user.
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',

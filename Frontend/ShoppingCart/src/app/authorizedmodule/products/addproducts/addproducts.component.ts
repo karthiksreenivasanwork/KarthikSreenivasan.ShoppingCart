@@ -3,8 +3,11 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { IProductModel } from '../IProductModel';
+import { IProductModel } from '../../../products/IProductModel';
 
+/**
+ * User interface to add a new product to the shopping cart.
+ */
 @Component({
   selector: 'app-addproducts',
   templateUrl: './addproducts.component.html',

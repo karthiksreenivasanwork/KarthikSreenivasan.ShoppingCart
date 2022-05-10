@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {
+  PreloadAllModules,
+  RouterModule,
+  Routes,
+} from '@angular/router';
 
 import { LoginComponent } from './login/login.component';
 import { ListproductsComponent } from './products/listproducts/listproducts.component';
-import { ViewcartComponent } from './products/viewcart/viewcart.component';
 
-import { ClientauthGuard } from './authorization/clientauthorization/clientauth.guard';
-import { AddproductsComponent } from './products/addproducts/addproducts.component';
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 
 const routes: Routes = [
@@ -22,15 +23,21 @@ const routes: Routes = [
    */
   { path: 'categories/:categoryid', component: ListproductsComponent },
   { path: 'login', component: LoginComponent },
+  /**
+   * Note: The order of asynchronous loading is based on the order of loading each feature module.
+   * Hence, order the feature modules based on the use case of the user.
+   * 
+   * Example: 
+   * Feature module 1: Product module
+   * Feature module 2: Cart module
+   * Feature module 3: Payment module
+   */
   {
-    path: 'viewcart',
-    component: ViewcartComponent,
-    canActivate: [ClientauthGuard],
-  },
-  {
-    path: 'addproducts',
-    component: AddproductsComponent,
-    canActivate: [ClientauthGuard],
+    path: 'authorized',
+    loadChildren: () =>
+      import('./authorizedmodule/authorized.module').then(
+        (module) => module.AuthorizedModule
+      ),
   },
   /**
    * Wild card route must be defined after all the known routes have been defined.
@@ -44,7 +51,9 @@ const routes: Routes = [
    * forRoot(routes) - Sepcifies that the routing is targetting only the root module.
    * forChild(routes) - Specifies that these are for the feature modules.
    */
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }), //Asynchronous loading: preloadingStrategy - PreloadAllModules
+  ],
   /**
    * Library related export. It supports features like
    * 1. Router module directive: <router-outlet></router-outlet>

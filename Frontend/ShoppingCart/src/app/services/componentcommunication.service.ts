@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
 /**
- * This service helps communicate between components
+ * Service that helps communicate between components
  */
 @Injectable({
   providedIn: 'root',

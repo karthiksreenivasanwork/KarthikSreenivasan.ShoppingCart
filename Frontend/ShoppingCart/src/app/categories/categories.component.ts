@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../services/products.service';
 
+/**
+ * Displays the list of categories available for each product to help filter data 
+ */
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',

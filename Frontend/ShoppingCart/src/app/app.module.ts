@@ -10,9 +10,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { ListproductsComponent } from './products/listproducts/listproducts.component';
 import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
-import { ViewcartComponent } from './products/viewcart/viewcart.component';
 import { TokeninterceptorService } from './authorization/serverauthorization/tokeninterceptor.service';
-import { AddproductsComponent } from './products/addproducts/addproducts.component';
 import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe';
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 
@@ -24,8 +22,6 @@ import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
     ListproductsComponent,
     FooterComponent,
     LoginComponent,
-    ViewcartComponent,
-    AddproductsComponent,
     ShowminimumproddescPipe,
     NotfoundComponent,
   ],

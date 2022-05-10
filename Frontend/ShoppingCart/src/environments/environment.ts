@@ -2,8 +2,12 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+/**
+ * Note: We can also add other configuration details such as payment gateway for each environment.
+ */
 export const environment = {
-  production: false
+  production: false,
+  apiServer: "https://localhost:44398"
 };
 
 /*

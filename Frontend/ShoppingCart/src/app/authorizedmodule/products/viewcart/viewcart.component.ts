@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { ICartItemCollectionModel } from '../ICartItemCollectionModel';
-import { ICartitemModel } from '../ICartitemModel';
+import { ICartItemCollectionModel } from '../../../products/ICartItemCollectionModel';
+import { ICartitemModel } from '../../../products/ICartitemModel';
 
 @Component({
   selector: 'app-viewcart',
@@ -83,7 +83,7 @@ export class ViewcartComponent implements OnInit {
               this.updateTotalAmount();
             }
           },
-          error: (error) => {
+          error: () => {
             this.userErrorStatus = true;
             this.userMessage = 'Something went wrong';
             console.log('Unable to remove item from cart.');
@@ -114,7 +114,7 @@ export class ViewcartComponent implements OnInit {
               this.updateTotalAmount();
             }
           },
-          error: (error) => {
+          error: () => {
             this.userErrorStatus = true;
             this.userMessage = 'Something went wrong';
             console.log('Unable to remove product from cart.');
@@ -138,7 +138,7 @@ export class ViewcartComponent implements OnInit {
         }
         this.userMessage = `Product '${cartModel.productname}' added to cart`;
       },
-      error: (error) => {
+      error: () => {
         this.userErrorStatus = true;
         this.userMessage = 'Something went wrong';
         console.log('Unable to add items to cart.');

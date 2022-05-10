@@ -4,6 +4,9 @@ import { CartService } from '../services/cart.service';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
 
+/**
+ * User interface that is represents the top section of this application
+ */
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',

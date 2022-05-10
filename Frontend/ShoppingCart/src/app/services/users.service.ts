@@ -7,16 +7,24 @@ import { Observable } from 'rxjs';
  */
 import jwt_decode from 'jwt-decode';
 import { CartService } from './cart.service';
+import { GlobalappdataService } from './globalappdata.service';
 
 const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 
+/**
+ * Service that is responsible for user authentication
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
   private _keysInLocalStorage: string[] = [];
 
-  constructor(public httpClient: HttpClient, public cartService: CartService) {
+  constructor(
+    public httpClient: HttpClient,
+    public cartService: CartService,
+    public globalAppData: GlobalappdataService
+  ) {
     this._keysInLocalStorage.push(LOCAL_STORAGE_KEY_LOGGED_USER);
   }
 
@@ -27,7 +35,7 @@ export class UsersService {
    */
   userRegistration(registrationDataFromUser: any): Observable<string> {
     return this.httpClient.post(
-      'https://localhost:44398/api/v1/users/register',
+      `${this.globalAppData.GetApiUrl}/api/v1/users/register`,
       registrationDataFromUser,
       { responseType: 'text' }
     );
@@ -40,7 +48,7 @@ export class UsersService {
    */
   userLogin(loginCredentialFromUser: any): Observable<string> {
     return this.httpClient.post(
-      'https://localhost:44398/api/v1/users/login',
+      `${this.globalAppData.GetApiUrl}/api/v1/users/login`,
       loginCredentialFromUser,
       { responseType: 'text' } //The return value is JSON by default and we need to change that to text.
     );
@@ -84,7 +92,7 @@ export class UsersService {
     this._keysInLocalStorage.forEach((localStorageKey) => {
       localStorage.removeItem(localStorageKey);
     });
-    this.cartService.clearCartItems();
+    this.cartService.clearCartItemsCount();
   }
 
   /**
@@ -100,6 +108,11 @@ export class UsersService {
     }
   }
 
+  /**
+   * Return the username of the authenticated user.
+   * @param jwtToken
+   * @returns
+   */
   getUserName(jwtToken: string) {
     let username: string = '';
     if (this.isUserLoggedIn)
