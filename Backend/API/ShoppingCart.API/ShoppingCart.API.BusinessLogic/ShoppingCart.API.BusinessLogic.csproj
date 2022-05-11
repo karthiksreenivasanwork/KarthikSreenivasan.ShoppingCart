@@ -14,4 +14,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingCart.API.Coordinator\ShoppingCart.API.Coordinator.csproj" />
+  </ItemGroup>
+
 </Project>

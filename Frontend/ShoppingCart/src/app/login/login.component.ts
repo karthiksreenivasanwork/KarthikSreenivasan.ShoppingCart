@@ -96,6 +96,8 @@ export class LoginComponent implements OnInit {
           if (loginErrorData.error) this.userMessage = loginErrorData.error;
           else this.userMessage = 'Something went wrong!';
           this.userErrorStatus = true;
+
+          this.loginForm.reset();
         },
       });
     } else {

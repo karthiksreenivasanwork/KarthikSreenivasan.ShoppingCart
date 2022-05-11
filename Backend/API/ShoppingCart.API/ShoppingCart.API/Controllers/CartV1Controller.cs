@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ShoppingCart.API.BusinessLogic;
+using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace ShoppingCart.API.Controllers
 {
@@ -23,11 +20,11 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "Cart Controller - V1")]
     public class CartV1Controller : ControllerBase
     {
-        /*
-         * ToDo - Move this to business logic using a interface to coordinate with the data provider.
-         */
-        CartDataProvider _cartDataProvider;
-        ProductDataProvider _productDataProvider;
+        Cart _cart;
+        Product _product;
+
+        ICartDataProvider _cartProvider;
+        IProductDataProvider _productDataProvider;
 
         /// <summary>
         /// Initialize controller
@@ -35,8 +32,11 @@ namespace ShoppingCart.API.Controllers
         /// <param name="configuration">Dependency injected parameter to get application configuration</param>
         public CartV1Controller(IConfiguration configuration)
         {
-            _cartDataProvider = new CartDataProvider(configuration);
-            _productDataProvider = new ProductDataProvider(configuration);
+            this._cart = new Cart(Coordinator.ProviderType.SQL, configuration);
+            this._cartProvider = this._cart.getCartProvider();
+
+            this._product = new Product(Coordinator.ProviderType.SQL, configuration);
+            this._productDataProvider = this._product.getProductProvider();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ShoppingCart.API.Controllers
         {
             try
             {
-                var cartItemCollection = _cartDataProvider.getCartItemForUser(((ClaimsIdentity)User.Identity).Name);
+                var cartItemCollection = this._cartProvider.getCartItemForUser(((ClaimsIdentity)User.Identity).Name);
                 foreach (var product in cartItemCollection)
                     product.ProductImageURL = ProductImageManager.GetImageApiURL(this.Request.Host.Value, product.ProductImageName);
                 return Ok(cartItemCollection);
@@ -76,7 +76,7 @@ namespace ShoppingCart.API.Controllers
                  * Todo:
                  * In case of performance issues, we need to create a direct call to the database.
                  */
-                return Ok(_cartDataProvider.getCartItemForUser(((ClaimsIdentity)User.Identity).Name).Count);
+                return Ok(this._cartProvider.getCartItemForUser(((ClaimsIdentity)User.Identity).Name).Count);
             }
             catch (Exception ex)
             {
@@ -107,7 +107,7 @@ namespace ShoppingCart.API.Controllers
                     ProductID = cartItemDetails.ProductID
                 };
 
-                newCartItemResult = _cartDataProvider.addNewItemToCart(newCartItemParam);
+                newCartItemResult = this._cartProvider.addNewItemToCart(newCartItemParam);
             }
             catch (Exception ex)
             {
@@ -142,7 +142,7 @@ namespace ShoppingCart.API.Controllers
                     ProductID = Convert.ToInt32(cartModelToDelete.ProductID)
                 };
 
-                deletedCartItemModel = _cartDataProvider.removeProductQuantityFromCart(cartItemToDelete);
+                deletedCartItemModel = this._cartProvider.removeProductQuantityFromCart(cartItemToDelete);
                 if (deletedCartItemModel == null)
                     return NotFound(string.Format("Unable to find product id {0} for the order {1}.", cartItemToDelete.OrderID, cartItemToDelete.ProductID));
             }
@@ -178,7 +178,7 @@ namespace ShoppingCart.API.Controllers
                     ProductID = Convert.ToInt32(cartModelToDelete.ProductID)
                 };
 
-                deletedCartItemModel = _cartDataProvider.removeProductFromCart(cartItemToDelete);
+                deletedCartItemModel = this._cartProvider.removeProductFromCart(cartItemToDelete);
                 if (deletedCartItemModel == null)
                     return NotFound(string.Format("Unable to find product id {0} for the order {1}.", cartItemToDelete.OrderID, cartItemToDelete.ProductID));
             }

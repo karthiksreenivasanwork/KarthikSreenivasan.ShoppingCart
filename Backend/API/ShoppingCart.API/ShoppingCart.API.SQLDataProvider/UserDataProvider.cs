@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,15 @@ namespace ShoppingCart.API.SQLDataProvider
     // Summary:
     //     Performs all CRUD (Create, Read, Update, Delete) in relation to user details.
     /// </summary>
-    public class UserDataProvider
+    public class UserDataProvider : IUserDataProvider
     {
-        IConfiguration _configuration; //Required NuGet package - Microsoft.Extensions.Configuration.Abstractions
+        string _sqlConnectionString;
         DatabaseFunctions _databaseFunctions = null;
 
-        public UserDataProvider(IConfiguration configuration)
+        public UserDataProvider(string sqlConnectionString)
         {
-            this._configuration = configuration;
-            _databaseFunctions = new DatabaseFunctions();
+            this._sqlConnectionString = sqlConnectionString;
+            this._databaseFunctions = new DatabaseFunctions();
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_UserManagement.sp_CreateUser",
                     sqlParameters);
 
@@ -94,7 +95,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_UserManagement.sp_ReturnHashedPasswordOfRegisteredUser",
                     sqlParameters);
 
@@ -137,7 +138,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_UserManagement.sp_UserExists",
                     sqlParameters);
 

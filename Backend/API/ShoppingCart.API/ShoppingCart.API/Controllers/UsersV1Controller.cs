@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ShoppingCart.API.BusinessLogic;
+using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,10 +24,8 @@ namespace ShoppingCart.API.Controllers
         IConfiguration _configuration;
         PasswordHashManager _passwordHashManager;
 
-        /*
-         * ToDo - Move this to business logic using a interface to coordinate with the data provider.
-         */
-        UserDataProvider _userDataProvider;
+        User _user;
+        IUserDataProvider _userDataProvider;
 
         /// <summary>
         /// Initialize controller
@@ -35,8 +34,10 @@ namespace ShoppingCart.API.Controllers
         public UsersV1Controller(IConfiguration configuration)
         {
             this._configuration = configuration;
-            _userDataProvider = new UserDataProvider(configuration);
-            _passwordHashManager = new PasswordHashManager();
+            this._passwordHashManager = new PasswordHashManager();
+
+            this._user = new User(Coordinator.ProviderType.SQL, configuration);
+            this._userDataProvider = this._user.getUserProvider();
         }
 
         #region CRUD methods

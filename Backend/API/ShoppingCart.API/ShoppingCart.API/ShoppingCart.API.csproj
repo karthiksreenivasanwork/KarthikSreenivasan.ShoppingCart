@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ShoppingCart.API.BusinessLogic\ShoppingCart.API.BusinessLogic.csproj" />
     <ProjectReference Include="..\ShoppingCart.API.Models\ShoppingCart.API.Models.csproj" />
-    <ProjectReference Include="..\ShoppingCart.API.SQLDataProvider\ShoppingCart.API.SQLDataProvider.csproj" />
   </ItemGroup>
 
 </Project>

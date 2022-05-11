@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ShoppingCart.API.BusinessLogic;
+using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,10 +24,8 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "Products Controller - V1")]
     public class ProductsV1Controller : ControllerBase
     {
-        /*
-         * ToDo - Move this to business logic using a interface to coordinate with the data provider.
-         */
-        ProductDataProvider _productDataProvider;
+        Product _product;
+        IProductDataProvider _productDataProvider;
 
         /// <summary>
         /// Initialize controller
@@ -34,7 +33,8 @@ namespace ShoppingCart.API.Controllers
         /// <param name="configuration">Dependency injected parameter to get application configuration</param>
         public ProductsV1Controller(IConfiguration configuration)
         {
-            _productDataProvider = new ProductDataProvider(configuration);
+            this._product = new Product(Coordinator.ProviderType.SQL, configuration);
+            this._productDataProvider = this._product.getProductProvider();
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -13,14 +13,14 @@ namespace ShoppingCart.API.SQLDataProvider
     // Summary:
     //     Performs all CRUD(Create, Read, Update, Delete) in relation to product details.
     /// </summary>
-    public class ProductDataProvider
+    public class ProductDataProvider : IProductDataProvider
     {
-        IConfiguration _configuration; //Required NuGet package - Microsoft.Extensions.Configuration.Abstractions
+        string _sqlConnectionString;
         DatabaseFunctions _databaseFunctions;
 
-        public ProductDataProvider(IConfiguration configuration)
+        public ProductDataProvider(string sqlConnectionString)
         {
-            this._configuration = configuration;
+            this._sqlConnectionString = sqlConnectionString;
             _databaseFunctions = new DatabaseFunctions();
         }
 
@@ -31,7 +31,7 @@ namespace ShoppingCart.API.SQLDataProvider
             try
             {
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_GetAllProductCategories"))
                 {
                     if (sqlReader != null)
@@ -61,7 +61,7 @@ namespace ShoppingCart.API.SQLDataProvider
             try
             {
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_GetAllProducts"))
                 {
                     if (sqlReader != null)
@@ -110,7 +110,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_GetProductsByCategory", sqlParameters))
                 {
                     if (sqlReader != null)
@@ -175,7 +175,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = await _databaseFunctions.executeNonQueryAsync(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_CreateProduct",
                     sqlParameters);
 
@@ -221,7 +221,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_UpdateProduct",
                     sqlParameters))
                 {
@@ -273,7 +273,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_ProductExistsByName",
                     sqlParameters);
 
@@ -316,7 +316,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_ProductExistsByID",
                     sqlParameters);
 
@@ -354,7 +354,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 };
 
                 using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
-                    _configuration.GetConnectionString(SqlProviderStrings.SQL_CONNECTION_KEY_NAME),
+                    this._sqlConnectionString,
                     "Sch_ProductManagement.sp_DeleteProduct",
                     sqlParameters))
                 {
@@ -381,6 +381,5 @@ namespace ShoppingCart.API.SQLDataProvider
             }
             return productModelAfterDelete;
         }
-
     }
 }

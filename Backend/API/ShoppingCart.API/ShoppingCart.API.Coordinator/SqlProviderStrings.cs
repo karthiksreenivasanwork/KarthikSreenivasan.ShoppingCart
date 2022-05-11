@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShoppingCart.API.SQLDataProvider
+namespace ShoppingCart.API.Coordinator
 {
     internal class SqlProviderStrings
     {
