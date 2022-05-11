@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
@@ -25,13 +25,13 @@ export class ListproductsComponent implements OnInit, OnDestroy {
   constructor(
     public productService: ProductsService,
     public cartService: CartService,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
     this.parameterSubscription = this.activatedRoute.params.subscribe({
       next: (parameter: Params) => {
-        console.log(parameter);
         if (parameter['categoryid']) {
           /**
            * Unsubscription is not required for API calls as the subscription gets completed
@@ -102,5 +102,19 @@ export class ListproductsComponent implements OnInit, OnDestroy {
      * Avoids having multiple subscriptions if this component is initialized multiple times.
      */
     this.parameterSubscription.unsubscribe();
+  }
+
+  /**
+   * Event handler when a single product is selected
+   * @param productData 
+   */
+  onProductSelected(productData: IProductModel){
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+          "productinfo": JSON.stringify(productData)
+      }
+    };
+  
+    this.router.navigate(["viewproduct"],  navigationExtras);
   }
 }

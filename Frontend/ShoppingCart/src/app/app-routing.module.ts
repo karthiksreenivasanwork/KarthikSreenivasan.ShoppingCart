@@ -1,14 +1,11 @@
 import { NgModule } from '@angular/core';
-import {
-  PreloadAllModules,
-  RouterModule,
-  Routes,
-} from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent } from './login/login.component';
 import { ListproductsComponent } from './products/listproducts/listproducts.component';
 
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
+import { ViewproductComponent } from './products/viewproduct/viewproduct.component';
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
@@ -22,12 +19,13 @@ const routes: Routes = [
    * Dynamic routing is implemented using query parameters.
    */
   { path: 'categories/:categoryid', component: ListproductsComponent },
+  { path: 'viewproduct', component: ViewproductComponent },
   { path: 'login', component: LoginComponent },
   /**
    * Note: The order of asynchronous loading is based on the order of loading each feature module.
    * Hence, order the feature modules based on the use case of the user.
-   * 
-   * Example: 
+   *
+   * Example:
    * Feature module 1: Product module
    * Feature module 2: Cart module
    * Feature module 3: Payment module

@@ -13,6 +13,7 @@ import { LoginComponent } from './login/login.component';
 import { TokeninterceptorService } from './authorization/serverauthorization/tokeninterceptor.service';
 import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe';
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
+import { ViewproductComponent } from './products/viewproduct/viewproduct.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
     LoginComponent,
     ShowminimumproddescPipe,
     NotfoundComponent,
+    ViewproductComponent,
   ],
   imports: [
     BrowserModule,
