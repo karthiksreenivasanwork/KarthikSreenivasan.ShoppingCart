@@ -13,7 +13,7 @@ import { ViewcartComponent } from './products/viewcart/viewcart.component';
 @NgModule({
   declarations: [
     ViewcartComponent,
-    AddproductsComponent,
+    AddproductsComponent
   ],
   imports: [
     CommonModule,

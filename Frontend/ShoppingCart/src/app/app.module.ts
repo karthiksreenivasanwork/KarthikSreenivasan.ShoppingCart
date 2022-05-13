@@ -14,6 +14,7 @@ import { TokeninterceptorService } from './authorization/serverauthorization/tok
 import { ShowminimumproddescPipe } from './custompipes/showminimumproddesc.pipe';
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 import { ViewproductComponent } from './products/viewproduct/viewproduct.component';
+import { ComingsoonComponent } from './others/comingsoon/comingsoon.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ViewproductComponent } from './products/viewproduct/viewproduct.compone
     LoginComponent,
     ShowminimumproddescPipe,
     NotfoundComponent,
-    ViewproductComponent
+    ViewproductComponent,
+    ComingsoonComponent
   ],
   imports: [
     BrowserModule,

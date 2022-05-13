@@ -6,6 +6,7 @@ import { ListproductsComponent } from './products/listproducts/listproducts.comp
 
 import { NotfoundComponent } from './errorhandling/notfound/notfound.component';
 import { ViewproductComponent } from './products/viewproduct/viewproduct.component';
+import { ComingsoonComponent } from './others/comingsoon/comingsoon.component';
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
@@ -39,6 +40,7 @@ const routes: Routes = [
         (module) => module.AuthorizedModule
       ),
   },
+  { path: 'comingsoon/:pagename', component: ComingsoonComponent },
   /**
    * Wild card route must be defined after all the known routes have been defined.
    * If no route matches, we display the page not found error to the user.

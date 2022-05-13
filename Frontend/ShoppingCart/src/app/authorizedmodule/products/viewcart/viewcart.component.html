@@ -97,6 +97,7 @@
                     type="text"
                     name="name"
                     placeholder="Full name"
+                    [disabled]="true"
                   />
                 </div>
                 <div class="w3_agileits_card_number_grids">
@@ -107,6 +108,7 @@
                         class="form-control"
                         type="text"
                         placeholder="Mobile number"
+                        [disabled]="true"
                       />
                     </div>
                   </div>
@@ -117,6 +119,7 @@
                         class="form-control"
                         type="text"
                         placeholder="Landmark"
+                        [disabled]="true"
                       />
                     </div>
                   </div>
@@ -128,23 +131,24 @@
                     class="form-control"
                     type="text"
                     placeholder="Town/City"
+                    [disabled]="true"
                   />
                 </div>
                 <div class="controls">
                   <label class="control-label">Address type: </label>
-                  <select class="form-control option-w3ls">
+                  <select class="form-control option-w3ls" [disabled]="true">
                     <option>Office</option>
                     <option>Home</option>
                     <option>Commercial</option>
                   </select>
                 </div>
               </div>
-              <button class="submit check_out">Delivery to this Address</button>
+              <button class="submit check_out" routerLink="/comingsoon/Deliver">Delivery to this Address</button>
             </div>
           </section>
         </form>
         <div class="checkout-right-basket">
-          <a href="payment.html"
+          <a routerLink="/comingsoon/Payment"
             >Make a Payment
             <span
               class="glyphicon glyphicon-chevron-right"
