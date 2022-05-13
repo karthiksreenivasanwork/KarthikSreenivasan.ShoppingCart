@@ -25,7 +25,7 @@ import { ViewproductComponent } from './products/viewproduct/viewproduct.compone
     LoginComponent,
     ShowminimumproddescPipe,
     NotfoundComponent,
-    ViewproductComponent,
+    ViewproductComponent
   ],
   imports: [
     BrowserModule,

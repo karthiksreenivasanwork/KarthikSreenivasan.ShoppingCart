@@ -9,6 +9,8 @@ import { ViewproductComponent } from './products/viewproduct/viewproduct.compone
 
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
+  { path: 'listproducts', component: ListproductsComponent },
+  { path: 'listproducts/:productsearchname', component: ListproductsComponent },
   /**
    * pathMatch: When the full path is ending with the route - categories,
    * then you redirect to list all the products.

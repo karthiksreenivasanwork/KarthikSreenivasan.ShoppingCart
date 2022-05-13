@@ -63,8 +63,6 @@ export class ViewcartComponent implements OnInit {
         .removeProductQtyFromCart(orderID.toString(), productID.toString())
         .subscribe({
           next: (data: any) => {
-            console.log(data);
-
             let cartModel = data as ICartitemModel;
             if (cartModel != null) {
               this.cartItemCollection[index].quantity -= 1;

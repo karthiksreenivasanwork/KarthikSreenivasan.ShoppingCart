@@ -8,12 +8,15 @@
       <input
         type="text"
         name="Product"
-        value="Search a product..."
-        onfocus="this.value = '';"
-        onblur="if (this.value == '') {this.value = 'Search a product...';}"
         required=""
+        [(ngModel)]="searchedProductName"
+        (keyup)="onSearchTextBoxKeyUpEvent()"
+        (focus)="onSearchTextBoxFocus()"
+        (blur)="onSearchTextBoxBlur()"
+        autocomplete="off"
+        maxlength="15"
       />
-      <input type="submit" value=" " />
+      <input type="submit" value=" " (click)="onSearchButtonClick()" />
     </form>
   </div>
   <div class="product_list_header">
