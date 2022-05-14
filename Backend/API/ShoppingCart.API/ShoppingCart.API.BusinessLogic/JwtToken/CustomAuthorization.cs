@@ -11,7 +11,6 @@ namespace ShoppingCart.API.BusinessLogic
     /// Summary:
     //     Specifies that the method that this attribute is applied to requires role based access if required along with JWT Token authentication.
     /// </summary>
-    //[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class CustomAuthorize : AuthorizeAttribute, IAuthorizationFilter
     {
