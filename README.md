@@ -1,5 +1,5 @@
 # Shopping Cart Project
-`Shopping Cart` project created using Angular for the front end and .Net Core 5 (API) and Microsoft SQL Server for the backend.
+`Shopping Cart` project was created using Angular for the front end and .Net Core 5 (API) and Microsoft SQL Server for the backend.
 
 # Technology Stack Details
 - **Angular:** This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.5.
@@ -7,7 +7,8 @@
 - **Database:** Microsoft SQL Server 2019.
 
 ## User Interface
-![Shopping Cart - User Interface](/gitimages/KarthikSreenivasan.ShoppingCart-AngularUserInterface.png)
+![Shopping Cart - Home Page](/gitimages/KarthikSreenivasan.ShoppingCart-AngularUserInterface_Part-1.png)
+![Shopping Cart - Cart Items](/gitimages/KarthikSreenivasan.ShoppingCart-AngularUserInterface_Part-2.png)
 
 ## Swagger API Documentation
 ![Web API- User Controller](/gitimages/KarthikSreenivasan.ShoppingCart-SwaggerAPI_Doc_Part-1.png)
@@ -24,14 +25,14 @@ Please find the description of the concepts implemented in this project detailed
   - Concepts
     - **Registration control validations:** Template driven forms.
     - **Login control validations:** Reactive forms.
-    - **Client side authorization:** Route Guard.
+    - **Client-side authorization:** Route Guard.
     	- Example: First level verification to check for the user authentication ensuring a JWT token was created in the local storage.
-    - **Server side authorization:** HttpInterceptor.
+    - **Server-side authorization:** HttpInterceptor.
     	- Example: Sends JWT web token as a `HttpHeader` check for authorization of each API call.
     - **Services:** Services to make API calls and establish communication between unrelated components.
     	- Example: Searching for products in the `Header` component triggers the search in the `Listproducts` component.
     - **Custom pipes:**
-    	- Example: Used for shortening product description for each product displayed in the home page.
+    	- Example: Used for the shortening product description for each product displayed on the home page.
     - **Dynamic routing:** Dynamic routing using URL parameters.
     	- Example: Filter products based on their `Category ID`.
 	
