@@ -41,11 +41,16 @@ export class TokeninterceptorService implements HttpInterceptor {
        * Throw generic error for other error types as - `Something went wrong!`
        */
       catchError((error: HttpErrorResponse) => {
+        console.log(error);
         if (error && error.status == 401) {
           console.log('Interceptor received invalid token error');
           this.userService.logout();
           this.router.navigateByUrl('/login');
           return throwError(() => new Error('401 Unauthorized'));
+        }
+        else if(error && error.status == 409){
+          console.log('Interceptor received a 409 error code from the API.');
+          return throwError(() => new Error('Username already exists'));
         }
         return throwError(() => new Error('Something went wrong!'));
       })

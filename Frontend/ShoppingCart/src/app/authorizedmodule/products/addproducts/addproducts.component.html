@@ -22,8 +22,7 @@
             #formTemplateRef="ngForm"
             enctype="multipart/form-data"
           >
-            <select name="category" ngModel class="select-product-categories">
-              <option value="">Select Category</option>
+            <select name="category" class="select-product-categories" ngModel [(ngModel)]="categoryDropdownSelectedValue">
               <option
                 *ngFor="let category of productCategories"
                 value="{{ category.productCategoryName }}"
@@ -36,17 +35,46 @@
               name="productname"
               ngModel
               placeholder="Product Name"
-              required=" "
               class="input"
+              required
+              #productname="ngModel"
+              pattern="^[a-zA-Z ]+$"
+              maxlength="16"
+              autocomplete="off"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="productname.errors?.['required'] && (productname.touched || productname.dirty); else inputProductnameValidation;"
+            >
+              Product name cannot be empty
+            </div>
+            <ng-template #inputProductnameValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="productname.errors?.['pattern'] && productname.touched;"
+              >
+                Product name can only contain letters
+              </div>
+            </ng-template>
             <input
               type="number"
               name="productprice"
               ngModel
               placeholder="Product Price"
-              required=" "
               class="input"
+              required
+              #productprice="ngModel"
+              pattern="\d*"
+              minlength="8"
+              autocomplete="off"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="productprice.errors?.['required'] &&
+              (productprice.touched || productprice.dirty);"
+            >
+              Product price cannot be empty
+            </div>
             <div class="file-container">
               <label for="fileUpload">Upload Product Image</label>
               <input
@@ -55,17 +83,36 @@
                 name="productImage"
                 ngModel
                 (change)="OnImageUpload($event)"
+                required
+                #productImage="ngModel"
               />
+            </div>
+            <div
+              class="alert alert-danger"
+              *ngIf="productImage.errors?.['required'] && productImage.touched"
+            >
+              Please provide a product image
             </div>
             <textarea
               name="productdescription"
               ngModel
-              required=" "
+              required
+              #productDesc="ngModel"
               class="textarea-product-desc"
               placeholder="Product Description"
             >
             </textarea>
-            <input type="submit" value="Add Product" />
+            <div
+              class="alert alert-danger"
+              *ngIf="productDesc.errors?.['required'] && (productDesc.touched || productDesc.dirty);"
+            >
+              Product description cannot be empty
+            </div>
+            <input
+              type="submit"
+              value="Add Product"
+              [disabled]="formTemplateRef.invalid"
+            />
           </form>
         </div>
       </div>

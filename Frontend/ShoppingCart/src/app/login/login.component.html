@@ -18,68 +18,181 @@
               type="text"
               formControlName="Username"
               placeholder="Username"
-              required=" "
+              required
               autoComplete="off"
+              maxlength="16"
             />
             <input
               type="password"
               formControlName="Password"
               placeholder="Password"
-              required=" "
+              required
               autoComplete="off"
+              maxlength="16"
             />
-            <input type="submit" value="Login" />
+            <input type="submit" value="Login" [disabled]="" />
           </form>
         </div>
         <div class="form">
           <h2>Create an account</h2>
-          <div class="alert-message-container" *ngIf="userMessage">
-            <div
-              class="alert-message-item alert"
-              [ngClass]="{
-                'alert-success': !userErrorStatus,
-                'alert-danger': userErrorStatus
-              }"
-            >
-              {{ userMessage }}
-            </div>
-          </div>
           <form
             (submit)="doRegistration(formTemplateRef)"
             #formTemplateRef="ngForm"
           >
+            <div
+              class="alert-message-container"
+              *ngIf="userMessage && formTemplateRef.valid"
+            >
+              <div
+                class="alert-message-item alert"
+                [ngClass]="{
+                  'alert-success': !userErrorStatus,
+                  'alert-danger': userErrorStatus
+                }"
+              >
+                {{ userMessage }}
+              </div>
+            </div>
+            <!--
+              ^                       //Start
+              [a-zA-Z]                //Letters in upper or lower
+              +                       //One or more
+               $"                     //End
+              -->
             <input
               type="text"
               name="Username"
               ngModel
               placeholder="Username"
-              required=" "
+              required
+              #username="ngModel"
+              pattern="^[a-zA-Z]+$"
+              maxlength="16"
+              autocomplete="off"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="username.errors?.['required'] && (username.touched || username.dirty); else inputUsernameValidation;"
+            >
+              Username cannot be empty
+            </div>
+            <ng-template #inputUsernameValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="username.errors?.['pattern'] && password.touched;"
+              >
+                Username can only contain letters
+              </div>
+            </ng-template>
+            <!--
+              (^                      //Start
+              (?=.*[0-9])             //Minimum of one digit
+              (?=.*[!@#$%^&*])        //Allowed special characters
+              [a-zA-Z0-9!@#$%^&*]     //Allowed characters 
+              {8,16}                  //Min length of 8 and max of 16
+               $)"                    //End
+            -->
             <input
               type="password"
               name="Password"
               ngModel
               placeholder="Password"
-              required=" "
+              required
+              #password="ngModel"
+              pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$"
+              maxlength="16"
+              minlength="8"
+              autocomplete="off"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="password.errors?.['required'] && (password.touched || password.dirty); else inputPasswordBasicValidation;"
+            >
+              Password cannot be empty
+            </div>
+            <ng-template #inputPasswordBasicValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="password.errors?.['minlength'] && password.touched; else inputPasswordAdvValidation;"
+              >
+                Password must be a minimum of 8 characters
+              </div>
+            </ng-template>
+            <ng-template #inputPasswordAdvValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="password.errors?.['pattern'] && password.touched;"
+              >
+                Password must contain atleast 1 digit and 1 special character
+                (!, @, #, $, %, ^, &, *)
+              </div>
+            </ng-template>
             <input
               type="email"
               name="Email"
               ngModel
               placeholder="Email Address"
-              required=" "
+              required
+              #email="ngModel"
+              pattern="^\S+@\S+\.\S+$"
+              autocomplete="off"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="email.errors?.['required'] && (email.touched || email.dirty); else inputEmailValidation;"
+            >
+              Email address cannot be empty
+            </div>
+            <ng-template #inputEmailValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="email.errors?.['pattern'] && password.touched;"
+              >
+                Please enter valid email address
+              </div>
+            </ng-template>
             <input
               type="text"
               name="Phone"
               ngModel
               placeholder="Phone Number"
-              required=" "
+              required
+              #phone="ngModel"
+              pattern="\d*"
+              minlength="8"
+              autocomplete="off"
             />
-            <input type="submit" value="Register" />
+            <div
+              class="alert alert-danger"
+              *ngIf="phone.errors?.['required'] &&
+              (phone.touched || phone.dirty); else inputPhoneValidation;"
+            >
+              Phone number cannot be empty
+            </div>
+            <ng-template #inputPhoneValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="phone.errors?.['pattern'] &&
+             phone.dirty; else inputPhoneLengthValidation;"
+              >
+                Phone numbers can have numbers only
+              </div>
+            </ng-template>
+            <ng-template #inputPhoneLengthValidation>
+              <div
+                class="alert alert-danger"
+                *ngIf="phone.errors?.['minlength'] && phone.touched;"
+              >
+                Phone must be a minimum of 8 numbers
+              </div>
+            </ng-template>
+            <input
+              type="submit"
+              value="Register"
+              [disabled]="formTemplateRef.invalid"
+            />
           </form>
         </div>
-        <div class="cta"><a href="#">Forgot your password?</a></div>
       </div>
     </div>
   </div>

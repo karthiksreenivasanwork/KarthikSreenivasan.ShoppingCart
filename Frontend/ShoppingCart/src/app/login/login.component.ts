@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
@@ -67,7 +67,8 @@ export class LoginComponent implements OnInit {
         console.log('Error during registration process');
         console.log(registrationErrorData);
 
-        this.userMessage = 'Something went wrong!';
+        if (registrationErrorData) this.userMessage = registrationErrorData;
+        else this.userMessage = 'Something went wrong!';
         this.userErrorStatus = true;
       },
     });
@@ -84,8 +85,11 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('loggeduser', loginResponseData);
             this.userErrorStatus = false;
 
-            let username: string = this.usersService.getUserName(loginResponseData);
-            this.compCommunicate.triggerLoginSuccessfulEvent(`Login successful for user - ${username}`);
+            let username: string =
+              this.usersService.getUserName(loginResponseData);
+            this.compCommunicate.triggerLoginSuccessfulEvent(
+              `Login successful for user - ${username}`
+            );
             this.router.navigateByUrl('/');
           }
         },

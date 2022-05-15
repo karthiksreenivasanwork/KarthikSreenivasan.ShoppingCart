@@ -1,5 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { NgControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
@@ -20,6 +26,8 @@ export class AddproductsComponent implements OnInit {
   productCategories: any[] = [];
   productImage: any;
 
+  categoryDropdownSelectedValue: string = '';
+
   constructor(
     public userService: UsersService,
     public router: Router,
@@ -30,6 +38,8 @@ export class AddproductsComponent implements OnInit {
     this.productService.getAllCategories().subscribe({
       next: (data: any) => {
         this.productCategories = data;
+        this.categoryDropdownSelectedValue =
+          this.productCategories[0].productCategoryName;
       },
       error: (error: any) => {
         if (error.status == 401) {
@@ -64,7 +74,8 @@ export class AddproductsComponent implements OnInit {
           }
         }
       },
-      error: (error) => { //Can include errors raised from HTTP Interceptors as well.
+      error: (error) => {
+        //Can include errors raised from HTTP Interceptors as well.
         this.userErrorStatus = true;
         //When the status code is 409, the product already exists.
         if (error.status == 409) this.userMessage = error.error;
