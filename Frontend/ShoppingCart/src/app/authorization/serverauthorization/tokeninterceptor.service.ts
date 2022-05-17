@@ -33,6 +33,12 @@ export class TokeninterceptorService implements HttpInterceptor {
         Authorization: jwtToken ? `Bearer ${jwtToken}` : '',
       },
     });
+    /**
+     * Pipe method from Observable:
+     * Any data from the server will be sent via pipe method including errors.
+     * Example: We can send async data from server for every 10 seconds for some use cases which
+     * can be received and processed by pipe.
+     */
     return next.handle(tokenizedRequest).pipe(  //Send the tokenized request to the server.
       /**
        * Unless the error is thrown, the subscribers of the API call will not be able to be aware of the error.

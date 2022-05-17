@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using System.IO;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace ShoppingCart.API
 {
@@ -35,7 +34,7 @@ namespace ShoppingCart.API
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -73,11 +72,9 @@ namespace ShoppingCart.API
             {
                 endpoints.MapControllers();
             });
+
+            //Support for logging using the NuGet package - Serilog.Extensions.Logging.File to log to a file.
+            loggerFactory.AddFile($"{Configuration.GetValue<string>(ApiStrings.LOG_PATH)}\\ShoppingCart.API_{DateTime.Today.Date.ToString("MMddyyyy")}.txt");
         }
-
-        #region Helper Methods
-
-
-        #endregion
     }
 }

@@ -60,7 +60,8 @@ Please find the description of the concepts implemented in this project detailed
     - **Authorization:** Endpoints that need authorization are protected by validating the JWT token using the concept `Authorize Attribute`.
 
   - To-do: Part 1
-	- Logging support.
+	- Advanced logging support.
+		- Example: Azure cloud support.
 	- Implement microservices to further modularize each controller's endpoint to provide better maintenance and scalability.
 		- Example: `UsersV1Controller` can be created as a new microservice.
 	- Use the data access technology `Microsoft.EntityFrameworkCore` to perform CRUD operations in the database. 

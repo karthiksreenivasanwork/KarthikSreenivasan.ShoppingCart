@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
@@ -21,9 +22,9 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "User Controller - V1")]
     public class UsersV1Controller : ControllerBase
     {
-        IConfiguration _configuration;
-        PasswordHashManager _passwordHashManager;
+        ILogger _logger;
 
+        PasswordHashManager _passwordHashManager;
         User _user;
         IUserDataProvider _userDataProvider;
 
@@ -31,13 +32,15 @@ namespace ShoppingCart.API.Controllers
         /// Initialize controller
         /// </summary>
         /// <param name="configuration">Dependency injected parameter to get application configuration</param>
-        public UsersV1Controller(IConfiguration configuration)
+        /// <param name="logger">Dependency injected parameter to get logging reference</param>
+        public UsersV1Controller(IConfiguration configuration, ILogger<UsersV1Controller> logger)
         {
-            this._configuration = configuration;
             this._passwordHashManager = new PasswordHashManager();
 
             this._user = new User(Coordinator.ProviderType.SQL, configuration);
             this._userDataProvider = this._user.getUserProvider();
+
+            this._logger = logger;
         }
 
         #region CRUD methods
@@ -61,13 +64,16 @@ namespace ShoppingCart.API.Controllers
 
                 if (!userModelEearchResult)
                 {
+                    this._logger.LogInformation($"'{username}' is not a registered user.");
                     successResponseMessage = string.Format("'{0}' is not a registered user.", username);
                     return NotFound(successResponseMessage); //Other ActionResult types - Ok, Exception, Unauthorized, BadRequest, Conflict and Redirect
                 }
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to find the user.", statusCode: 500); //Default status code is 500 by default.
+                string errorMessage = $"Something went wrong. Unable to find the user `{username}`.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage, statusCode: 500); //Default status code is 500 by default.
             }
             return Ok(successResponseMessage);
         }
@@ -96,11 +102,15 @@ namespace ShoppingCart.API.Controllers
             }
             catch (UserExistsException uex)
             {
-                return Conflict(string.Format(uex.Message, userModelRegistrationData.Username));
+                string errorMessage = $"{uex.Message} {userModelRegistrationData.Username}.";
+                this._logger.LogError(errorMessage);
+                return Conflict(errorMessage);
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to add a new user.");
+                string errorMessage = "Something went wrong. Unable to add a new user.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: $"{errorMessage}.");
             }
 
             //CreatedAtAction returns status code 201 response.
@@ -137,7 +147,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to login");
+                string errorMessage = "Something went wrong. Unable to login.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: $"{errorMessage}");
             }
         }
 

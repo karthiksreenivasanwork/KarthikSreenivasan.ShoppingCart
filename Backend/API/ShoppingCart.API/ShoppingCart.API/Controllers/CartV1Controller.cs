@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
@@ -20,6 +21,8 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "Cart Controller - V1")]
     public class CartV1Controller : ControllerBase
     {
+        ILogger _logger;
+
         Cart _cart;
         Product _product;
 
@@ -30,13 +33,15 @@ namespace ShoppingCart.API.Controllers
         /// Initialize controller
         /// </summary>
         /// <param name="configuration">Dependency injected parameter to get application configuration</param>
-        public CartV1Controller(IConfiguration configuration)
+        /// <param name="logger">Dependency injected parameter to get logging reference</param>
+        public CartV1Controller(IConfiguration configuration, ILogger<CartV1Controller> logger)
         {
             this._cart = new Cart(Coordinator.ProviderType.SQL, configuration);
             this._cartProvider = this._cart.getCartProvider();
 
             this._product = new Product(Coordinator.ProviderType.SQL, configuration);
             this._productDataProvider = this._product.getProductProvider();
+            this._logger = logger;
         }
 
         /// <summary>
@@ -57,7 +62,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to get all cart items.");
+                string errorMessage = "Something went wrong. Unable to get all cart items.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
         }
 
@@ -80,7 +87,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to get all cart items.");
+                string errorMessage = "Something went wrong. Unable to get cart count.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
         }
 
@@ -111,7 +120,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to add a new item to the cart.");
+                string errorMessage = "Something went wrong.Unable to add a new item to the cart.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             //CreatedAtAction returns status code 201 response.
             return CreatedAtAction("PostNewCartItem", new { id = newCartItemResult.CartID }, newCartItemResult);
@@ -148,7 +159,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: string.Format("Something went wrong. Unable to delete cart item."));
+                string errorMessage = "Something went wrong. Unable to delete cart item.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             return Ok(deletedCartItemModel);
         }
@@ -184,7 +197,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: string.Format("Something went wrong. Unable to delete product from cart."));
+                string errorMessage = "Something went wrong. Unable to delete product from cart.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             return Ok(deletedCartItemModel);
         }

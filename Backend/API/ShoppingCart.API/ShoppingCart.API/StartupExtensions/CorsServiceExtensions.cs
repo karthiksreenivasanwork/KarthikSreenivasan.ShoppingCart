@@ -42,6 +42,7 @@ namespace ShoppingCart.API
                 {
                     options.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
                     options.WithOrigins("http://localhost:4201").AllowAnyMethod().AllowAnyHeader();
+                    options.WithOrigins("http://localhost:4202").AllowAnyMethod().AllowAnyHeader();
                 });
             return app;
         }

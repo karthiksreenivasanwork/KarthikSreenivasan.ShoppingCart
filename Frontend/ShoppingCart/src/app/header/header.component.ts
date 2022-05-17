@@ -31,6 +31,9 @@ export class HeaderComponent implements OnInit {
     this.resetCartCount();
     /**
      * Once the login is successful, update the cart item count from the database.
+     * 
+     * Gopi Sir's comments - Have a single Subject in cart service to be used in both 
+     * list component and login component to display cart count.
      */
     this.compCommunicate.onSuccessfulLoginEvent.subscribe(() => {
       this.updateCartCountFromAPI();

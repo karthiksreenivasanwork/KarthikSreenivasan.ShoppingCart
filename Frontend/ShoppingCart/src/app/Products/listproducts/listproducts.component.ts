@@ -84,6 +84,11 @@ export class ListproductsComponent implements OnInit, OnDestroy {
                 },
               });
           } else if (parameter['productsearchname']) {
+            /**
+             * Gopi Sir's comments:
+             * Review #1: This filter has to happen in the database as realtime projects will have a lot of products
+             * Review #2: Avoid sending product search name from the browser URL.
+             */
             this.productService.getAllProducts().subscribe({
               next: (data: any) => {
                 this.productModelCollection = data as IProductModel[];

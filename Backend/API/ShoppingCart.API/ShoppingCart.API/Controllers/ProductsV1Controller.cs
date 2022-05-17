@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
@@ -24,6 +25,8 @@ namespace ShoppingCart.API.Controllers
     [ApiExplorerSettings(GroupName = "Products Controller - V1")]
     public class ProductsV1Controller : ControllerBase
     {
+        ILogger _logger;
+
         Product _product;
         IProductDataProvider _productDataProvider;
 
@@ -31,10 +34,13 @@ namespace ShoppingCart.API.Controllers
         /// Initialize controller
         /// </summary>
         /// <param name="configuration">Dependency injected parameter to get application configuration</param>
-        public ProductsV1Controller(IConfiguration configuration)
+        /// <param name="logger">Dependency injected parameter to get logging reference</param>
+        public ProductsV1Controller(IConfiguration configuration, ILogger<ProductsV1Controller> logger)
         {
             this._product = new Product(Coordinator.ProviderType.SQL, configuration);
             this._productDataProvider = this._product.getProductProvider();
+
+            this._logger = logger;
         }
 
         /// <summary>
@@ -52,7 +58,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to get all product categories.");
+                string errorMessage = "Something went wrong. Unable to get all product categories.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
         }
 
@@ -74,7 +82,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to retrieve all the products.");
+                string errorMessage = "Something went wrong. Unable to retrieve all the products.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
         }
 
@@ -96,7 +106,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to retrieve all the products.");
+                string errorMessage = "Something went wrong. Unable to retrieve all the products.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
         }
 
@@ -136,11 +148,15 @@ namespace ShoppingCart.API.Controllers
             }
             catch (ProductException pex)
             {
-                return Conflict(string.Format(pex.Message, productDataParam.ProductName));
+                string errorMessage = string.Format(pex.Message, productDataParam.ProductName);
+                this._logger.LogError($"{errorMessage} Exception Details: \n {pex}");
+                return Conflict(errorMessage);
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to add a new product.");
+                string errorMessage = "Something went wrong. Unable to add a new product.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             //CreatedAtAction returns status code 201 response.
             return CreatedAtAction("PostProduct", new { id = productModelToRegister.ProductID }, productModelToRegister);
@@ -181,11 +197,15 @@ namespace ShoppingCart.API.Controllers
             }
             catch (ProductException pex)
             {
-                return Conflict(string.Format("Product ID `{0}` does not exists", id));
+                string errorMessage = string.Format("Product ID `{0}` does not exists", id);
+                this._logger.LogError($"{errorMessage} Exception Details: \n {pex}");
+                return Conflict(errorMessage);
             }
             catch (Exception ex)
             {
-                return Problem(detail: string.Format("Something went wrong. Unable to update product - `{0}`.", productUpdateModelParam.ProductName));
+                string errorMessage = string.Format("Something went wrong. Unable to update product - `{0}`.", productUpdateModelParam.ProductName);
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             return NoContent();
         }
@@ -214,11 +234,15 @@ namespace ShoppingCart.API.Controllers
             }
             catch (ProductException pex)
             {
-                return Conflict(string.Format("Product ID `{0}` does not exists", id));
+                string errorMessage = string.Format("Product ID `{0}` does not exists", id);
+                this._logger.LogError($"{errorMessage} Exception Details: \n {pex}");
+                return Conflict(errorMessage);
             }
             catch (Exception ex)
             {
-                return Problem(detail: string.Format("Something went wrong. Unable to delete product ID - `{0}`.", id));
+                string errorMessage = string.Format("Something went wrong. Unable to delete product ID - `{0}`.", id);
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             return Ok(deletedProductModel);
         }
@@ -255,7 +279,9 @@ namespace ShoppingCart.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(detail: "Something went wrong. Unable to delete the products");
+                string errorMessage = "Something went wrong. Unable to delete the products";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
             }
             return Ok(productsToDelete);
         }
