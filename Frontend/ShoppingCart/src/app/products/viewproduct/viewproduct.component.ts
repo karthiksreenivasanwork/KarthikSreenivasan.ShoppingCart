@@ -60,7 +60,7 @@ export class ViewproductComponent implements OnInit, OnDestroy {
           this.userMessage = `Product '${data.productname}' added to cart`;
         } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
-        this.cartService.updateCartCountSubj.next('');
+        this.cartService.triggerUpdateCartEvent('viewproducts');
       },
       error: (error) => {
         this.userErrorStatus = true;

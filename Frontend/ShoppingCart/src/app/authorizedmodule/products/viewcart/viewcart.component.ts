@@ -73,7 +73,7 @@ export class ViewcartComponent implements OnInit {
               if (this.cartItemCollection[index].quantity == 0)
               {
                 this.cartItemCollection.splice(index, 1);
-                this.cartService.updateCartCountSubj.next('');
+                this.cartService.triggerUpdateCartEvent('viewcart');
 
                 this.userDangerAlert = true;
                 this.userMessage = `One product quanity of '${cartModel.productname}' removed from cart`;
@@ -104,7 +104,7 @@ export class ViewcartComponent implements OnInit {
             let cartModel = data as ICartitemModel;
             if (cartModel != null) {
               this.cartItemCollection.splice(index, 1);
-              this.cartService.updateCartCountSubj.next('');
+              this.cartService.triggerUpdateCartEvent('viewcart');
 
               this.userDangerAlert = true;
               this.userMessage = `Product '${cartModel.productname}' removed from cart`;

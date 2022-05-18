@@ -92,7 +92,6 @@ export class UsersService {
     this._keysInLocalStorage.forEach((localStorageKey) => {
       localStorage.removeItem(localStorageKey);
     });
-    this.cartService.clearCartItemsCount();
   }
 
   /**

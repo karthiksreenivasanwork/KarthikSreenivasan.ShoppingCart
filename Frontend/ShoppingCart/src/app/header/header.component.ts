@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CartService } from '../services/cart.service';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
@@ -12,10 +13,12 @@ import { UsersService } from '../services/users.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
-  cartCount: number = 0;
+export class HeaderComponent implements OnInit, OnDestroy {
   readonly searchStringTextboxLabel: string = 'Search a product...';
+
+  cartCount: number = 0;
   searchedProductName: string = '';
+  subscriptionCollection: Subscription[] = [];
 
   constructor(
     public usersService: UsersService,
@@ -28,25 +31,22 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.updateCartCount();
-    this.resetCartCount();
-    /**
-     * Once the login is successful, update the cart item count from the database.
-     * 
-     * Gopi Sir's comments - Have a single Subject in cart service to be used in both 
-     * list component and login component to display cart count.
-     */
-    this.compCommunicate.onSuccessfulLoginEvent.subscribe(() => {
-      this.updateCartCountFromAPI();
-    });
     /**
      * This would be required on page refresh to update the correct cart items count from the database.
      */
     this.updateCartCountFromAPI();
   }
 
+  ngOnDestroy(): void {
+    if (this.subscriptionCollection.length > 0)
+      this.subscriptionCollection.forEach((subscription) => {
+        subscription.unsubscribe();
+      });
+  }
+
   /**
    * Update the cart count displayed to the user.
-   * 
+   *
    * Since this is `Single page application`, the header component will only be loaded for the
    * first time during the browser refresh.
    * Hence, if the count needs to be updated correctly, we need to call this method after
@@ -70,26 +70,16 @@ export class HeaderComponent implements OnInit {
    */
   updateCartCount() {
     //Update cart count if the cart item is saved in the database.
-    this.cartService.updateCartCountSubj.subscribe({
-      next: () => {
-        this.updateCartCountFromAPI();
-      },
-      error: () => {
-        console.log('Error while updating the cart count.');
-      },
-    });
-  }
-
-  /**
-   * Reset the cart count displayed to the user.
-   */
-  resetCartCount() {
-    //Reset cart when user logs out
-    this.cartService.resetCartSubj.subscribe({
-      next: () => {
-        this.cartCount = 0;
-      },
-    });
+    this.subscriptionCollection.push(
+      this.cartService.onupdateCartCountEvent.subscribe({
+        next: () => {
+          this.updateCartCountFromAPI();
+        },
+        error: () => {
+          console.log('Error while updating the cart count.');
+        },
+      })
+    );
   }
 
   /**
@@ -98,6 +88,7 @@ export class HeaderComponent implements OnInit {
   onLogoutClick() {
     this.usersService.logout();
     this.routerRef.navigateByUrl('/login');
+    this.cartCount = 0;
   }
 
   /**

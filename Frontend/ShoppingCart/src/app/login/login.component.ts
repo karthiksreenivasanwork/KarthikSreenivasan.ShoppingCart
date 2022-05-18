@@ -85,17 +85,12 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('loggeduser', loginResponseData);
             this.userErrorStatus = false;
 
-            let username: string =
-              this.usersService.getUserName(loginResponseData);
-            this.compCommunicate.triggerLoginSuccessfulEvent(
-              `Login successful for user - ${username}`
-            );
+            this.cartService.triggerUpdateCartEvent('login');
             this.router.navigateByUrl('/');
           }
         },
         error: (loginErrorData) => {
           console.log('Error during login process');
-          console.log(loginErrorData);
 
           if (loginErrorData.error) this.userMessage = loginErrorData.error;
           else this.userMessage = 'Something went wrong!';
