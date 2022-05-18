@@ -150,6 +150,24 @@ where p.ProductName = @ProductNameInputParam;
 END
 GO
 
+CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductSearchByName
+@ProductNameInputParam VARCHAR(200)
+AS
+BEGIN
+SELECT p.ProductID,
+	   p.ProductCategoryID,
+	   pc.ProductCategoryName,
+	   p.ProductName,
+	   p.ProductPrice,
+	   p.ProductDescription,
+	   p.ProductImageName FROM T_Products p
+	   join T_LU_ProductCategories pc
+	   on p.ProductCategoryID = pc.ProductCategoryID
+	   where p.ProductName like '%' + @ProductNameInputParam + '%'
+	   order by p.ProductCategoryID;
+END
+GO
+
 CREATE OR ALTER PROCEDURE Sch_ProductManagement.sp_ProductExistsByID
 @ProductIDParam NUMERIC(6, 0),
 @ProductSearchCountOutputParam int OUTPUT 

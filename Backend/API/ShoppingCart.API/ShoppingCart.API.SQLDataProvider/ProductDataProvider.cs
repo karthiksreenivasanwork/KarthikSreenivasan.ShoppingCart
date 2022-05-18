@@ -91,6 +91,50 @@ namespace ShoppingCart.API.SQLDataProvider
             return productCollection;
         }
 
+        public List<ProductModel> getProductsByName(string productSearchText)
+        {
+            var productCollection = new List<ProductModel>();
+
+            try
+            {
+                SqlParameter productSearchName = new SqlParameter("ProductNameInputParam", SqlDbType.VarChar);
+                productSearchName.Value = productSearchText;
+                List<SqlParameter> sqlParameters = new List<SqlParameter>
+                {
+                    productSearchName
+                };
+
+                using (SqlDataReader sqlReader = _databaseFunctions.executeReader(
+                    this._sqlConnectionString,
+                    "Sch_ProductManagement.sp_ProductSearchByName", sqlParameters))
+                {
+                    if (sqlReader != null)
+                    {
+                        while (sqlReader.Read())
+                        {
+                            productCollection.Add(new ProductModel
+                            {
+                                ProductID = Convert.ToInt32(sqlReader["ProductID"]),
+                                ProductCategoryID = Convert.ToInt32(sqlReader["ProductCategoryID"]),
+                                ProductCategoryName = sqlReader["ProductCategoryName"].ToString(),
+                                ProductName = sqlReader["ProductName"].ToString(),
+                                ProductPrice = Convert.ToInt32(sqlReader["ProductPrice"].ToString()),
+                                ProductDescription = sqlReader["ProductDescription"].ToString(),
+                                ProductImageName = sqlReader["ProductImageName"].ToString(),
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //ToDo - Log this information
+                System.Diagnostics.Debug.WriteLine(ex);
+                throw ex;
+            }
+            return productCollection;
+        }
+
         /// <summary>
         /// Returns the product collection based on it's category id.
         /// </summary>

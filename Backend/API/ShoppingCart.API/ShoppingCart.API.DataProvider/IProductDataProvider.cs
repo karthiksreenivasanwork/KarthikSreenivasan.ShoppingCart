@@ -11,6 +11,8 @@ namespace ShoppingCart.API.DataProvider
 
         public List<ProductModel> getAllProducts();
 
+        public List<ProductModel> getProductsByName(string productSearchText);
+
         /// <summary>
         /// Returns the product collection based on it's category id.
         /// </summary>

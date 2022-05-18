@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CartService } from '../services/cart.service';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
@@ -96,7 +96,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.searchedProductName != this.searchStringTextboxLabel) {
       let searchedString = this.searchedProductName.trim();
       if (searchedString.length > 0)
-        this.routerRef.navigateByUrl(`listproducts/${searchedString}`);
+      {
+        let navigationExtras: NavigationExtras = {
+          state: {
+            productSearchText: searchedString
+          },
+        };
+        this.routerRef.navigate(['listproducts'], navigationExtras);
+      }
       else this.routerRef.navigateByUrl(`/`);
     } else this.routerRef.navigateByUrl(`/`);
   }

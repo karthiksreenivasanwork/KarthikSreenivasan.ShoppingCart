@@ -11,7 +11,6 @@ import { ComingsoonComponent } from './others/comingsoon/comingsoon.component';
 const routes: Routes = [
   { path: '', component: ListproductsComponent },
   { path: 'listproducts', component: ListproductsComponent },
-  { path: 'listproducts/:productsearchname', component: ListproductsComponent },
   /**
    * pathMatch: When the full path is ending with the route - categories,
    * then you redirect to list all the products.

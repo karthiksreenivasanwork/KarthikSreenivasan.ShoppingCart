@@ -36,10 +36,16 @@ export class ProductsService {
     );
   }
 
+  getProductsbyName(productSearchText: string) {
+    return this.httpClient.get<any[]>(
+      `${this.globalAppData.GetApiUrl}/api/v1/Products/products/${productSearchText}`
+    );
+  }
+
   getProductsByCategoryID(categoryIDParam: string) {
     let categoryID: number = Number(categoryIDParam);
     return this.httpClient.get<any[]>(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/products/${categoryID}`
+      `${this.globalAppData.GetApiUrl}/api/v1/Products/products/category/${categoryID}`
     );
   }
 }

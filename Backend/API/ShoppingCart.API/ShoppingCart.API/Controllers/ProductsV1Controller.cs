@@ -89,12 +89,36 @@ namespace ShoppingCart.API.Controllers
         }
 
         /// <summary>
+        /// Returns the list of all the products which matches the product search string.
+        /// </summary>
+        /// <returns>Returns a collection of ShoppingCart.API.Models.ProductModel</returns>
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to search by it's product name search text.")]
+        [HttpGet("products/{productSearchText}")]
+        public IActionResult GetProductsByName(string productSearchText)
+        {
+            try
+            {
+                List<ProductModel> productCollection = _productDataProvider.getProductsByName(productSearchText);
+                foreach (var product in productCollection)
+                    product.ProductImageURL = ProductImageManager.GetImageApiURL(this.Request.Host.Value, product.ProductImageName);
+                return Ok(productCollection);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Something went wrong. Unable to search by product name by it's search text.";
+                this._logger.LogError($"{errorMessage} Exception Details: \n {ex}");
+                return Problem(detail: errorMessage);
+            }
+        }
+
+        /// <summary>
         /// Returns the list of all the products based on it's category ID
         /// </summary>
         /// <returns>Returns a collection of ShoppingCart.API.Models.ProductModel</returns>
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ProductModel))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to retrieve the list of all the products available.")]
-        [HttpGet("products/{categoryID}")]
+        [HttpGet("products/category/{categoryID}")]
         public IActionResult GetProductsByCategory(int categoryID)
         {
             try

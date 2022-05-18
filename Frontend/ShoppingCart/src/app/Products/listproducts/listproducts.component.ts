@@ -29,6 +29,7 @@ export class ListproductsComponent implements OnInit, OnDestroy {
   userErrorStatus: boolean = false;
 
   subscriptions: Subscription[] = [];
+  productSearchTextInfo: string;
 
   constructor(
     public productService: ProductsService,
@@ -36,7 +37,17 @@ export class ListproductsComponent implements OnInit, OnDestroy {
     public activatedRoute: ActivatedRoute,
     public router: Router,
     public compCommunicate: ComponentcommunicationService
-  ) {}
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    const productSearchDetails = navigation.extras as {
+      state: {
+        productSearchText: string;
+      };
+    };
+    if (navigation.extras.state) {
+      this.productSearchTextInfo = productSearchDetails.state.productSearchText;
+    }
+  }
 
   ngOnInit(): void {
     this.populateAllProductData();
@@ -83,25 +94,6 @@ export class ListproductsComponent implements OnInit, OnDestroy {
                   );
                 },
               });
-          } else if (parameter['productsearchname']) {
-            /**
-             * Gopi Sir's comments:
-             * Review #1: This filter has to happen in the database as realtime projects will have a lot of products
-             * Review #2: Avoid sending product search name from the browser URL.
-             */
-            this.productService.getAllProducts().subscribe({
-              next: (data: any) => {
-                this.productModelCollection = data as IProductModel[];
-                this.applyProductFilter(parameter['productsearchname']);
-                if (this.productModelFilteredCollection.length == 0)
-                  this.displayNoProductAvailableMessage(
-                    parameter['productsearchname']
-                  );
-              },
-              error: (error) => {
-                console.log(error);
-              },
-            });
           }
         },
         error: (error) => {
@@ -109,12 +101,30 @@ export class ListproductsComponent implements OnInit, OnDestroy {
         },
       })
     );
+
+    //Filter products to display if there are is product search text found in the NavigationExtras parameter for this route.
+    if (this.productSearchTextInfo) {
+      this.productService
+        .getProductsbyName(this.productSearchTextInfo)
+        .subscribe({
+          next: (data: any) => {
+            this.productModelCollection = data as IProductModel[];
+            this.productModelFilteredCollection = this.productModelCollection;
+            console.log(this.productSearchTextInfo);
+            if (this.productModelFilteredCollection.length == 0)
+              this.displayNoProductAvailableMessage(this.productSearchTextInfo);
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
+    }
   }
 
   /**
    * Subscribe to the keyup event of the search textbox to filter the products based on their name.
    */
-   searchTextboxKeyUpEventSubscription() {
+  searchTextboxKeyUpEventSubscription() {
     this.subscriptions.push(
       this.compCommunicate.onSearchKeyUpEvent.subscribe({
         next: (productSearchName: any) => {
