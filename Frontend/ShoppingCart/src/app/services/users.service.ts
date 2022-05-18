@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
 /**
  * jwt-decode is a small browser library that helps to decode JWTs token which is Base64Url encoded.
  */
@@ -33,7 +32,7 @@ export class UsersService {
    * @param registrationDataFromUser Registration details
    * @returns Observable reference of type string.
    */
-  userRegistration(registrationDataFromUser: any): Observable<string> {
+  registerNewUser(registrationDataFromUser: any): Observable<string> {
     return this.httpClient.post(
       `${this.globalAppData.GetApiUrl}/api/v1/users/register`,
       registrationDataFromUser,

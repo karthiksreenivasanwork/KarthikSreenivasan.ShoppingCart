@@ -13,7 +13,7 @@ import { UsersService } from 'src/app/services/users.service';
 /**
  * Attaches a HTTP header with the JWT token for each request to the API
  * after the user has been authenticated.
- *  
+ *
  * Added server side authorization using HTTP_INTERCEPTORS.
  * Injectable: This is required in the recent versions of Angular even though we are adding them in the providers of the app.module.
  */
@@ -39,7 +39,8 @@ export class TokeninterceptorService implements HttpInterceptor {
      * Example: We can send async data from server for every 10 seconds for some use cases which
      * can be received and processed by pipe.
      */
-    return next.handle(tokenizedRequest).pipe(  //Send the tokenized request to the server.
+    return next.handle(tokenizedRequest).pipe(
+      //Send the tokenized request to the server.
       /**
        * Unless the error is thrown, the subscribers of the API call will not be able to be aware of the error.
        * Status Code - 401 Unauthorized:
@@ -53,11 +54,11 @@ export class TokeninterceptorService implements HttpInterceptor {
           this.userService.logout();
           this.router.navigateByUrl('/login');
           return throwError(() => new Error('401 Unauthorized'));
-        }
-        else if(error && error.status == 409){
+        } else if (error && error.status == 409) {
           console.log('Interceptor received a 409 error code from the API.');
           return throwError(() => new Error('Username already exists'));
         }
+        console.log('Something went wrong!');
         return throwError(() => new Error('Something went wrong!'));
       })
     );

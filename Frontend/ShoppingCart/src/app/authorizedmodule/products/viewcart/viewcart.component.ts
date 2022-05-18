@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
+import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
 import { ICartItemCollectionModel } from '../../../products/ICartItemCollectionModel';
@@ -23,6 +24,7 @@ export class ViewcartComponent implements OnInit {
     public userService: UsersService,
     public productService: ProductsService,
     public cartService: CartService,
+    public compCommunicate: ComponentcommunicationService,
     public router: Router
   ) {}
 
@@ -73,7 +75,7 @@ export class ViewcartComponent implements OnInit {
               if (this.cartItemCollection[index].quantity == 0)
               {
                 this.cartItemCollection.splice(index, 1);
-                this.cartService.triggerUpdateCartEvent('viewcart');
+                this.compCommunicate.triggerUpdateCartEvent('viewcart');
 
                 this.userDangerAlert = true;
                 this.userMessage = `One product quanity of '${cartModel.productname}' removed from cart`;
@@ -104,7 +106,7 @@ export class ViewcartComponent implements OnInit {
             let cartModel = data as ICartitemModel;
             if (cartModel != null) {
               this.cartItemCollection.splice(index, 1);
-              this.cartService.triggerUpdateCartEvent('viewcart');
+              this.compCommunicate.triggerUpdateCartEvent('viewcart');
 
               this.userDangerAlert = true;
               this.userMessage = `Product '${cartModel.productname}' removed from cart`;

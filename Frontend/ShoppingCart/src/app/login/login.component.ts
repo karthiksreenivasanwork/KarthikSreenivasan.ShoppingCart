@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CartService } from '../services/cart.service';
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
   }
 
   doRegistration(ngFormTemplateRef: NgForm) {
-    this.usersService.userRegistration(ngFormTemplateRef.value).subscribe({
+    this.usersService.registerNewUser(ngFormTemplateRef.value).subscribe({
       next: (registrationResponseData: string) => {
         this.userErrorStatus = false;
         this.userMessage = registrationResponseData;
@@ -85,7 +85,7 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('loggeduser', loginResponseData);
             this.userErrorStatus = false;
 
-            this.cartService.triggerUpdateCartEvent('login');
+            this.compCommunicate.triggerUpdateCartEvent('login');
             this.router.navigateByUrl('/');
           }
         },

@@ -31,9 +31,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.updateCartCount();
-    /**
-     * This would be required on page refresh to update the correct cart items count from the database.
-     */
     this.updateCartCountFromAPI();
   }
 
@@ -71,7 +68,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   updateCartCount() {
     //Update cart count if the cart item is saved in the database.
     this.subscriptionCollection.push(
-      this.cartService.onupdateCartCountEvent.subscribe({
+      this.compCommunicate.onupdateCartCountEvent.subscribe({
         next: () => {
           this.updateCartCountFromAPI();
         },

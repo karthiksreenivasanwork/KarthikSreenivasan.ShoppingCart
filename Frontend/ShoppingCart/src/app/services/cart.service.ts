@@ -10,15 +10,6 @@ import { GlobalappdataService } from './globalappdata.service';
   providedIn: 'root',
 })
 export class CartService {
-  /*
-   * Rxjs: Reactive Extensions for Javascript
-   * Rxjs-Subject is a light weight version of the EventEmitter@angularcore concept to send notifications between components.
-   */
-  private updateCartCountSubject = new Subject();
-  /**
-   * Components that want to be notified the cart count is updated..
-   */
-  onupdateCartCountEvent = this.updateCartCountSubject.asObservable();
 
   constructor(
     public httpClient: HttpClient,
@@ -92,13 +83,5 @@ export class CartService {
       `${this.globalAppData.GetApiUrl}/api/v1/Cart/removeproduct`,
       cartItemDataToDelete
     );
-  }
-
-  /**
-   * Method to trigger an event to update the cart count.
-   * @param eventArgs
-   */
-  triggerUpdateCartEvent(eventArgs: string) {
-    this.updateCartCountSubject.next(eventArgs);
   }
 }

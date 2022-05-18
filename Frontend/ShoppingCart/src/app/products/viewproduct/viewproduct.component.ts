@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { IProductModel } from '../IProductModel';
 import { ActivatedRoute } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
+import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 
 /**
  * Displays unique product information to the user.
@@ -31,7 +32,8 @@ export class ViewproductComponent implements OnInit, OnDestroy {
 
   constructor(
     public activeRoute: ActivatedRoute,
-    public cartService: CartService
+    public cartService: CartService,
+    public compCommunicate: ComponentcommunicationService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +62,7 @@ export class ViewproductComponent implements OnInit, OnDestroy {
           this.userMessage = `Product '${data.productname}' added to cart`;
         } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
-        this.cartService.triggerUpdateCartEvent('viewproducts');
+        this.compCommunicate.triggerUpdateCartEvent('viewproducts');
       },
       error: (error) => {
         this.userErrorStatus = true;

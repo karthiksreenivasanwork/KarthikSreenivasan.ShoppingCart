@@ -148,7 +148,7 @@ export class ListproductsComponent implements OnInit, OnDestroy {
           this.userMessage = `Product '${data.productname}' added to cart`;
         } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
-        this.cartService.triggerUpdateCartEvent('listproducts');
+        this.compCommunicate.triggerUpdateCartEvent('listproducts');
       },
       error: (error) => {
         this.userErrorStatus = true;
