@@ -1,21 +1,20 @@
 # Shopping Cart Project
 `Shopping Cart` project was created using Angular for the front end and .Net Core 5 (API) and Microsoft SQL Server for the backend.
 
-# Technology Stack Details
+# Technology Stack
 - **Angular:** This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.5.
 - **Backend:** Web API using .Net 5.0 with Swagger code generated documentation.
 - **Database:** Microsoft SQL Server 2019.
+
+## My LinkedIn Profile | Profile Name: karthiksreenivasan
+Please visit my LinkedIn profile page [here.](https://www.linkedin.com/in/karthiksreenivasan/)
 
 ## User Interface
 ![Shopping Cart - Home Page](/gitimages/KarthikSreenivasan.ShoppingCart-AngularUserInterface_Part-1.png)
 ![Shopping Cart - Cart Items](/gitimages/KarthikSreenivasan.ShoppingCart-AngularUserInterface_Part-2.png)
 
 ## Swagger API Documentation
-![Web API- User Controller](/gitimages/KarthikSreenivasan.ShoppingCart-SwaggerAPI_Doc_Part-1.png)
-![Web API- Products and Cart Controller](/gitimages/KarthikSreenivasan.ShoppingCart-SwaggerAPI_Doc_Part-2.png)
-
-## My LinkedIn Profile
-Please visit my LinkedIn profile page [here.](https://www.linkedin.com/in/karthiksreenivasan/)
+![Web API- User Controller](/gitimages/KarthikSreenivasan.ShoppingCart-SwaggerAPI_Doc.png)
 
 ## Project Description
 Please find the description of the concepts implemented in this project detailed below
@@ -61,7 +60,6 @@ Please find the description of the concepts implemented in this project detailed
 
   - To-do: Part 1
 	- Advanced logging support.
-		- Example: Azure cloud support.
 	- Implement microservices to further modularize each controller's endpoint to provide better maintenance and scalability.
 		- Example: `UsersV1Controller` can be created as a new microservice.
 	- Use the data access technology `Microsoft.EntityFrameworkCore` to perform CRUD operations in the database. 
