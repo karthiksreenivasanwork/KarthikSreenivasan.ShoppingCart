@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IProductModel } from '../IProductModel';
+import { IProductModel } from '../../models/IProductModel';
 import { ActivatedRoute } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
@@ -31,9 +31,9 @@ export class ViewproductComponent implements OnInit, OnDestroy {
   public parameterSubscription: Subscription;
 
   constructor(
-    public activeRoute: ActivatedRoute,
-    public cartService: CartService,
-    public compCommunicate: ComponentcommunicationService
+    private activeRoute: ActivatedRoute,
+    private cartService: CartService,
+    private compCommunicate: ComponentcommunicationService
   ) {}
 
   ngOnInit(): void {

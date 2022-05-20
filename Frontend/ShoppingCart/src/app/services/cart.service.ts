@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GlobalappdataService } from './globalappdata.service';
 
 /**
@@ -12,8 +12,8 @@ import { GlobalappdataService } from './globalappdata.service';
 export class CartService {
 
   constructor(
-    public httpClient: HttpClient,
-    public globalAppData: GlobalappdataService
+    private httpClient: HttpClient,
+    private globalAppData: GlobalappdataService
   ) {}
 
   /**

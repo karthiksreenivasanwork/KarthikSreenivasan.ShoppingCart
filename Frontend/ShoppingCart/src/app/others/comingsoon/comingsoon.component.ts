@@ -11,7 +11,7 @@ export class ComingsoonComponent implements OnInit, OnDestroy {
   pagename: string = '';
   subscriptions: Subscription[] = [];
 
-  constructor(public activeRoute: ActivatedRoute) {}
+  constructor(private activeRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.subscriptions.push(

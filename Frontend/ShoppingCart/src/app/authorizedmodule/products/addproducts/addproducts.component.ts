@@ -1,15 +1,12 @@
 import {
-  AfterContentInit,
-  AfterViewInit,
   Component,
   OnInit,
-  ViewChild,
 } from '@angular/core';
-import { NgControl, NgForm } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { IProductModel } from '../../../products/IProductModel';
+import { IProductModel } from '../../../models/IProductModel';
 
 /**
  * User interface to add a new product to the shopping cart.
@@ -29,9 +26,9 @@ export class AddproductsComponent implements OnInit {
   categoryDropdownSelectedValue: string = '';
 
   constructor(
-    public userService: UsersService,
-    public router: Router,
-    public productService: ProductsService
+    private userService: UsersService,
+    private router: Router,
+    private productService: ProductsService
   ) {}
 
   ngOnInit(): void {

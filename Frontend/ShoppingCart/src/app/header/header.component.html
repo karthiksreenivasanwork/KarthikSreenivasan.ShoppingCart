@@ -40,19 +40,16 @@
           <div class="w3ls_vegetables">
             <ul
               class="dropdown-menu drp-mnu"
-              *ngIf="!usersService.isUserLoggedIn"
+              *ngIf="!getIsUserLoggedIn"
             >
               <!--
                     routerLink: backslash ( /login) specifies a new URL path.
                 -->
-              <li><a routerLink="/login">Login</a></li>
-              <li>
-                <a routerLink="/login">Sign Up</a>
-              </li>
+              <li><a routerLink="/login">Login or Signup</a></li>
             </ul>
             <ul
               class="dropdown-menu drp-mnu"
-              *ngIf="usersService.isUserLoggedIn"
+              *ngIf="getIsUserLoggedIn"
             >
               <li><a routerLink="authorized/addproducts">Add products</a></li>
               <li><a (click)="onLogoutClick()">Logout</a></li>

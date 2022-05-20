@@ -12,7 +12,7 @@ import { ProductsService } from '../services/products.service';
 export class CategoriesComponent implements OnInit {
   productCategories: any[] = [];
 
-  constructor(public productService: ProductsService) {}
+  constructor(private productService: ProductsService) {}
 
   ngOnInit(): void {
     this.productService.getAllCategories().subscribe({

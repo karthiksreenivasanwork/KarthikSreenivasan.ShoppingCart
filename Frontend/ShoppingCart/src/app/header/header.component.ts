@@ -21,10 +21,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   subscriptionCollection: Subscription[] = [];
 
   constructor(
-    public usersService: UsersService,
-    public cartService: CartService,
-    public compCommunicate: ComponentcommunicationService,
-    public routerRef: Router
+    private usersService: UsersService,
+    private cartService: CartService,
+    private compCommunicate: ComponentcommunicationService,
+    private routerRef: Router
   ) {
     this.searchedProductName = this.searchStringTextboxLabel;
   }
@@ -39,6 +39,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.subscriptionCollection.forEach((subscription) => {
         subscription.unsubscribe();
       });
+  }
+
+  /**
+   * Returns true if the user has logged in and false otherwise.
+   */
+  get getIsUserLoggedIn(): boolean {
+    /**
+     * Dev Comment: It is a good practice to have the services privately and expose what is necessary to the
+     * template via this implementation instead of the using the service reference directly.
+     */
+    return this.usersService.isUserLoggedIn;
   }
 
   /**
@@ -95,16 +106,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onSearchButtonClick() {
     if (this.searchedProductName != this.searchStringTextboxLabel) {
       let searchedString = this.searchedProductName.trim();
-      if (searchedString.length > 0)
-      {
+      if (searchedString.length > 0) {
         let navigationExtras: NavigationExtras = {
           state: {
-            productSearchText: searchedString
+            productSearchText: searchedString,
           },
         };
         this.routerRef.navigate(['listproducts'], navigationExtras);
-      }
-      else this.routerRef.navigateByUrl(`/`);
+      } else this.routerRef.navigateByUrl(`/`);
     } else this.routerRef.navigateByUrl(`/`);
   }
 

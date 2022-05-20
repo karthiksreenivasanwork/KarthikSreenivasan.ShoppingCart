@@ -10,7 +10,7 @@ import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { Filterproducts } from 'src/app/utils/filterproducts';
-import { IProductModel } from '../IProductModel';
+import { IProductModel } from '../../models/IProductModel';
 
 /**
  * Home page of the shopping cart application where all the products
@@ -32,11 +32,11 @@ export class ListproductsComponent implements OnInit, OnDestroy {
   productSearchTextInfo: string;
 
   constructor(
-    public productService: ProductsService,
-    public cartService: CartService,
-    public activatedRoute: ActivatedRoute,
-    public router: Router,
-    public compCommunicate: ComponentcommunicationService
+    private productService: ProductsService,
+    private cartService: CartService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private compCommunicate: ComponentcommunicationService
   ) {
     const navigation = this.router.getCurrentNavigation();
     const productSearchDetails = navigation.extras as {

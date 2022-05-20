@@ -12,9 +12,9 @@ import { UsersService } from './users.service';
 })
 export class ProductsService {
   constructor(
-    public httpClient: HttpClient,
-    public userService: UsersService,
-    public globalAppData: GlobalappdataService
+    private httpClient: HttpClient,
+    private userService: UsersService,
+    private globalAppData: GlobalappdataService
   ) {}
 
   getAllCategories(): Observable<any> {

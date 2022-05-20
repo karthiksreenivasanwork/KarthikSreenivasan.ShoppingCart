@@ -2,7 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ILoginModel } from '../products/ILoginModel';
+import { ILoginModel } from '../models/ILoginModel';
+import { ILoginResultModel } from '../models/ILoginResultModel';
 import { CartService } from '../services/cart.service';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
@@ -24,10 +25,10 @@ export class LoginComponent implements OnInit {
   @ViewChild('formTemplateRef') registrationForm: NgForm;
 
   constructor(
-    public usersService: UsersService,
-    public cartService: CartService,
-    public compCommunicate: ComponentcommunicationService,
-    public router: Router
+    private usersService: UsersService,
+    private cartService: CartService,
+    private compCommunicate: ComponentcommunicationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -92,27 +93,27 @@ export class LoginComponent implements OnInit {
   doLogin() {
     this.resetComponentVariables();
 
-    console.log(this.loginForm.value);
-
     if (this.loginForm.valid) {
       this.usersService
         .userLogin(this.getLoginModel(this.loginForm))
         .subscribe({
-          next: (loginResponseData: string) => {
-            if (loginResponseData.length == 0) {
-              this.userErrorStatus = true;
-              this.userMessage = 'Username or password incorrect';
-            } else if (loginResponseData.length > 0) {
-              localStorage.setItem('loggeduser', loginResponseData);
+          next: (loginResponseData: ILoginResultModel) => {
+            if (loginResponseData.JWT_Token) {
+              localStorage.setItem('loggeduser', loginResponseData.JWT_Token);
               this.userErrorStatus = false;
 
               this.compCommunicate.triggerUpdateCartEvent('login');
               this.router.navigateByUrl('/');
+            } else {
+              this.userErrorStatus = true;
+              this.userMessage = 'Username or password incorrect';
+              this.loginForm.reset();
             }
           },
           error: (loginErrorData: HttpErrorResponse) => {
             this.userErrorStatus = true;
             console.log('Error during login process');
+            console.log(loginErrorData);
             if (loginErrorData.status == 401) {
               //Unauthorized user.
               this.userMessage = loginErrorData.error;
@@ -179,7 +180,7 @@ export class LoginComponent implements OnInit {
     this.resetComponentVariables();
   }
 
-  onInputRegisterPhoneKeyUp(){
+  onInputRegisterPhoneKeyUp() {
     this.resetComponentVariables();
   }
   //#endregion

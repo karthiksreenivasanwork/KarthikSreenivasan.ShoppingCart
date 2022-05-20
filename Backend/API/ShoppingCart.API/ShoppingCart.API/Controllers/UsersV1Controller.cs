@@ -123,10 +123,12 @@ namespace ShoppingCart.API.Controllers
         /// <param name="loginModelDataFromUser">Authentication credentials from the user to validate</param>
         /// <returns>Returns JWT token on successful result and </returns>
         [HttpPost("login")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Returns a valid 'JSON Web Token' (JWT) token which expires in 30 minutes.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Returns a valid 'JSON Web Token' (JWT) token which expires in 30 minutes.", Type = typeof(LoginResultModel))]
         [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid User")]
         public IActionResult PostLogin([FromBody] LoginModel loginModelDataFromUser)
         {
+            var loginResult = new LoginResultModel();
+
             try
             {
                 string hashedPassword = _userDataProvider.returnHashedPassword(loginModelDataFromUser.Username);
@@ -140,7 +142,8 @@ namespace ShoppingCart.API.Controllers
 
                     if (passwordVerificationResult)
                     {
-                        return CreatedAtAction("PostLogin", JwtTokenManager.GenerateToken(loginModelDataFromUser.Username));
+                        loginResult.JwtToken = JwtTokenManager.GenerateToken(loginModelDataFromUser.Username);
+                        return CreatedAtAction("PostLogin", loginResult);
                     }
                 }
                 return Unauthorized("Invalid User");

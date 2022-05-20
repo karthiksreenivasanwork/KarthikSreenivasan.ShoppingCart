@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 /**
  * jwt-decode is a small browser library that helps to decode JWTs token which is Base64Url encoded.
  */
 import jwt_decode from 'jwt-decode';
 import { CartService } from './cart.service';
 import { GlobalappdataService } from './globalappdata.service';
+import { ILoginResultModel } from '../models/ILoginResultModel';
 
 const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 
@@ -20,9 +21,9 @@ export class UsersService {
   private _keysInLocalStorage: string[] = [];
 
   constructor(
-    public httpClient: HttpClient,
-    public cartService: CartService,
-    public globalAppData: GlobalappdataService
+    private httpClient: HttpClient,
+    private cartService: CartService,
+    private globalAppData: GlobalappdataService
   ) {
     this._keysInLocalStorage.push(LOCAL_STORAGE_KEY_LOGGED_USER);
   }
@@ -45,12 +46,17 @@ export class UsersService {
    * @param loginCredentialFromUser Login details
    * @returns Observable reference of type string.
    */
-  userLogin(loginCredentialFromUser: any): Observable<string> {
-    return this.httpClient.post(
-      `${this.globalAppData.GetApiUrl}/api/v1/users/login`,
-      loginCredentialFromUser,
-      { responseType: 'text' } //The return value is JSON by default and we need to change that to text.
-    );
+  userLogin(loginCredentialFromUser: any): Observable<ILoginResultModel> {
+    return this.httpClient
+      .post<ILoginResultModel>(
+        `${this.globalAppData.GetApiUrl}/api/v1/users/login`,
+        loginCredentialFromUser
+      )
+      .pipe(
+        map((response: ILoginResultModel) => {
+          return response;
+        })
+      );
   }
 
   /**

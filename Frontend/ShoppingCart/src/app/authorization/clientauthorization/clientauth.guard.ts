@@ -10,7 +10,7 @@ import { UsersService } from 'src/app/services/users.service';
   providedIn: 'root',
 })
 export class ClientauthGuard implements CanActivate {
-  constructor(public userService: UsersService, public router: Router) {}
+  constructor(private userService: UsersService, private router: Router) {}
 
   canActivate(): boolean {
     let isAuthorized: boolean = this.userService.isUserLoggedIn;

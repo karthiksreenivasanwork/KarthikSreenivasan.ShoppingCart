@@ -4,8 +4,8 @@ import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { ICartItemCollectionModel } from '../../../products/ICartItemCollectionModel';
-import { ICartitemModel } from '../../../products/ICartitemModel';
+import { ICartItemCollectionModel } from '../../../models/ICartItemCollectionModel';
+import { ICartitemModel } from '../../../models/ICartitemModel';
 
 @Component({
   selector: 'app-viewcart',
@@ -21,11 +21,11 @@ export class ViewcartComponent implements OnInit {
   userDangerAlert: boolean = false;
 
   constructor(
-    public userService: UsersService,
-    public productService: ProductsService,
-    public cartService: CartService,
-    public compCommunicate: ComponentcommunicationService,
-    public router: Router
+    private userService: UsersService,
+    private productService: ProductsService,
+    private cartService: CartService,
+    private compCommunicate: ComponentcommunicationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +57,11 @@ export class ViewcartComponent implements OnInit {
     });
   }
 
-  removeProductQuantityFromCart(orderID: number, productID: number, index: number) {
+  removeProductQuantityFromCart(
+    orderID: number,
+    productID: number,
+    index: number
+  ) {
     this.resetUserMessageState();
 
     if (this.cartItemCollection[index].quantity > 0) {
@@ -72,8 +76,7 @@ export class ViewcartComponent implements OnInit {
                 cartModel.productPrice *
                 this.cartItemCollection[index].quantity;
 
-              if (this.cartItemCollection[index].quantity == 0)
-              {
+              if (this.cartItemCollection[index].quantity == 0) {
                 this.cartItemCollection.splice(index, 1);
                 this.compCommunicate.triggerUpdateCartEvent('viewcart');
 
