@@ -13,22 +13,24 @@
           <div [ngClass]="{ 'alert alert-danger': userErrorStatus }">
             {{ userMessage }}
           </div>
-          <form [formGroup]="loginForm" (submit)="doLogin()">
+          <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
             <input
               type="text"
-              formControlName="Username"
+              formControlName="loginusername"
               placeholder="Username"
               required
               autoComplete="off"
               maxlength="16"
+              (keyup)="onInputLoginUsernameKeyUp()"
             />
             <input
               type="password"
-              formControlName="Password"
+              formControlName="loginpassword"
               placeholder="Password"
               required
               autoComplete="off"
               maxlength="16"
+              (keyup)="onInputLoginPasswordKeyUp()"
             />
             <input type="submit" value="Login" [disabled]="" />
           </form>
@@ -36,7 +38,7 @@
         <div class="form">
           <h2>Create an account</h2>
           <form
-            (submit)="doRegistration(formTemplateRef)"
+            (ngSubmit)="doRegistration()"
             #formTemplateRef="ngForm"
           >
             <div
@@ -69,6 +71,7 @@
               pattern="^[a-zA-Z]+$"
               maxlength="16"
               autocomplete="off"
+              (keyup)="onInputRegisterUsernameKeyUp()"
             />
             <div
               class="alert alert-danger"
@@ -103,6 +106,7 @@
               maxlength="16"
               minlength="8"
               autocomplete="off"
+              (keyup)="onInputRegisterPasswordKeyUp()"
             />
             <div
               class="alert alert-danger"
@@ -136,6 +140,7 @@
               #email="ngModel"
               pattern="^\S+@\S+\.\S+$"
               autocomplete="off"
+              (keyup)="onInputRegisterEmailKeyUp()"
             />
             <div
               class="alert alert-danger"
@@ -161,6 +166,7 @@
               pattern="\d*"
               minlength="8"
               autocomplete="off"
+              (keyup)="onInputRegisterPhoneKeyUp()"
             />
             <div
               class="alert alert-danger"

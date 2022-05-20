@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ILoginModel } from '../products/ILoginModel';
 import { CartService } from '../services/cart.service';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
@@ -19,6 +21,7 @@ export class LoginComponent implements OnInit {
   userErrorStatus: boolean = false;
 
   loginForm: FormGroup;
+  @ViewChild('formTemplateRef') registrationForm: NgForm;
 
   constructor(
     public usersService: UsersService,
@@ -29,6 +32,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     $('.toggle').click(() => {
+      this.resetComponentVariables();
+      this.resetComponentForms();
+
       // Switches the Icon
       $(this).children('i').toggleClass('fa-pencil');
       // Switches the forms
@@ -44,16 +50,20 @@ export class LoginComponent implements OnInit {
     });
 
     this.loginForm = new FormGroup({
-      Username: new FormControl(null, [Validators.required]),
-      Password: new FormControl(null, [Validators.required]),
+      loginusername: new FormControl(null, [Validators.required]),
+      loginpassword: new FormControl(null, [Validators.required]),
     });
   }
 
-  doRegistration(ngFormTemplateRef: NgForm) {
-    this.usersService.registerNewUser(ngFormTemplateRef.value).subscribe({
+  doRegistration() {
+    this.resetComponentVariables();
+
+    this.usersService.registerNewUser(this.registrationForm.value).subscribe({
       next: (registrationResponseData: string) => {
         this.userErrorStatus = false;
         this.userMessage = registrationResponseData;
+
+        console.log(this.userMessage);
         /**
          * This is to indicate the user about the successful registration for a second
          * before redirecting the user to the login page.
@@ -63,45 +73,110 @@ export class LoginComponent implements OnInit {
           window.location.reload();
         }, 1000);
       },
-      error: (registrationErrorData) => {
+      error: (registrationErrorData: HttpErrorResponse) => {
         console.log('Error during registration process');
-        console.log(registrationErrorData);
-
-        if (registrationErrorData) this.userMessage = registrationErrorData;
-        else this.userMessage = 'Something went wrong!';
         this.userErrorStatus = true;
+
+        if (registrationErrorData.status == 409) {
+          //Username already taken.
+          this.userMessage = registrationErrorData.error;
+        } else this.userMessage = 'Something went wrong!';
       },
     });
   }
 
   doLogin() {
+    this.resetComponentVariables();
+
+    console.log(this.loginForm.value);
+
     if (this.loginForm.valid) {
-      this.usersService.userLogin(this.loginForm.value).subscribe({
-        next: (loginResponseData: string) => {
-          if (loginResponseData.length == 0) {
+      this.usersService
+        .userLogin(this.getLoginModel(this.loginForm))
+        .subscribe({
+          next: (loginResponseData: string) => {
+            if (loginResponseData.length == 0) {
+              this.userErrorStatus = true;
+              this.userMessage = 'Username or password incorrect';
+            } else if (loginResponseData.length > 0) {
+              localStorage.setItem('loggeduser', loginResponseData);
+              this.userErrorStatus = false;
+
+              this.compCommunicate.triggerUpdateCartEvent('login');
+              this.router.navigateByUrl('/');
+            }
+          },
+          error: (loginErrorData: HttpErrorResponse) => {
             this.userErrorStatus = true;
-            this.userMessage = 'Username or password incorrect';
-          } else if (loginResponseData.length > 0) {
-            localStorage.setItem('loggeduser', loginResponseData);
-            this.userErrorStatus = false;
+            console.log('Error during login process');
+            if (loginErrorData.status == 401) {
+              //Unauthorized user.
+              this.userMessage = loginErrorData.error;
+            } else this.userMessage = 'Something went wrong!';
 
-            this.compCommunicate.triggerUpdateCartEvent('login');
-            this.router.navigateByUrl('/');
-          }
-        },
-        error: (loginErrorData) => {
-          console.log('Error during login process');
-
-          if (loginErrorData.error) this.userMessage = loginErrorData.error;
-          else this.userMessage = 'Something went wrong!';
-          this.userErrorStatus = true;
-
-          this.loginForm.reset();
-        },
-      });
+            this.loginForm.reset();
+          },
+        });
     } else {
       this.userErrorStatus = true;
       this.userMessage = 'Username or password incorrect';
     }
   }
+
+  /**
+   * Extract the form data and convert it to the login model.
+   * @param ngLoginForm FormGroup reference
+   * @returns ILoginModel
+   */
+  getLoginModel(ngLoginForm: FormGroup) {
+    let loginModel: ILoginModel = {
+      username: ngLoginForm.value.loginusername,
+      password: ngLoginForm.value.loginpassword,
+    };
+    return loginModel;
+  }
+
+  /**
+   * Reset component variables to their original state.
+   */
+  resetComponentVariables() {
+    this.userErrorStatus = false;
+    this.userMessage = '';
+  }
+
+  /**
+   * Reset form variables to their original state.
+   */
+  resetComponentForms() {
+    this.loginForm.reset();
+    this.registrationForm.reset();
+  }
+
+  //#region Login Textbox Events
+  onInputLoginUsernameKeyUp() {
+    this.resetComponentVariables();
+  }
+
+  onInputLoginPasswordKeyUp() {
+    this.resetComponentVariables();
+  }
+  //#endregion
+
+  //#region Registration Textbox Events
+  onInputRegisterUsernameKeyUp() {
+    this.resetComponentVariables();
+  }
+
+  onInputRegisterPasswordKeyUp() {
+    this.resetComponentVariables();
+  }
+
+  onInputRegisterEmailKeyUp() {
+    this.resetComponentVariables();
+  }
+
+  onInputRegisterPhoneKeyUp(){
+    this.resetComponentVariables();
+  }
+  //#endregion
 }
