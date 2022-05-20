@@ -23,6 +23,12 @@
               maxlength="16"
               (keyup)="onInputLoginUsernameKeyUp()"
             />
+            <div
+              class="alert alert-danger"
+              *ngIf="loginForm.get('loginusername').touched && loginForm.get('loginusername').hasError('required')"
+            >
+              Please enter a username
+            </div>
             <input
               type="password"
               formControlName="loginpassword"
@@ -32,15 +38,23 @@
               maxlength="16"
               (keyup)="onInputLoginPasswordKeyUp()"
             />
-            <input type="submit" value="Login" [disabled]="" />
+            <div
+            class="alert alert-danger"
+            *ngIf="loginForm.get('loginpassword').touched && loginForm.get('loginpassword').hasError('required')"
+          >
+            Please enter a password
+          </div>
+            <input
+              type="submit"
+              value="Login"
+              [disabled]="loginForm.invalid"
+              [ngClass]="{ 'disabled-button': loginForm.invalid }"
+            />
           </form>
         </div>
         <div class="form">
           <h2>Create an account</h2>
-          <form
-            (ngSubmit)="doRegistration()"
-            #formTemplateRef="ngForm"
-          >
+          <form (ngSubmit)="doRegistration()" #formTemplateRef="ngForm">
             <div
               class="alert-message-container"
               *ngIf="userMessage && formTemplateRef.valid"
@@ -196,6 +210,7 @@
               type="submit"
               value="Register"
               [disabled]="formTemplateRef.invalid"
+              [ngClass]="{ 'disabled-button': formTemplateRef.invalid }"
             />
           </form>
         </div>

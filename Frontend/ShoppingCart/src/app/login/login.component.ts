@@ -50,8 +50,12 @@ export class LoginComponent implements OnInit {
     });
 
     this.loginForm = new FormGroup({
-      loginusername: new FormControl(null, [Validators.required]),
-      loginpassword: new FormControl(null, [Validators.required]),
+      /**
+       * Since these are input controls as a part of the login form, the user only needs
+       * to enter the values for username and password.
+       */
+      loginusername: new FormControl('', [Validators.required]),
+      loginpassword: new FormControl('', [Validators.required]),
     });
   }
 

@@ -112,6 +112,7 @@
               type="submit"
               value="Add Product"
               [disabled]="formTemplateRef.invalid"
+              [ngClass]="{ 'disabled-button': formTemplateRef.invalid }"
             />
           </form>
         </div>
