@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { IProductModel } from '../../models/IProductModel';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
+import { ProductsService } from 'src/app/services/products.service';
 
 /**
  * Displays unique product information to the user.
@@ -13,39 +13,51 @@ import { ComponentcommunicationService } from 'src/app/services/componentcommuni
   templateUrl: './viewproduct.component.html',
   styleUrls: ['./viewproduct.component.css'],
 })
-export class ViewproductComponent implements OnInit, OnDestroy {
+export class ViewproductComponent implements OnInit {
   userMessage: string = '';
   userErrorStatus: boolean = false;
 
-  public productModel: IProductModel = {
-    productCategoryID: 0,
-    productCategoryName: '',
-    productDescription: '',
-    productID: 0,
-    productImageName: '',
-    productImageURL: '',
-    productName: '',
-    productPrice: 0,
-  };
-
-  public parameterSubscription: Subscription;
+  public productNameFromNav: string;
+  public productModel: IProductModel;
 
   constructor(
-    private activeRoute: ActivatedRoute,
+    private router: Router,
     private cartService: CartService,
+    private productService: ProductsService,
     private compCommunicate: ComponentcommunicationService
-  ) {}
+  ) {
+    this.productModel = {
+      ProductCategoryID: 0,
+      ProductCategoryName: '',
+      ProductDescription: '',
+      ProductID: 0,
+      ProductImageName: '',
+      ProductImageURL: '',
+      ProductName: '',
+      ProductPrice: 0,
+    };
 
-  ngOnInit(): void {
-    this.parameterSubscription = this.activeRoute.queryParams.subscribe(
-      (params) => {
-        this.productModel = JSON.parse(params['productinfo']);
-      }
-    );
+    const navigation = this.router.getCurrentNavigation();
+    const navigationData = navigation.extras as {
+      state: {
+        productName: string;
+      };
+    };
+
+    if (navigationData)
+      this.productNameFromNav = navigationData.state.productName;
   }
 
-  ngOnDestroy(): void {
-    this.parameterSubscription.unsubscribe();
+  ngOnInit(): void {
+    if (this.productNameFromNav) {
+      this.productService.getProductsbyName(this.productNameFromNav).subscribe({
+        next: (data: IProductModel[]) => {
+          if (data.length > 0) {
+            this.productModel = data[0];
+          }
+        },
+      });
+    }
   }
 
   /**

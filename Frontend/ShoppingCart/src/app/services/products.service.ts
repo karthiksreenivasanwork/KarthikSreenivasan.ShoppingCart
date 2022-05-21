@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { IProductCategoryModel } from '../models/IProductCategoryModel';
+import { IProductModel } from '../models/IProductModel';
 import { GlobalappdataService } from './globalappdata.service';
-import { UsersService } from './users.service';
 
 /**
  * Service that is responsible for product management
@@ -13,39 +14,68 @@ import { UsersService } from './users.service';
 export class ProductsService {
   constructor(
     private httpClient: HttpClient,
-    private userService: UsersService,
     private globalAppData: GlobalappdataService
   ) {}
 
-  getAllCategories(): Observable<any> {
-    return this.httpClient.get<any[]>(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/categories`
-    );
+  getAllCategories(): Observable<IProductCategoryModel[]> {
+    return this.httpClient
+      .get<IProductCategoryModel[]>(
+        `${this.globalAppData.GetApiUrl}/api/v1/Products/categories`
+      )
+      .pipe(
+        map((response: IProductCategoryModel[]) => {
+          return response;
+        })
+      );
   }
 
-  addProducts(formData: any) {
-    return this.httpClient.post(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/add`,
-      formData
-    );
+  addProducts(formData: FormData) {
+    return this.httpClient
+      .post<IProductModel>(
+        `${this.globalAppData.GetApiUrl}/api/v1/Products/add`,
+        formData
+      )
+      .pipe(
+        map((response: IProductModel) => {
+          return response;
+        })
+      );
   }
 
-  getAllProducts() {
-    return this.httpClient.get<any[]>(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/products`
-    );
+  getAllProducts(): Observable<IProductModel[]> {
+    return this.httpClient
+      .get<IProductModel[]>(
+        `${this.globalAppData.GetApiUrl}/api/v1/Products/products`
+      )
+      .pipe(
+        map((response: IProductModel[]) => {
+          return response;
+        })
+      );
   }
 
-  getProductsbyName(productSearchText: string) {
-    return this.httpClient.get<any[]>(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/products/${productSearchText}`
-    );
+  getProductsbyName(productSearchText: string): Observable<IProductModel[]> {
+    return this.httpClient
+      .get<IProductModel[]>(
+        `${this.globalAppData.GetApiUrl}/api/v1/Products/products/${productSearchText}`
+      )
+      .pipe(
+        map((response: IProductModel[]) => {
+          return response;
+        })
+      );
   }
 
   getProductsByCategoryID(categoryIDParam: string) {
     let categoryID: number = Number(categoryIDParam);
-    return this.httpClient.get<any[]>(
-      `${this.globalAppData.GetApiUrl}/api/v1/Products/products/category/${categoryID}`
-    );
+    return this.httpClient
+      .get<IProductModel[]>(
+        `${this.globalAppData.GetApiUrl}/api/v1/Products/products/category/${categoryID}`
+      )
+      .pipe(
+        map((response: IProductModel[]) => {
+          return response;
+        })
+      );
   }
 }

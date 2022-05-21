@@ -7,7 +7,9 @@ import { map, Observable } from 'rxjs';
 import jwt_decode from 'jwt-decode';
 import { CartService } from './cart.service';
 import { GlobalappdataService } from './globalappdata.service';
-import { ILoginResultModel } from '../models/ILoginResultModel';
+import { ILoginResultModel } from '../models/Login/ILoginResultModel';
+import { IUserModel } from '../models/User/IUserModel';
+import { IUserResultModel } from '../models/User/IUserResultModel';
 
 const LOCAL_STORAGE_KEY_LOGGED_USER: string = 'loggeduser';
 
@@ -33,18 +35,25 @@ export class UsersService {
    * @param registrationDataFromUser Registration details
    * @returns Observable reference of type string.
    */
-  registerNewUser(registrationDataFromUser: any): Observable<string> {
-    return this.httpClient.post(
-      `${this.globalAppData.GetApiUrl}/api/v1/users/register`,
-      registrationDataFromUser,
-      { responseType: 'text' }
-    );
+  registerNewUser(
+    registrationDataFromUser: IUserModel
+  ): Observable<IUserResultModel> {
+    return this.httpClient
+      .post<IUserResultModel>(
+        `${this.globalAppData.GetApiUrl}/api/v1/users/register`,
+        registrationDataFromUser
+      )
+      .pipe(
+        map((response: IUserResultModel) => {
+          return response;
+        })
+      );
   }
 
   /**
    * API call to validate the credentials
    * @param loginCredentialFromUser Login details
-   * @returns Observable reference of type string.
+   * @returns Observable reference of type ILoginResultModel.
    */
   userLogin(loginCredentialFromUser: any): Observable<ILoginResultModel> {
     return this.httpClient

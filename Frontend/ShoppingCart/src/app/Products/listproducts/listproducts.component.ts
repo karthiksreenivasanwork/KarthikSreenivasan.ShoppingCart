@@ -60,8 +60,8 @@ export class ListproductsComponent implements OnInit, OnDestroy {
    */
   populateAllProductData() {
     this.productService.getAllProducts().subscribe({
-      next: (data: any) => {
-        this.productModelCollection = data as IProductModel[];
+      next: (data: IProductModel[]) => {
+        this.productModelCollection = data;
         this.productModelFilteredCollection = this.productModelCollection;
       },
       error: (error) => {
@@ -107,10 +107,9 @@ export class ListproductsComponent implements OnInit, OnDestroy {
       this.productService
         .getProductsbyName(this.productSearchTextInfo)
         .subscribe({
-          next: (data: any) => {
-            this.productModelCollection = data as IProductModel[];
+          next: (data: IProductModel[]) => {
+            this.productModelCollection = data;
             this.productModelFilteredCollection = this.productModelCollection;
-            console.log(this.productSearchTextInfo);
             if (this.productModelFilteredCollection.length == 0)
               this.displayNoProductAvailableMessage(this.productSearchTextInfo);
           },
@@ -186,11 +185,10 @@ export class ListproductsComponent implements OnInit, OnDestroy {
    */
   onProductSelected(productData: IProductModel) {
     let navigationExtras: NavigationExtras = {
-      queryParams: {
-        productinfo: JSON.stringify(productData),
-      },
+      state: {
+        productName: productData.ProductName
+      }
     };
-
     this.router.navigate(['viewproduct'], navigationExtras);
   }
 

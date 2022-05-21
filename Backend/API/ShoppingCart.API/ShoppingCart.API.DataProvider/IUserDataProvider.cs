@@ -9,7 +9,7 @@ namespace ShoppingCart.API.DataProvider
         /// </summary>
         /// <param name="userModelToRegister">User model with the registration data.</param>
         /// <returns>Returns true if the new user registration was successful and false otherwise.</returns>
-        public bool addNewUser(UserModel userModelToRegister);
+        public int addNewUser(UserModel userModelToRegister);
 
         /// <summary>
         /// Validate the credentials provided by the user against the database.

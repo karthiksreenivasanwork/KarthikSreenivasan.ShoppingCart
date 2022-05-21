@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
@@ -62,11 +59,11 @@ export class AddproductsComponent implements OnInit {
     );
     formData.append('ProductImage', this.productImage);
     this.productService.addProducts(formData).subscribe({
-      next: (data) => {
-        let productModel = data as IProductModel;
+      next: (data: IProductModel) => {
+        let productModel = data;
         if (productModel != null) {
-          if (productModel.productID > 0) {
-            this.userMessage = `Product '${productModel.productName}' has been created`;
+          if (productModel.ProductID > 0) {
+            this.userMessage = `Product '${productModel.ProductName}' has been created`;
             ngFormTemplateRef.reset();
           }
         }

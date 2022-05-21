@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IProductCategoryModel } from '../models/IProductCategoryModel';
 import { ProductsService } from '../services/products.service';
 
 /**
@@ -10,13 +11,13 @@ import { ProductsService } from '../services/products.service';
   styleUrls: ['./categories.component.css'],
 })
 export class CategoriesComponent implements OnInit {
-  productCategories: any[] = [];
+  productCategories: IProductCategoryModel[] = [];
 
   constructor(private productService: ProductsService) {}
 
   ngOnInit(): void {
     this.productService.getAllCategories().subscribe({
-      next: (data: any) => {
+      next: (data: IProductCategoryModel[]) => {
         this.productCategories = data;
       },
       error: (error: any) => {

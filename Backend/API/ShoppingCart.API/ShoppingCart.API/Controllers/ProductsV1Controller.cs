@@ -141,7 +141,7 @@ namespace ShoppingCart.API.Controllers
         /// </summary>
         /// <returns>Returns prodct name</returns>
         [HttpPost("add"), CustomAuthorize(Role.Admin)]
-        [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status201Created, Type = typeof(ProductModel))]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Product `{0}` already exists")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new product.")]
         public async Task<IActionResult> PostProduct([FromForm] ProductSwaggerAddModel productDataParam)

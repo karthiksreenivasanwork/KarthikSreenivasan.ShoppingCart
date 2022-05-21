@@ -2,9 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ILoginModel } from '../models/ILoginModel';
-import { ILoginResultModel } from '../models/ILoginResultModel';
-import { CartService } from '../services/cart.service';
+import { ILoginModel } from '../models/Login/ILoginModel';
+import { ILoginResultModel } from '../models/Login/ILoginResultModel';
+import { IUserModel } from '../models/User/IUserModel';
+import { IUserResultModel } from '../models/User/IUserResultModel';
 import { ComponentcommunicationService } from '../services/componentcommunication.service';
 import { UsersService } from '../services/users.service';
 declare var $: any;
@@ -26,7 +27,6 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private usersService: UsersService,
-    private cartService: CartService,
     private compCommunicate: ComponentcommunicationService,
     private router: Router
   ) {}
@@ -63,31 +63,31 @@ export class LoginComponent implements OnInit {
   doRegistration() {
     this.resetComponentVariables();
 
-    this.usersService.registerNewUser(this.registrationForm.value).subscribe({
-      next: (registrationResponseData: string) => {
-        this.userErrorStatus = false;
-        this.userMessage = registrationResponseData;
+    this.usersService
+      .registerNewUser(this.getUserModel(this.registrationForm))
+      .subscribe({
+        next: (registrationResponseData: IUserResultModel) => {
+          this.userErrorStatus = false;
+          this.userMessage = `New user - '${registrationResponseData.Username}' added successfully`;
+          /**
+           * This is to indicate the user about the successful registration for a second
+           * before redirecting the user to the login page.
+           */
+          setTimeout(() => {
+            //Will reload the page to load the login section as login and registration are on the same component.
+            window.location.reload();
+          }, 1000);
+        },
+        error: (registrationErrorData: HttpErrorResponse) => {
+          console.log('Error during registration process');
+          this.userErrorStatus = true;
 
-        console.log(this.userMessage);
-        /**
-         * This is to indicate the user about the successful registration for a second
-         * before redirecting the user to the login page.
-         */
-        setTimeout(() => {
-          //Will reload the page to load the login section as login and registration are on the same component.
-          window.location.reload();
-        }, 1000);
-      },
-      error: (registrationErrorData: HttpErrorResponse) => {
-        console.log('Error during registration process');
-        this.userErrorStatus = true;
-
-        if (registrationErrorData.status == 409) {
-          //Username already taken.
-          this.userMessage = registrationErrorData.error;
-        } else this.userMessage = 'Something went wrong!';
-      },
-    });
+          if (registrationErrorData.status == 409) {
+            //Username already taken.
+            this.userMessage = registrationErrorData.error;
+          } else this.userMessage = 'Something went wrong!';
+        },
+      });
   }
 
   doLogin() {
@@ -133,12 +133,28 @@ export class LoginComponent implements OnInit {
    * @param ngLoginForm FormGroup reference
    * @returns ILoginModel
    */
-  getLoginModel(ngLoginForm: FormGroup) {
+  getLoginModel(ngLoginForm: FormGroup): ILoginModel {
     let loginModel: ILoginModel = {
-      username: ngLoginForm.value.loginusername,
-      password: ngLoginForm.value.loginpassword,
+      Username: ngLoginForm.value.loginusername,
+      Password: ngLoginForm.value.loginpassword,
     };
     return loginModel;
+  }
+
+  /**
+   * Extract the form data and convert it to the user model.
+   * @param ngLoginForm FormGroup reference
+   * @returns IUserModel
+   */
+  getUserModel(ngUserForm: NgForm): IUserModel {
+    let userModel: IUserModel = {
+      UserID: 0,
+      Username: ngUserForm.value.Username,
+      Password: ngUserForm.value.Password,
+      Email: ngUserForm.value.Email,
+      Phone: Number(ngUserForm.value.Phone),
+    };
+    return userModel;
   }
 
   /**

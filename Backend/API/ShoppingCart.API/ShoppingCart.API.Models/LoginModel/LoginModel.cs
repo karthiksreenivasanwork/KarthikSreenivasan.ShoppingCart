@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShoppingCart.API.Models
 {
@@ -12,12 +13,14 @@ namespace ShoppingCart.API.Models
         /// </summary>
         /// <example>karthik</example>
         [Required]
+        [JsonPropertyName("Username")]
         public string Username { get; set; }
         /// <summary>
         /// Specifies the password corresponding to the to perform authentication
         /// </summary>
         /// <example>p@ssw0rd123!</example>
         [Required]
+        [JsonPropertyName("Password")]
         public string Password { get; set; }
     }
 }

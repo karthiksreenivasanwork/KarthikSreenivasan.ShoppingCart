@@ -13,7 +13,9 @@ CREATE OR ALTER PROCEDURE Sch_UserManagement.sp_CreateUser
 @UsernameParam VARCHAR(200),
 @PasswordParam VARCHAR(200),
 @EmailParam varchar(200),
-@PhoneParam varchar(20) AS
+@PhoneParam varchar(20),
+@UserIDOutputParam NUMERIC(6, 0) OUTPUT
+AS
 BEGIN
 INSERT INTO T_Users (Username, Password, Email, Phone)
 VALUES (
@@ -22,6 +24,7 @@ VALUES (
 		@EmailParam,
 		@PhoneParam
 	);
+SELECT @UserIDOutputParam = SCOPE_IDENTITY();
 END
 GO
 

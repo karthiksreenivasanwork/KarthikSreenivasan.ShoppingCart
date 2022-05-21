@@ -1,5 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShoppingCart.API.Models
 {
@@ -13,12 +14,14 @@ namespace ShoppingCart.API.Models
         /// </summary>
         /// <example>1</example>
         [SwaggerSchema(ReadOnly = true)]
+        [JsonPropertyName("ProductCategoryID")]
         public int ProductCategoryID { get; set; }
         /// <summary>
         /// Defines the category a product belongs to
         /// </summary>
         /// <example>Branded Foods</example>
         [Required]
+        [JsonPropertyName("ProductCategoryName")]
         public string ProductCategoryName { get; set; }
     }
 }

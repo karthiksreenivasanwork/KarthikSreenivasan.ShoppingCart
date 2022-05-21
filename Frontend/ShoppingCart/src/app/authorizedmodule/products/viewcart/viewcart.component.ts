@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
@@ -170,5 +170,20 @@ export class ViewcartComponent implements OnInit {
       this.userDangerAlert = true;
       this.userMessage = 'Cart is empty. Please place an order.';
     }
+  }
+
+  /**
+   * Event handler when a single product is selected
+   * @param productData
+   */
+  onProductSelected(cartItem: ICartItemCollectionModel) {
+    console.log(cartItem.productname);
+    let navigationData: NavigationExtras = {
+      state: {
+        productName: cartItem.productname,
+      },
+    };
+
+    this.router.navigate(['viewproduct'], navigationData);
   }
 }

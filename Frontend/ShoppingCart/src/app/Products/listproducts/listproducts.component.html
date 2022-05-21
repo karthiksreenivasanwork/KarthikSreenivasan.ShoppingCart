@@ -24,16 +24,16 @@
                   <div class="snipcart-thumb">
                     <a (click)="onProductSelected(product)" class="pointer"
                       ><img
-                        src="{{ product.productImageURL }}"
+                        src="{{ product.ProductImageURL }}"
                         alt=" "
                         class="img-responsive"
-                      />{{ product.productName }}</a
+                      />{{ product.ProductName }}</a
                     >
                     <p>
-                      {{ product.productDescription | showminimumproddesc: 50 }}
+                      {{ product.ProductDescription | showminimumproddesc: 50 }}
                     </p>
                     <h4>
-                      {{ product.productPrice | currency: "INR" }}
+                      {{ product.ProductPrice | currency: "INR" }}
                     </h4>
                   </div>
                   <div class="snipcart-details">
@@ -42,7 +42,7 @@
                       name="submit"
                       value="Add to cart"
                       class="button"
-                      (click)="onAddToCartClick(product.productID)"
+                      (click)="onAddToCartClick(product.ProductID)"
                     />
                   </div>
                 </div>

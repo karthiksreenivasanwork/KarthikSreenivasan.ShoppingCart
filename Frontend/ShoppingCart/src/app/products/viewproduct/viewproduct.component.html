@@ -1,6 +1,6 @@
 <div class="w3l_banner_nav_right">
   <div class="agileinfo_single">
-    <h5>{{ productModel.productName }}</h5>
+    <h5>{{ productModel.ProductName }}</h5>
     <div class="alert-message-container" *ngIf="userMessage">
       <div
         class="alert-message-item alert"
@@ -15,7 +15,7 @@
     <div class="col-md-4 agileinfo_single_left">
       <img
         id="example"
-        src="{{ productModel.productImageURL }}"
+        src="{{ productModel.ProductImageURL }}"
         alt=" "
         class="img-responsive"
       />
@@ -23,11 +23,11 @@
     <div class="col-md-8 agileinfo_single_right">
       <div class="w3agile_description">
         <h4>Description :</h4>
-        <p>{{ productModel.productDescription }}</p>
+        <p>{{ productModel.ProductDescription }}</p>
       </div>
       <div class="snipcart-item block">
         <div class="snipcart-thumb agileinfo_single_right_snipcart">
-          <h4>{{ productModel.productPrice | currency: "INR" }}</h4>
+          <h4>{{ productModel.ProductPrice | currency: "INR" }}</h4>
         </div>
         <div class="snipcart-details agileinfo_single_right_details">
           <input
@@ -35,7 +35,7 @@
             name="submit"
             value="Add to cart"
             class="button"
-            (click)="onAddToCartClick(productModel.productID)"
+            (click)="onAddToCartClick(productModel.ProductID)"
           />
         </div>
       </div>

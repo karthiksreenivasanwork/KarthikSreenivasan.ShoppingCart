@@ -13,7 +13,7 @@ export abstract class Filterproducts {
     ) {
       for (let product of productCollection) {
         if (
-          product.productName.toLowerCase().includes(searchValue.toLowerCase())
+          product.ProductName.toLowerCase().includes(searchValue.toLowerCase())
         ) {
           filteredproductCollection.push(product);
         }

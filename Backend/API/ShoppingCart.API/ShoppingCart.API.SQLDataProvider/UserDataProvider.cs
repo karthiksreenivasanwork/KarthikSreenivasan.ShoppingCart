@@ -28,8 +28,8 @@ namespace ShoppingCart.API.SQLDataProvider
         /// Register a new user.
         /// </summary>
         /// <param name="userModelToRegister">User model with the registration data.</param>
-        /// <returns>Returns true if the new user registration was successful and false otherwise.</returns>
-        public bool addNewUser(UserModel userModelToRegister)
+        /// <returns>Returns the new User ID if the new user registration was successful.</returns>
+        public int addNewUser(UserModel userModelToRegister)
         {
             if (userModelToRegister == null)
                 throw new ArgumentNullException("userModelToRegister");
@@ -37,9 +37,12 @@ namespace ShoppingCart.API.SQLDataProvider
             if (this.verifyUserRegistration(userModelToRegister.Username))
                 throw new UserExistsException(userModelToRegister.Username);
 
-            bool hasUserAddedSuccessfully = false;
             int commandResult = 0;
             SqlCommand commandReference = null;
+            int userIDOutputData = 0;
+
+            SqlParameter userIDOutPutSQLParam = new SqlParameter("UserIDOutputParam", SqlDbType.Int);
+            userIDOutPutSQLParam.Direction = ParameterDirection.Output;
 
             try
             {
@@ -48,7 +51,8 @@ namespace ShoppingCart.API.SQLDataProvider
                     new SqlParameter("UsernameParam", userModelToRegister.Username),
                     new SqlParameter("PasswordParam", userModelToRegister.Password),
                     new SqlParameter("EmailParam", userModelToRegister.Email),
-                    new SqlParameter("PhoneParam", userModelToRegister.Phone)
+                    new SqlParameter("PhoneParam", userModelToRegister.Phone),
+                    userIDOutPutSQLParam
                 };
 
                 (commandResult, commandReference) = _databaseFunctions.executeNonQuery(
@@ -56,8 +60,8 @@ namespace ShoppingCart.API.SQLDataProvider
                     "Sch_UserManagement.sp_CreateUser",
                     sqlParameters);
 
-                if (commandReference != null)
-                    hasUserAddedSuccessfully = commandResult > 0;
+                if (commandReference != null && commandResult > 0)
+                    userIDOutputData = Convert.ToInt32(userIDOutPutSQLParam.Value);
             }
             catch (Exception ex)
             {
@@ -65,7 +69,7 @@ namespace ShoppingCart.API.SQLDataProvider
                 System.Diagnostics.Debug.WriteLine(ex);
                 throw ex;
             }
-            return hasUserAddedSuccessfully;
+            return userIDOutputData;
         }
 
         /// <summary>

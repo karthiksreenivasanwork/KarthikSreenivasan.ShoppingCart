@@ -40,23 +40,26 @@ export class TokeninterceptorService implements HttpInterceptor {
      * can be received and processed by pipe.
      */
     return next.handle(tokenizedRequest).pipe(
-      //Send the tokenized request to the server.
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Handle the error response returned from the API call and then return that HTTPErrorResponse reference to the caller.
+   * @param error HttpErrorResponse received from the API call.
+   * @returns HttpErrorResponse
+   */
+  private handleError(error: HttpErrorResponse) {
+    if (error && error.status == 401) {
       /**
        * Unless the error is thrown, the subscribers of the API call will not be able to be aware of the error.
        * Status Code - 401 Unauthorized:
        * When the user is found to be unauthorized, logout the user automatically before throwing the error.
-       * Throw generic error for other error types as - `Something went wrong!`
        */
-      catchError((error: HttpErrorResponse) => {
-        if (error && error.status == 401) {
-          console.log('Interceptor received invalid token error');
-          this.userService.logout();
-          this.router.navigateByUrl('/login');
-          return throwError(() => error);
-        }
-        console.log('Something went wrong!');
-        return throwError(() => error);
-      })
-    );
+      this.userService.logout();
+      this.router.navigateByUrl('/login');
+      return throwError(() => error);
+    }
+    return throwError(() => error);
   }
 }

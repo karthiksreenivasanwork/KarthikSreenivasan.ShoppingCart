@@ -84,11 +84,13 @@ namespace ShoppingCart.API.Controllers
         /// <param name="userModelRegistrationData">New user details</param>
         /// <returns>Returns new user registration success message or error status code 500 with a custom error message otherwise.</returns>
         [HttpPost("register")]
-        [SwaggerResponse(StatusCodes.Status201Created, "New user - '{username}' added successfully")]
+        [SwaggerResponse(StatusCodes.Status201Created, Type = typeof(UserResultModel))]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Username {username} already exists")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to add a new user.")]
         public IActionResult PostUser([FromBody] UserModel userModelRegistrationData)
         {
+            UserResultModel userModelAfterRegistration = new UserResultModel();
+
             try
             {
                 UserModel userModelToRegister = new UserModel()
@@ -98,7 +100,11 @@ namespace ShoppingCart.API.Controllers
                     Email = userModelRegistrationData.Email,
                     Phone = userModelRegistrationData.Phone
                 };
-                _userDataProvider.addNewUser(userModelToRegister);
+
+                userModelAfterRegistration.UserID = _userDataProvider.addNewUser(userModelToRegister);
+                userModelAfterRegistration.Username = userModelRegistrationData.Username;
+                userModelAfterRegistration.Email = userModelRegistrationData.Email;
+                userModelAfterRegistration.Phone = userModelRegistrationData.Phone;
             }
             catch (UserExistsException uex)
             {
@@ -114,7 +120,7 @@ namespace ShoppingCart.API.Controllers
             }
 
             //CreatedAtAction returns status code 201 response.
-            return CreatedAtAction("PostUser", string.Format("New user - '{0}' added successfully", userModelRegistrationData.Username));
+            return CreatedAtAction("PostUser", new { id = userModelAfterRegistration.UserID }, userModelAfterRegistration);
         }
 
         /// <summary>
