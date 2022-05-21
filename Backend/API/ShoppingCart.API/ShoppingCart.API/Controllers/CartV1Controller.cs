@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using ShoppingCart.API.BusinessLogic;
 using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
-using ShoppingCart.API.SQLDataProvider;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Security.Claims;
@@ -134,7 +133,7 @@ namespace ShoppingCart.API.Controllers
         /// <param name="cartModelToDelete">Order ID and Product ID are required</param>
         /// <returns>Returns ShoppingCart.API.Models.CartItemModel if product from the cart was removed successfully</returns>
         [HttpPost("removeprodqty"), CustomAuthorize(Role.User)]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(CartItemModel[]))]
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(CartItemModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Product ID `{0}` does not exists")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Unable to find product id {0} for the order {1}.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to delete cart item.")]
@@ -172,7 +171,7 @@ namespace ShoppingCart.API.Controllers
         /// <param name="cartModelToDelete">Order ID and Product ID are required</param>
         /// <returns>Returns ShoppingCart.API.Models.CartItemModel if product from the cart was removed successfully</returns>
         [HttpPost("removeproduct"), CustomAuthorize(Role.User)]
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(CartItemModel[]))]
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(CartItemModel))]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Product ID `{0}` does not exists")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Unable to find product id {0} for the order {1}.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Something went wrong. Unable to delete product from cart.")]

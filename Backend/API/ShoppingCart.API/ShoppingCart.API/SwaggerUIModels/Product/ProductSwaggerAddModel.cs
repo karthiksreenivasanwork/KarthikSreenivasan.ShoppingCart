@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using ShoppingCart.API.Models;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Text.Json.Serialization;
+﻿using ShoppingCart.API.Models;
 
 namespace ShoppingCart.API
 {

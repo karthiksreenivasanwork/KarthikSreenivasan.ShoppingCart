@@ -6,11 +6,12 @@ import {
   Router,
 } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ICartitemModel } from 'src/app/models/Cart/ICartitemModel';
 import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { Filterproducts } from 'src/app/utils/filterproducts';
-import { IProductModel } from '../../models/IProductModel';
+import { IProductModel } from '../../models/Product/IProductModel';
 
 /**
  * Home page of the shopping cart application where all the products
@@ -152,9 +153,9 @@ export class ListproductsComponent implements OnInit, OnDestroy {
     this.userErrorStatus = false;
 
     this.cartService.addItemsToCart(productID.toString()).subscribe({
-      next: (data: any) => {
+      next: (data: ICartitemModel) => {
         if (data != null) {
-          this.userMessage = `Product '${data.productname}' added to cart`;
+          this.userMessage = `Product '${data.Productname}' added to cart`;
         } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
         this.compCommunicate.triggerUpdateCartEvent('listproducts');
@@ -186,8 +187,8 @@ export class ListproductsComponent implements OnInit, OnDestroy {
   onProductSelected(productData: IProductModel) {
     let navigationExtras: NavigationExtras = {
       state: {
-        productName: productData.ProductName
-      }
+        productName: productData.ProductName,
+      },
     };
     this.router.navigate(['viewproduct'], navigationExtras);
   }

@@ -1,4 +1,4 @@
-import { IProductModel } from '../models/IProductModel';
+import { IProductModel } from '../models/Product/IProductModel';
 
 export abstract class Filterproducts {
   static applyFilter(

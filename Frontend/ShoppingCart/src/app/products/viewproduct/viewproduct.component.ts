@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { IProductModel } from '../../models/IProductModel';
+import { IProductModel } from '../../models/Product/IProductModel';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
+import { ICartitemModel } from 'src/app/models/Cart/ICartitemModel';
 
 /**
  * Displays unique product information to the user.
@@ -69,9 +70,9 @@ export class ViewproductComponent implements OnInit {
     this.userErrorStatus = false;
 
     this.cartService.addItemsToCart(productID.toString()).subscribe({
-      next: (data: any) => {
+      next: (data: ICartitemModel) => {
         if (data != null) {
-          this.userMessage = `Product '${data.productname}' added to cart`;
+          this.userMessage = `Product '${data.Productname}' added to cart`;
         } else this.userMessage = 'Product added to cart';
         //Only update the cart count when the cart item has been successfully saved to the database.
         this.compCommunicate.triggerUpdateCartEvent('viewproducts');

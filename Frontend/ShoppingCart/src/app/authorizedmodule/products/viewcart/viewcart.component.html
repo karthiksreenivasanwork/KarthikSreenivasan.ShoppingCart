@@ -41,7 +41,7 @@
             <td class="invert-image">
               <a (click)="onProductSelected(cartItem)" class="pointer"
                 ><img
-                  src="{{ cartItem.productImageURL }}"
+                  src="{{ cartItem.ProductImageURL }}"
                   alt=" "
                   class="img-responsive"
               /></a>
@@ -53,8 +53,8 @@
                     class="entry value-minus"
                     (click)="
                       removeProductQuantityFromCart(
-                        cartItem.orderID,
-                        cartItem.productID,
+                        cartItem.OrderID,
+                        cartItem.ProductID,
                         i
                       )
                     "
@@ -62,28 +62,28 @@
                     &nbsp;
                   </div>
                   <div class="entry value">
-                    <span>{{ cartItem.quantity }}</span>
+                    <span>{{ cartItem.Quantity }}</span>
                   </div>
                   <div
                     class="entry value-plus active"
-                    (click)="addItemQtyToCart(cartItem.productID, i)"
+                    (click)="addItemQtyToCart(cartItem.ProductID, i)"
                   >
                     &nbsp;
                   </div>
                 </div>
               </div>
             </td>
-            <td class="invert">{{ cartItem.productname }}</td>
+            <td class="invert">{{ cartItem.Productname }}</td>
 
-            <td class="invert">{{ cartItem.totalAmount | currency: "INR" }}</td>
+            <td class="invert">{{ cartItem.TotalAmount | currency: "INR" }}</td>
             <td class="invert">
               <div class="rem">
                 <div
                   class="close1"
                   (click)="
                     removeProductFromCart(
-                      cartItem.orderID,
-                      cartItem.productID,
+                      cartItem.OrderID,
+                      cartItem.ProductID,
                       i
                     )
                   "
@@ -99,8 +99,8 @@
         <h4>Continue to basket</h4>
         <ul>
           <li *ngFor="let cartItem of cartItemCollection">
-            {{ cartItem.productname }}
-            <span>{{ cartItem.totalAmount | currency: "INR" }}</span>
+            {{ cartItem.Productname }}
+            <span>{{ cartItem.TotalAmount | currency: "INR" }}</span>
           </li>
           <li class="checkout-left-total">
             Total <span>{{ grandTotalAmount | currency: "INR" }}</span>

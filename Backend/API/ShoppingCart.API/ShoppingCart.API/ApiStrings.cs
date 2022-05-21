@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ShoppingCart.API
+﻿namespace ShoppingCart.API
 {
     internal class ApiStrings
     {

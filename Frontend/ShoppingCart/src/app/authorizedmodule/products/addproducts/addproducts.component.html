@@ -25,9 +25,9 @@
             <select name="category" class="select-product-categories" ngModel [(ngModel)]="categoryDropdownSelectedValue">
               <option
                 *ngFor="let category of productCategories"
-                value="{{ category.productCategoryName }}"
+                value="{{ category.ProductCategoryName }}"
               >
-                {{ category.productCategoryName }}
+                {{ category.ProductCategoryName }}
               </option>
             </select>
             <input

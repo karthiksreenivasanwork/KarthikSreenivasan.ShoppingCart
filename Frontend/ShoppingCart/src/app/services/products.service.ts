@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { IProductCategoryModel } from '../models/IProductCategoryModel';
-import { IProductModel } from '../models/IProductModel';
+import { IProductCategoryModel } from '../models/Product/IProductCategoryModel';
+import { IProductModel } from '../models/Product/IProductModel';
 import { GlobalappdataService } from './globalappdata.service';
 
 /**

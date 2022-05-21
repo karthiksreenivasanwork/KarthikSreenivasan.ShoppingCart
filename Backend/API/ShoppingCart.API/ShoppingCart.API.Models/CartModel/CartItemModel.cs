@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ShoppingCart.API.Models
 {
@@ -15,6 +14,7 @@ namespace ShoppingCart.API.Models
         /// </summary>
         /// <example>1</example>
         [SwaggerSchema(ReadOnly = true)]
+        [JsonPropertyName("CartID")]
         public int CartID { get; set; }
         /// <summary>
         /// Uniquely identifies each cart item with a unique order id
@@ -22,35 +22,41 @@ namespace ShoppingCart.API.Models
         /// <example>1</example>
         [SwaggerSchema(ReadOnly = true)]
         [Required]
+        [JsonPropertyName("OrderID")]
         public int OrderID { get; set; }
         /// <summary>
         /// Uniquely identifies each order with the user.
         /// </summary>
         /// <example>1</example>
+        [JsonPropertyName("UserID")]
         public int UserID { get; set; }
         /// <summary>
         /// Username of the user.
         /// </summary>
         /// <example>karthik</example>
         [Required]
+        [JsonPropertyName("Username")]
         public string Username { get; set; }
         /// <summary>
         /// Represents a unique product added to the cart
         /// </summary>
         /// <example>1</example>
         [Required]
+        [JsonPropertyName("ProductID")]
         public int ProductID { get; set; }
         /// <summary>
         /// Product name of the cart item
         /// </summary>
         /// <example>Branded Foods</example>
         [Required]
+        [JsonPropertyName("Productname")]
         public string Productname { get; set; }
         /// <summary>
         /// Defines the price of this product
         /// </summary>
         /// <example>100</example>
         [Required]
+        [JsonPropertyName("ProductPrice")]
         public int ProductPrice { get; set; }
     }
 }

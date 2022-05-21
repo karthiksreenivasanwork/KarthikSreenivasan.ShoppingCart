@@ -4,8 +4,8 @@ import { CartService } from 'src/app/services/cart.service';
 import { ComponentcommunicationService } from 'src/app/services/componentcommunication.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { ICartItemCollectionModel } from '../../../models/ICartItemCollectionModel';
-import { ICartitemModel } from '../../../models/ICartitemModel';
+import { ICartItemCollectionModel } from '../../../models/Cart/ICartItemCollectionModel';
+import { ICartitemModel } from '../../../models/Cart/ICartitemModel';
 
 @Component({
   selector: 'app-viewcart',
@@ -37,8 +37,8 @@ export class ViewcartComponent implements OnInit {
     this.grandTotalAmount = 0;
 
     this.cartService.getMyCartItems().subscribe({
-      next: (data: any[]) => {
-        this.cartItemCollection = data as ICartItemCollectionModel[];
+      next: (data: ICartItemCollectionModel[]) => {
+        this.cartItemCollection = data;
         this.informUserWhenCartisEmpty();
         this.updateTotalAmount();
       },
@@ -64,24 +64,24 @@ export class ViewcartComponent implements OnInit {
   ) {
     this.resetUserMessageState();
 
-    if (this.cartItemCollection[index].quantity > 0) {
+    if (this.cartItemCollection[index].Quantity > 0) {
       this.cartService
         .removeProductQtyFromCart(orderID.toString(), productID.toString())
         .subscribe({
-          next: (data: any) => {
-            let cartModel = data as ICartitemModel;
+          next: (data: ICartitemModel) => {
+            let cartModel: ICartitemModel = data;
             if (cartModel != null) {
-              this.cartItemCollection[index].quantity -= 1;
-              this.cartItemCollection[index].totalAmount =
-                cartModel.productPrice *
-                this.cartItemCollection[index].quantity;
+              this.cartItemCollection[index].Quantity -= 1;
+              this.cartItemCollection[index].TotalAmount =
+                cartModel.ProductPrice *
+                this.cartItemCollection[index].Quantity;
 
-              if (this.cartItemCollection[index].quantity == 0) {
+              if (this.cartItemCollection[index].Quantity == 0) {
                 this.cartItemCollection.splice(index, 1);
                 this.compCommunicate.triggerUpdateCartEvent('viewcart');
 
                 this.userDangerAlert = true;
-                this.userMessage = `One product quanity of '${cartModel.productname}' removed from cart`;
+                this.userMessage = `One product quanity of '${cartModel.Productname}' removed from cart`;
               }
               this.updateTotalAmount();
             }
@@ -99,20 +99,18 @@ export class ViewcartComponent implements OnInit {
   removeProductFromCart(orderID: number, productID: number, index: number) {
     this.resetUserMessageState();
 
-    if (this.cartItemCollection[index].quantity > 0) {
+    if (this.cartItemCollection[index].Quantity > 0) {
       this.cartService
         .removeProductFromCart(orderID.toString(), productID.toString())
         .subscribe({
-          next: (data: any) => {
-            console.log(data);
-
-            let cartModel = data as ICartitemModel;
+          next: (data: ICartitemModel) => {
+            let cartModel: ICartitemModel = data;
             if (cartModel != null) {
               this.cartItemCollection.splice(index, 1);
               this.compCommunicate.triggerUpdateCartEvent('viewcart');
 
               this.userDangerAlert = true;
-              this.userMessage = `Product '${cartModel.productname}' removed from cart`;
+              this.userMessage = `Product '${cartModel.Productname}' removed from cart`;
 
               this.updateTotalAmount();
             }
@@ -131,15 +129,15 @@ export class ViewcartComponent implements OnInit {
     this.resetUserMessageState();
 
     this.cartService.addItemsToCart(productID.toString()).subscribe({
-      next: (data: any) => {
-        let cartModel = data as ICartitemModel;
+      next: (data: ICartitemModel) => {
+        let cartModel = data;
         if (cartModel != null) {
-          this.cartItemCollection[index].quantity += 1;
-          this.cartItemCollection[index].totalAmount =
-            cartModel.productPrice * this.cartItemCollection[index].quantity;
+          this.cartItemCollection[index].Quantity += 1;
+          this.cartItemCollection[index].TotalAmount =
+            cartModel.ProductPrice * this.cartItemCollection[index].Quantity;
           this.updateTotalAmount();
         }
-        this.userMessage = `Product '${cartModel.productname}' added to cart`;
+        this.userMessage = `Product '${cartModel.Productname}' added to cart`;
       },
       error: () => {
         this.userErrorStatus = true;
@@ -153,7 +151,7 @@ export class ViewcartComponent implements OnInit {
     this.grandTotalAmount = 0;
     if (this.cartItemCollection != null && this.cartItemCollection.length > 0) {
       this.cartItemCollection.forEach((cartItem) => {
-        this.grandTotalAmount += cartItem.totalAmount;
+        this.grandTotalAmount += cartItem.TotalAmount;
       });
     }
   }
@@ -177,10 +175,10 @@ export class ViewcartComponent implements OnInit {
    * @param productData
    */
   onProductSelected(cartItem: ICartItemCollectionModel) {
-    console.log(cartItem.productname);
+    console.log(cartItem.Productname);
     let navigationData: NavigationExtras = {
       state: {
-        productName: cartItem.productname,
+        productName: cartItem.Productname,
       },
     };
 

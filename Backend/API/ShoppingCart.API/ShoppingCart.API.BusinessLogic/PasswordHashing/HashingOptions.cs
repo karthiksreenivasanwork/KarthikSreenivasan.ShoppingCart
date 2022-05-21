@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ShoppingCart.API.BusinessLogic
+﻿namespace ShoppingCart.API.BusinessLogic
 {
     /// <summary>
     /// Summary:

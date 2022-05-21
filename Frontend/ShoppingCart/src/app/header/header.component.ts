@@ -63,7 +63,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   updateCartCountFromAPI() {
     if (this.usersService.isUserLoggedIn) {
       this.cartService.getCartItemsCount().subscribe({
-        next: (data: any) => {
+        next: (data: number) => {
           this.cartCount = data;
         },
         error: () => {

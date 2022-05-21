@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using ShoppingCart.API.DataProvider;
-using ShoppingCart.API.Models;
 using ShoppingCart.API.SQLDataProvider;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ShoppingCart.API.Coordinator
 {

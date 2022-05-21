@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using ShoppingCart.API.Coordinator;
 using ShoppingCart.API.DataProvider;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ShoppingCart.API.BusinessLogic
 {

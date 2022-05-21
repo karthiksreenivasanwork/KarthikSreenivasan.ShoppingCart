@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { UsersService } from 'src/app/services/users.service';
-import { IProductModel } from '../../../models/IProductModel';
+import { IProductModel } from '../../../models/Product/IProductModel';
 
 /**
  * User interface to add a new product to the shopping cart.

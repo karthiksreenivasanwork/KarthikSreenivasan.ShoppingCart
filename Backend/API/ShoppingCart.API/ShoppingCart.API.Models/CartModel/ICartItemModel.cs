@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ShoppingCart.API.Models
+﻿namespace ShoppingCart.API.Models
 {
     public interface ICartItemModel
     {

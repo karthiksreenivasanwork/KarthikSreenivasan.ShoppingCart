@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using ShoppingCart.API.DataProvider;
+﻿using ShoppingCart.API.DataProvider;
 using ShoppingCart.API.Models;
 using System;
 using System.Collections.Generic;
