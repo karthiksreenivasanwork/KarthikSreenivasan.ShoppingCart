@@ -29,6 +29,7 @@ Please find the description of the concepts implemented in this project detailed
 
 - Angular with bootstrap website template design from http://w3layouts.com/
 - Concepts
+
   - **Registration control validations:** Template driven forms.
   - **Login control validations:** Reactive forms.
   - **Client-side authorization:** Route Guard.
@@ -41,6 +42,7 @@ Please find the description of the concepts implemented in this project detailed
     - Example: Used for the shortening product description for each product displayed on the home page.
   - **Dynamic routing:** Dynamic routing using URL parameters.
     - Example: Filter products based on their `Category ID`.
+
 - Performance
 
   - **Eager loading:** Modules that do not need authentication.
@@ -48,7 +50,12 @@ Please find the description of the concepts implemented in this project detailed
   - **Lazy loading:** Feature module that gets downloaded asynchronously using route parameter detailed below.
     - RouterModule.forRoot | preloadingStrategy parameter: PreloadAllModules.
 
+- Unit Testing
+
+  - Added a basic unit testing to initialize and verify component reference for the login component.
+
 - To-do: Part 1
+  - Detailed unit testing for each component.
   - User address capturing feature.
   - Payment feature.
   - Update or remove products.
