@@ -27,7 +27,7 @@ import { ComingsoonComponent } from './others/comingsoon/comingsoon.component';
     ShowminimumproddescPipe,
     NotfoundComponent,
     ViewproductComponent,
-    ComingsoonComponent
+    ComingsoonComponent,
   ],
   imports: [
     BrowserModule,
